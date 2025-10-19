@@ -1,0 +1,1602 @@
+[
+  {
+    "name": "Santiago",
+    "slug": "santiago",
+    "region": "Metropolitana de Santiago",
+    "country": "Chile",
+    "lat": -33.448889,
+    "lon": -70.669265
+  },
+  {
+    "name": "Arica",
+    "slug": "arica",
+    "region": "Arica y Parinacota",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Camarones",
+    "slug": "camarones",
+    "region": "Arica y Parinacota",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "General Lagos",
+    "slug": "general-lagos",
+    "region": "Arica y Parinacota",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Putre",
+    "slug": "putre",
+    "region": "Arica y Parinacota",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Alto Hospicio",
+    "slug": "alto-hospicio",
+    "region": "Tarapacá",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Iquique",
+    "slug": "iquique",
+    "region": "Tarapacá",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Camiña",
+    "slug": "camina",
+    "region": "Tarapacá",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Colchane",
+    "slug": "colchane",
+    "region": "Tarapacá",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Huara",
+    "slug": "huara",
+    "region": "Tarapacá",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pica",
+    "slug": "pica",
+    "region": "Tarapacá",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pozo Almonte",
+    "slug": "pozo-almonte",
+    "region": "Tarapacá",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Antofagasta",
+    "slug": "antofagasta",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Calama",
+    "slug": "calama",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "María Elena",
+    "slug": "maria-elena",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Mejillones",
+    "slug": "mejillones",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Ollagüe",
+    "slug": "ollagüe",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Pedro de Atacama",
+    "slug": "san-pedro-de-atacama",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Sierra Gorda",
+    "slug": "sierra-gorda",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Taltal",
+    "slug": "taltal",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Tocopilla",
+    "slug": "tocopilla",
+    "region": "Antofagasta",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Alto del Carmen",
+    "slug": "alto-del-carmen",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Caldera",
+    "slug": "caldera",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Chañaral",
+    "slug": "chanaral",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Copiapó",
+    "slug": "copiapo",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Diego de Almagro",
+    "slug": "diego-de-almagro",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Freirina",
+    "slug": "freirina",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Huasco",
+    "slug": "huasco",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Tierra Amarilla",
+    "slug": "tierra-amarilla",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Vallenar",
+    "slug": "vallenar",
+    "region": "Atacama",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Andacollo",
+    "slug": "andacollo",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Canela",
+    "slug": "canela",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Combarbalá",
+    "slug": "combarbala",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Coquimbo",
+    "slug": "coquimbo",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Illapel",
+    "slug": "illapel",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "La Higuera",
+    "slug": "la-higuera",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "La Serena",
+    "slug": "la-serena",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Los Vilos",
+    "slug": "los-vilos",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Monte Patria",
+    "slug": "monte-patria",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Ovalle",
+    "slug": "ovalle",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Paihuano",
+    "slug": "paihuano",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Punitaqui",
+    "slug": "punitaqui",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Río Hurtado",
+    "slug": "rio-hurtado",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Salamanca",
+    "slug": "salamanca",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Vicuña",
+    "slug": "vicuna",
+    "region": "Coquimbo",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Valparaíso",
+    "slug": "valparaiso",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Viña del Mar",
+    "slug": "vina-del-mar",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Concón",
+    "slug": "concon",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Quilpué",
+    "slug": "quilpue",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Villa Alemana",
+    "slug": "villa-alemana",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Casablanca",
+    "slug": "casablanca",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "La Calera",
+    "slug": "la-calera",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "La Cruz",
+    "slug": "la-cruz",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Hijuelas",
+    "slug": "hijuelas",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Nogales",
+    "slug": "nogales",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Quillota",
+    "slug": "quillota",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Limache",
+    "slug": "limache",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Olmué",
+    "slug": "olmue",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Quintero",
+    "slug": "quintero",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Puchuncaví",
+    "slug": "puchuncavi",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Antonio",
+    "slug": "san-antonio",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Cartagena",
+    "slug": "cartagena",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "El Tabo",
+    "slug": "el-tabo",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "El Quisco",
+    "slug": "el-quisco",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Santo Domingo",
+    "slug": "santo-domingo",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Algarrobo",
+    "slug": "algarrobo",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Felipe",
+    "slug": "san-felipe",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Putaendo",
+    "slug": "putaendo",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Santa María",
+    "slug": "santa-maria",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Panquehue",
+    "slug": "panquehue",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Llaillay",
+    "slug": "llaillay",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Catemu",
+    "slug": "catemu",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Los Andes",
+    "slug": "los-andes",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Calle Larga",
+    "slug": "calle-larga",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Rinconada",
+    "slug": "rinconada",
+    "region": "Valparaíso",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Rancagua",
+    "slug": "rancagua",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Machalí",
+    "slug": "machali",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Graneros",
+    "slug": "graneros",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Mostazal",
+    "slug": "mostazal",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Doñihue",
+    "slug": "donihue",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Coltauco",
+    "slug": "coltauco",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Las Cabras",
+    "slug": "las-cabras",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Peumo",
+    "slug": "peumo",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pichidegua",
+    "slug": "pichidegua",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Requínoa",
+    "slug": "requinoa",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Rengo",
+    "slug": "rengo",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Malloa",
+    "slug": "malloa",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Vicente",
+    "slug": "san-vicente",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pichilemu",
+    "slug": "pichilemu",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Navidad",
+    "slug": "navidad",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Litueche",
+    "slug": "litueche",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Marchigüe",
+    "slug": "marchigüe",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "La Estrella",
+    "slug": "la-estrella",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Paredones",
+    "slug": "paredones",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Santa Cruz",
+    "slug": "santa-cruz",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Chimbarongo",
+    "slug": "chimbarongo",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Nancagua",
+    "slug": "nancagua",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Placilla",
+    "slug": "placilla",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Palmilla",
+    "slug": "palmilla",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Peralillo",
+    "slug": "peralillo",
+    "region": "O'Higgins",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Talca",
+    "slug": "talca",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Clemente",
+    "slug": "san-clemente",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pelarco",
+    "slug": "pelarco",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Río Claro",
+    "slug": "rio-claro",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Curepto",
+    "slug": "curepto",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Constitución",
+    "slug": "constitucion",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Empedrado",
+    "slug": "empedrado",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Maule",
+    "slug": "maule",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Rafael",
+    "slug": "san-rafael",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Curicó",
+    "slug": "curico",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Teno",
+    "slug": "teno",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Romeral",
+    "slug": "romeral",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Rauco",
+    "slug": "rauco",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Hualañé",
+    "slug": "hualane",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Licantén",
+    "slug": "licanten",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Vichuquén",
+    "slug": "vichuquen",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Molina",
+    "slug": "molina",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Sagrada Familia",
+    "slug": "sagrada-familia",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Linares",
+    "slug": "linares",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Yerbas Buenas",
+    "slug": "yerbas-buenas",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Colbún",
+    "slug": "colbun",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Villa Alegre",
+    "slug": "villa-alegre",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Javier",
+    "slug": "san-javier",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Longaví",
+    "slug": "longavi",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Retiro",
+    "slug": "retiro",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Parral",
+    "slug": "parral",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Cauquenes",
+    "slug": "cauquenes",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Chanco",
+    "slug": "chanco",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pelluhue",
+    "slug": "pelluhue",
+    "region": "Maule",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Chillán",
+    "slug": "chillan",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Chillán Viejo",
+    "slug": "chillan-viejo",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Bulnes",
+    "slug": "bulnes",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Quillón",
+    "slug": "quillon",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Ignacio",
+    "slug": "san-ignacio",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "El Carmen",
+    "slug": "el-carmen",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pemuco",
+    "slug": "pemuco",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Yungay",
+    "slug": "yungay",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pinto",
+    "slug": "pinto",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Coihueco",
+    "slug": "coihueco",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Carlos",
+    "slug": "san-carlos",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Ñiquén",
+    "slug": "niquen",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Nicolás",
+    "slug": "san-nicolas",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Ninhue",
+    "slug": "ninhue",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Quirihue",
+    "slug": "quirihue",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Cobquecura",
+    "slug": "cobquecura",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Portezuelo",
+    "slug": "portezuelo",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Ránquil",
+    "slug": "ranquil",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Coelemu",
+    "slug": "coelemu",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Trehuaco",
+    "slug": "trehuaco",
+    "region": "Ñuble",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Concepción",
+    "slug": "concepcion",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Talcahuano",
+    "slug": "talcahuano",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Penco",
+    "slug": "penco",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Tomé",
+    "slug": "tome",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Hualpén",
+    "slug": "hualpen",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Chiguayante",
+    "slug": "chiguayante",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Pedro de la Paz",
+    "slug": "san-pedro-de-la-paz",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Coronel",
+    "slug": "coronel",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Lota",
+    "slug": "lota",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Hualqui",
+    "slug": "hualqui",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Florida",
+    "slug": "florida",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Santa Juana",
+    "slug": "santa-juana",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Arauco",
+    "slug": "arauco",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Curanilahue",
+    "slug": "curanilahue",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Lebu",
+    "slug": "lebu",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Los Álamos",
+    "slug": "los-alamos",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Cañete",
+    "slug": "canete",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Contulmo",
+    "slug": "contulmo",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Tirúa",
+    "slug": "tirua",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Los Ángeles",
+    "slug": "los-angeles",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Cabrero",
+    "slug": "cabrero",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Yumbel",
+    "slug": "yumbel",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Laja",
+    "slug": "laja",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "San Rosendo",
+    "slug": "san-rosendo",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Nacimiento",
+    "slug": "nacimiento",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Mulchén",
+    "slug": "mulchen",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Negrete",
+    "slug": "negrete",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Quilleco",
+    "slug": "quilleco",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Quilaco",
+    "slug": "quilaco",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Santa Bárbara",
+    "slug": "santa-barbara",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Alto Biobío",
+    "slug": "alto-biobio",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Tucapel",
+    "slug": "tucapel",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Antuco",
+    "slug": "antuco",
+    "region": "Biobío",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Temuco",
+    "slug": "temuco",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Padre Las Casas",
+    "slug": "padre-las-casas",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Lautaro",
+    "slug": "lautaro",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Perquenco",
+    "slug": "perquenco",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Galvarino",
+    "slug": "galvarino",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Vilcún",
+    "slug": "vilcun",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Curarrehue",
+    "slug": "curarrehue",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Cunco",
+    "slug": "cunco",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Melipeuco",
+    "slug": "melipeuco",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Nueva Imperial",
+    "slug": "nueva-imperial",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Carahue",
+    "slug": "carahue",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Saavedra",
+    "slug": "saavedra",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Teodoro Schmidt",
+    "slug": "teodoro-schmidt",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Toltén",
+    "slug": "tolten",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Gorbea",
+    "slug": "gorbea",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Loncoche",
+    "slug": "loncoche",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Pitrufquén",
+    "slug": "pitrufquen",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  },
+  {
+    "name": "Freire",
+    "slug": "freire",
+    "region": "La Araucanía",
+    "country": "Chile",
+    "lat": null,
+    "lon": null
+  }
+]
