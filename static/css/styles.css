@@ -1,0 +1,557 @@
+/* ======== Design Tokens (ajusta a la paleta del documento) ======== */
+:root{
+  /* Core brand (ejemplo vibrante para nightlife; reemplaza por tu paleta) */
+  --brand-50:#eef2ff; --brand-100:#e0e7ff; --brand-200:#c7d2fe;
+  --brand-300:#a5b4fc; --brand-400:#818cf8; --brand-500:#6366f1; /* Primario */
+  --brand-600:#5850ec; --brand-700:#4f46e5; --brand-800:#4338ca; --brand-900:#3730a3;
+  --app-bg-gradient: linear-gradient(135deg, #0b0c12 0%, #1a1e4a 60%, #20227a 100%);
+  --accent-500:#22d3ee;     /* Cian para estados/accents */
+  --highlight-500:#f43f5e;  /* Destacado/ofertas */
+
+  /* Superficies y tipografía */
+  --surface-0:#0b0b12;  /* Fondo app */
+  --surface-1:#11111a;  /* Superficie cards/nav */
+  --surface-2:#171826;  /* Hover/raised */
+  --text-1:#f5f7ff;     /* Texto alto contraste */
+  --text-2:#b9c0d4;     /* Texto secundario */
+
+  /* Tokens extra usados en zonas auth (antes no definidos) */
+  --bg-1:#0b0c12;
+  --bg-2:#12132a;
+  --field-bg: rgba(255,255,255,.04);
+  --field-bd: rgba(255,255,255,.12);
+  --focus: rgba(99,102,241,.45);
+
+  /* Bordes/Radius/Sombras */
+  --radius-lg:1rem; --radius-md:.75rem; --radius-sm:.5rem;
+  --ring:0 0 0 .25rem rgba(99,102,241,.25);
+  --shadow-1:0 6px 30px rgba(0,0,0,.35);
+  --shadow-2:0 10px 50px rgba(35,35,95,.45);
+
+  /* Gradients */
+  --grad-hero:
+    radial-gradient(1200px 600px at 10% 0%, rgba(99,102,241,.25), transparent 60%),
+    radial-gradient(900px 500px at 90% 10%, rgba(34,211,238,.18), transparent 60%),
+    linear-gradient(180deg, #0b0b12 0%, #0b0b12 100%);
+}
+
+/* ======== Base / Reset ======== */
+html,body{background:var(--surface-0); color:var(--text-1);}
+.text-soft{color:var(--text-2)!important;}
+.bg-surface-1{background:var(--surface-1)!important;}
+.bg-surface-2{background:var(--surface-2)!important;}
+.rounded-lg{border-radius:var(--radius-lg)!important;}
+.rounded-md{border-radius:var(--radius-md)!important;}
+.shadow-1{box-shadow:var(--shadow-1);}
+.shadow-2{box-shadow:var(--shadow-2);}
+.ring-focus:focus{outline:none; box-shadow:var(--ring);}
+
+/* Botones (usar junto a .btn de Bootstrap) */
+.btn-brand{
+  --bs-btn-bg:var(--brand-500);
+  --bs-btn-border-color:var(--brand-500);
+  --bs-btn-hover-bg:var(--brand-600);
+  --bs-btn-hover-border-color:var(--brand-600);
+}
+.btn-ghost{
+  --bs-btn-color:var(--text-1);
+  --bs-btn-bg:transparent;
+  --bs-btn-border-color:transparent;
+  --bs-btn-hover-bg:rgba(255,255,255,.06);
+}
+
+/* ======== Navbar ======== */
+.navbar-brand b{color:var(--brand-400)}
+/* ÚNICA definición consolidada */
+.nav-glass{
+  backdrop-filter:saturate(160%) blur(10px);
+  background:rgba(17,17,26,.55)!important;
+  border-bottom:1px solid rgba(255,255,255,.06)
+}
+
+/* ======== Hero ======== */
+.hero{background:var(--grad-hero);}
+.hero-title{letter-spacing:.2px}
+.tagline{color:var(--brand-300)}
+
+/* ======== Chips / Filtros ======== */
+.chip{
+  display:inline-flex; align-items:center; gap:.5rem; padding:.35rem .7rem;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08);
+  border-radius:999px; color:var(--text-1); cursor:pointer; transition:.2s;
+}
+.chip.active{background:rgba(99,102,241,.15); border-color:rgba(99,102,241,.45)}
+.chip:hover{transform:translateY(-1px)}
+
+/* ======== Cards ======== */
+.card-event{
+  background:linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+  border:1px solid rgba(255,255,255,.08); border-radius:var(--radius-lg);
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.card-event:hover{transform:translateY(-3px); box-shadow:var(--shadow-2); border-color:rgba(99,102,241,.35)}
+.card-cover{
+  position:relative; overflow:hidden; border-radius:calc(var(--radius-lg) - 2px);
+  background:linear-gradient(135deg, rgba(99,102,241,.35), rgba(34,211,238,.3));
+  aspect-ratio:16/9;
+}
+.card-cover img{width:100%; height:100%; object-fit:cover; filter:saturate(1.05) contrast(1.05)}
+.badge-offer{background:var(--highlight-500)}
+.badge-vibe{background:rgba(34,211,238,.2); color:#aef; border:1px solid rgba(34,211,238,.4)}
+
+/* ======== Map placeholder ======== */
+.map-shell{
+  height:420px;
+  background:
+    radial-gradient(500px 200px at 70% 20%, rgba(99,102,241,.15), transparent 60%),
+    #0e0f18;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:var(--radius-lg);
+}
+
+/* ======== Section headers ======== */
+.section-title{font-weight:800}
+.section-sub{color:var(--text-2)}
+
+/* ======== Animaciones ======== */
+.reveal{opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
+.reveal.in{opacity:1; transform:none}
+.floaty{transition:transform .2s ease}
+.floaty:hover{transform:translateY(-2px)}
+
+/* ======== Forms ======== */
+.form-control, .form-select{
+  background-color:rgba(255,255,255,.04)!important; color:var(--text-1)!important;
+  border:1px solid rgba(255,255,255,.12)!important; border-radius:var(--radius-md)!important;
+}
+.form-control:focus, .form-select:focus{box-shadow:var(--ring)!important}
+
+/* ======== Footer ======== */
+.footer{border-top:1px solid rgba(255,255,255,.08)}
+
+/* ======== Secciones con imagen (parallax seguro) ======== */
+.section-with-bg{
+  position: relative;
+  background-image: var(--section-bg);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* desactivado en móviles abajo */
+  isolation: isolate;
+}
+.section-with-bg::before{
+  content:"";
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(1200px 600px at 10% 0%, rgba(99,102,241,.28), transparent 60%),
+    linear-gradient(180deg, rgba(11,11,18,.75), rgba(11,11,18,.9));
+  z-index: -1;
+}
+.section-with-bg > .container{ position: relative; z-index: 1; }
+@media (prefers-reduced-motion: reduce){
+  .section-with-bg{ background-attachment: scroll; }
+}
+/* iOS Safari detection simple para desactivar fixed */
+@supports (-webkit-touch-callout: none){
+  .section-with-bg{ background-attachment: scroll; }
+}
+
+/* ======== Trending / Carrusel ======== */
+.card-trend{
+  background: var(--bs-body-bg, var(--surface-1));
+  border: 1px solid var(--bs-border-color, rgba(255,255,255,.1));
+  border-radius: .2rem;
+  overflow: hidden;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.card-trend:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 .5rem 1.25rem rgba(0,0,0,.12);
+  border-color: rgba(0,0,0,.1);
+}
+.card-trend .cover{
+  position: relative; overflow: hidden; aspect-ratio: 4 / 3;
+  background: linear-gradient(180deg, rgba(0,0,0,.04), rgba(0,0,0,.02));
+}
+.card-trend .cover img{ width: 100%; height: 100%; object-fit: cover; }
+.card-trend .badge-soft{
+  background: rgba(0,0,0,.6); color: #fff; font-weight: 500;
+  border: 1px solid rgba(255,255,255,.25);
+}
+.card-trend .body{ padding: .9rem .9rem 1rem; }
+.card-trend .title{
+  font-size: .98rem; font-weight: 700; margin: 0 0 .25rem;
+}
+.card-trend .meta{
+  font-size: .85rem; color: var(--bs-secondary-color, var(--text-2));
+}
+
+/* Botones pill */
+.btn-pill{ border-radius: 2rem; }
+
+/* Responsividad del carrusel: 1 / 2 / 4 por slide usando grid dentro del item */
+.carousel-item .grid{
+  display: grid; gap: 1rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px){
+  .carousel-item .grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 992px){
+  .carousel-item .grid{ grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Indicadores discretos */
+#trendIndicators button{
+  width: .6rem; height: .6rem; border-radius: 50%;
+}
+
+/* ======== Featured / Hero de listados ======== */
+.featured-slide{ position:relative; }
+.featured-media{ position:relative; }
+.featured-media img{
+  width:100%; height: clamp(280px, 38vw, 460px); object-fit: cover; display:block;
+}
+.featured-overlay{
+  position:absolute; inset:0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.35) 60%, rgba(0,0,0,.55)),
+    radial-gradient(900px 420px at 10% 20%, rgba(99,102,241,.18), transparent 60%);
+}
+/* Contenido superpuesto */
+.featured-content{
+  position:absolute; inset:0;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  padding: clamp(1rem, 4vw, 2rem);
+}
+.featured-eyebrow{
+  font-size:.85rem; letter-spacing:.06em; text-transform:uppercase; color:var(--text-2);
+}
+.featured-title{
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800; margin:.15rem 0 .25rem; color:var(--text-1);
+  text-shadow: 0 2px 16px rgba(0,0,0,.35);
+}
+.featured-meta{ max-width: 60ch; }
+/* Indicadores móviles */
+#featuredIndicators button{
+  width:.6rem; height:.6rem; border-radius:50%; background:rgba(255,255,255,.35); border:0;
+}
+#featuredIndicators button.active{ background:var(--brand-500); }
+.featured-content .btn{ align-self:flex-start; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+
+/* ======== Flyers ======== */
+.flyer { position: relative; }
+.flyer img{ width:100%; height: clamp(280px, 34vw, 460px); object-fit: cover; display:block; }
+.flyer__overlay{
+  position:absolute; inset:0; display:flex; flex-direction:column; justify-content:space-between;
+  padding:1rem; background: linear-gradient(180deg, rgba(0,0,0,.05), rgba(0,0,0,.45) 55%, rgba(0,0,0,.65));
+  opacity:0; transition:opacity .2s ease;
+}
+.flyer:hover .flyer__overlay{ opacity:1; }
+/* FIX typo gap: 4.rem -> 4rem */
+.flyer__meta{ display:flex; flex-wrap:wrap; gap:4rem; }
+
+/* ======== Grid marketplace ======== */
+.ml-grid{
+  display:grid; gap: .75rem;
+  grid-template-columns: repeat(2, 1fr);
+}
+@media (min-width: 768px){ .ml-grid{ grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 1200px){ .ml-grid{ grid-template-columns: repeat(5, 1fr); } }
+
+/* Tarjeta compacta estilo marketplace */
+.ml-card{
+  display:flex; flex-direction:column; text-decoration:none;
+  background: var(--surface-1);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: .5rem; overflow: hidden;
+  transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+}
+.ml-card:hover{
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-2);
+  border-color: rgba(99,102,241,.35);
+}
+.ml-thumb{ position: relative; background: var(--surface-2); }
+.ml-thumb img{ width:100%; height: 150px; object-fit: cover; display:block; }
+.ml-body{ padding: .6rem .7rem .75rem; }
+.ml-title{
+  color: var(--text-1); font-weight: 700; font-size: .95rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.ml-meta{
+  color: var(--text-2); font-size: .82rem; margin-top: .15rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Indicadores móviles sutiles como puntos */
+#relacionadosCarousel .carousel-indicators [data-bs-target]{
+  width:.55rem; height:.55rem; border-radius:50%; background:rgba(255,255,255,.35);
+}
+#relacionadosCarousel .carousel-indicators .active{ background: var(--brand-500); }
+
+/* ======== Auth ======== */
+.auth-shell{
+  min-height:100vh; display:grid; place-items:center;
+  background:
+    radial-gradient(1200px 800px at 20% 10%, rgba(70,68,255,.18), transparent 50%),
+    linear-gradient(110deg, var(--bg-1) 0%, #0d0e1a 35%, var(--bg-2) 100%);
+  color:var(--text-1);
+}
+.auth-card{ width:min(640px, 92vw); }
+.auth-title{ font-weight:800; letter-spacing:.4px; }
+.auth-sub{ color:var(--text-2); }
+.auth-form label{
+  font-size:.78rem; letter-spacing:.12em; text-transform:uppercase; color:var(--text-2);
+}
+.auth-input{
+  background:var(--field-bg); border:1px solid var(--field-bd); color:var(--text-1);
+  padding:.9rem 1rem; width:100%;
+}
+.auth-input:focus{ outline:2px solid var(--focus); border-color:transparent; }
+.help{ font-size:.72rem; color:#9aa0b4; text-transform:uppercase; }
+.btn-cta{
+  background:#fff; color:#0b0c12; border:0; padding:.9rem 1.2rem; font-weight:700; width:210px;
+}
+.errorlist{ color:#ff7a7a; margin:.25rem 0 0; font-size:.85rem; list-style:none; padding:0; }
+
+/* ======== Venue Hero (única definición, duplicados removidos) ======== */
+.hero-venue{ position:relative; }
+.hero-venue__media{ position:relative; }
+.hero-venue__media img{ width:100%; height: clamp(260px, 40vw, 520px); object-fit:cover; display:block; }
+.hero-venue__overlay{ position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.55) 60%, rgba(0,0,0,.75));
+}
+.hero-venue__content{ position:absolute; inset:0; display:flex; align-items:end; }
+.hero-venue__panel{ backdrop-filter: blur(6px); background: rgba(17,17,26,.55); border:1px solid rgba(255,255,255,.08) }
+.divider{ height:1px; background: rgba(255,255,255,.08); }
+.list-timeline .item{ display:flex; gap:.9rem; padding:.8rem 0; border-bottom:1px solid rgba(255,255,255,.08); }
+.list-timeline .time{ min-width:92px; color:var(--text-2); font-size:.92rem; }
+.list-timeline .title{ font-weight:600; }
+
+/* ÚNICA definición de badge-soft (duplicado removido) */
+.badge-soft{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); }
+
+.gallery img{ width:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius: var(--radius-md); }
+.note{ font-size:.9rem; color:var(--text-2); }
+.subnav-sticky{ position:sticky; top:64px; z-index: 1020; }
+.pill-link{
+  --_bg: rgba(255,255,255,.06); --_bd: rgba(255,255,255,.10);
+  display:inline-flex; align-items:center; gap:.5rem; padding:.45rem .9rem; border-radius:999px;
+  background:var(--_bg); border:1px solid var(--_bd); color:var(--text-1); text-decoration:none;
+}
+.pill-link:hover{ background:rgba(255,255,255,.08); border-color: rgba(255,255,255,.18) }
+.menu-table td{ padding:.4rem .2rem; border-color: rgba(255,255,255,.08)!important }
+
+/* ======== Choice Hero ======== */
+.choice-hero{
+  min-height:calc(100vh - 120px);display:flex;align-items:center;justify-content:center;background:#0b0c12;
+  background-image:radial-gradient(800px 600px at 10% 10%, rgba(80,80,255,.18), transparent 60%),
+  linear-gradient(120deg,#0b0c12 0%,#12132a 50%,#2726c7 100%);color:#fff
+}
+.choice-title{letter-spacing:.28em;font-weight:700}
+.choice-grid{display:grid;gap:1.5rem;grid-template-columns:repeat(2,minmax(0,1fr))}
+@media (max-width:768px){.choice-grid{grid-template-columns:1fr}}
+.choice-card{position:relative;border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.choice-card img{width:100%;height:360px;object-fit:cover;display:block}
+.choice-card::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35);transition:background .25s}
+.choice-card:hover::after{background:rgba(0,0,0,.15)}
+.choice-label{
+  position:absolute;inset:0;display:grid;place-items:center;font-size:clamp(2rem,6vw,4rem);
+  font-weight:800;letter-spacing:.35em;text-transform:uppercase;color:#fff
+}
+.choice-link{position:absolute;inset:0;z-index:2}
+.choice-note{color:#cfd3ff;opacity:.85}
+
+/* === Choices en tema dark: fondo claro + texto oscuro === */
+.choices .choices__inner{
+  background: var(--app-bg-gradient) !important;
+  color:white !important;
+  border:1px solid rgba(255,255,255,.18) !important;
+  border-radius:.75rem !important;
+  min-height:46px;
+}
+.choices .choices__placeholder{ color:#6c757d !important; }
+.choices.is-focused .choices__inner{
+  border-color:#6366f1 !important;
+  box-shadow:0 0 0 .25rem rgba(99,102,241,.25) !important;
+}
+
+.choices .choices__list--dropdown{
+  background:#fff !important;
+  color:#111 !important;
+  border:1px solid rgba(0,0,0,.15) !important;
+  border-radius:.75rem !important;
+  box-shadow:0 8px 24px rgba(0,0,0,.25) !important;
+  z-index: 2000; /* por si algo lo tapa */
+}
+.choices .choices__list--dropdown .choices__item{ color:#111 !important; }
+.choices .choices__list--dropdown .choices__item--selectable.is-highlighted{
+  background:#e7f0ff !important;
+  color:#111 !important;
+}
+
+/* Flecha */
+.choices[data-type*="select-one"]::after{
+  border-color:#6c6cf1 transparent transparent transparent !important;
+}
+
+/* Evita que un reset global del tema oscuro imponga blanco */
+.choices, .choices *{ color:inherit; }
+
+.modal .form-control {
+  background: var(--surface-2, #1b1b22);
+  border: 1px solid rgba(255,255,255,.12);
+  color: var(--text-1, #fff);
+}
+.modal .form-control:focus {
+  border-color: rgba(255,255,255,.22);
+  box-shadow: none;
+}
+
+
+/* Estilo general del select */
+select {
+  background-color: #111; /* fondo negro */
+  color: white;           /* texto blanco */
+  border: 1px solid #444;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+/* Estilo de las opciones desplegadas */
+option {
+  background-color: #111; /* fondo negro */
+  color: white;           /* texto blanco */
+}
+
+/* Estilo cuando se pasa el mouse o se selecciona */
+option:checked,
+option:hover,
+option:focus {
+  background-color: #333; /* gris oscuro para resaltar */
+  color: white;
+}
+
+
+.tag-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem .6rem;
+}
+
+.tag-chip {
+  position: relative;
+  display: inline-block;
+}
+
+.tag-chip input[type="checkbox"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tag-chip label {
+  display: inline-block;
+  padding: .38rem .75rem;
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: 9999px;
+  font-size: .875rem;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  background: rgba(255,255,255,.06);
+  color: #eaeaea;
+}
+
+.tag-chip label:hover {
+  border-color: rgba(255,255,255,.5);
+  box-shadow: 0 0 0 3px rgba(13,110,253,.2);
+}
+
+.tag-chip input[type="checkbox"]:checked + label {
+  background: #0d6efd;         /* Bootstrap primary */
+  border-color: #0d6efd;
+  color: #fff;
+  box-shadow: 0 0 0 3px rgba(13,110,253,.25);
+}
+
+/* Tema claro (si aplica): añade .theme-light al body */
+.theme-light .tag-chip label {
+  background: #f6f7f9;
+  color: #1d1d1f;
+  border-color: #d0d4db;
+}
+.theme-light .tag-chip input[type="checkbox"]:checked + label {
+  background: #0d6efd;
+  border-color: #0d6efd;
+  color: #fff;
+}
+
+
+/* ==========================================================
+   COMPONENTE: Card Hero (versión universal)
+   Reutilizable para venues, eventos o promociones
+   ========================================================== */
+
+.card-hero {
+  display: block;
+  position: relative;
+  border-radius: 1rem;              /* rounded-4 */
+  overflow: hidden;
+  background-color: #0b0d20;        /* fallback si no hay imagen */
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.card-hero:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+}
+
+/* Imagen principal (logo, cover o flyer) */
+.card-hero__img {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background: #111;
+}
+.card-hero__img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Capa oscura degradada */
+.card-hero__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.8) 100%);
+}
+
+/* Texto inferior */
+.card-hero__meta {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 1rem;
+  z-index: 2;
+  text-align: center;
+}
+
+.card-hero__meta h3 {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 600;
+}
+
+.card-hero__meta .small {
+  color: rgba(255,255,255,0.6);
+}
+
+/* Utilidades */
+.object-fit-cover { object-fit: cover; }
+.object-fit-contain { object-fit: contain; }
+.bg-dark-subtle { background-color: rgba(10,12,28,0.4); }

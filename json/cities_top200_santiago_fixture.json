@@ -1,6 +1,6 @@
 [
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Santiago",
       "slug": "santiago",
@@ -11,7 +11,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Arica",
       "slug": "arica",
@@ -22,7 +22,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Camarones",
       "slug": "camarones",
@@ -33,7 +33,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "General Lagos",
       "slug": "general-lagos",
@@ -44,7 +44,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Putre",
       "slug": "putre",
@@ -55,7 +55,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Alto Hospicio",
       "slug": "alto-hospicio",
@@ -66,7 +66,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Iquique",
       "slug": "iquique",
@@ -77,7 +77,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Camiña",
       "slug": "camina",
@@ -88,7 +88,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Colchane",
       "slug": "colchane",
@@ -99,7 +99,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Huara",
       "slug": "huara",
@@ -110,7 +110,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pica",
       "slug": "pica",
@@ -121,7 +121,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pozo Almonte",
       "slug": "pozo-almonte",
@@ -132,7 +132,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Antofagasta",
       "slug": "antofagasta",
@@ -143,7 +143,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Calama",
       "slug": "calama",
@@ -154,7 +154,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "María Elena",
       "slug": "maria-elena",
@@ -165,7 +165,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Mejillones",
       "slug": "mejillones",
@@ -176,7 +176,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Ollagüe",
       "slug": "ollagüe",
@@ -187,7 +187,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Pedro de Atacama",
       "slug": "san-pedro-de-atacama",
@@ -198,7 +198,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Sierra Gorda",
       "slug": "sierra-gorda",
@@ -209,7 +209,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Taltal",
       "slug": "taltal",
@@ -220,7 +220,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Tocopilla",
       "slug": "tocopilla",
@@ -231,7 +231,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Alto del Carmen",
       "slug": "alto-del-carmen",
@@ -242,7 +242,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Caldera",
       "slug": "caldera",
@@ -253,7 +253,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Chañaral",
       "slug": "chanaral",
@@ -264,7 +264,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Copiapó",
       "slug": "copiapo",
@@ -275,7 +275,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Diego de Almagro",
       "slug": "diego-de-almagro",
@@ -286,7 +286,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Freirina",
       "slug": "freirina",
@@ -297,7 +297,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Huasco",
       "slug": "huasco",
@@ -308,7 +308,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Tierra Amarilla",
       "slug": "tierra-amarilla",
@@ -319,7 +319,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Vallenar",
       "slug": "vallenar",
@@ -330,7 +330,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Andacollo",
       "slug": "andacollo",
@@ -341,7 +341,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Canela",
       "slug": "canela",
@@ -352,7 +352,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Combarbalá",
       "slug": "combarbala",
@@ -363,7 +363,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Coquimbo",
       "slug": "coquimbo",
@@ -374,7 +374,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Illapel",
       "slug": "illapel",
@@ -385,7 +385,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "La Higuera",
       "slug": "la-higuera",
@@ -396,7 +396,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "La Serena",
       "slug": "la-serena",
@@ -407,7 +407,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Los Vilos",
       "slug": "los-vilos",
@@ -418,7 +418,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Monte Patria",
       "slug": "monte-patria",
@@ -429,7 +429,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Ovalle",
       "slug": "ovalle",
@@ -440,7 +440,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Paihuano",
       "slug": "paihuano",
@@ -451,7 +451,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Punitaqui",
       "slug": "punitaqui",
@@ -462,7 +462,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Río Hurtado",
       "slug": "rio-hurtado",
@@ -473,7 +473,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Salamanca",
       "slug": "salamanca",
@@ -484,7 +484,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Vicuña",
       "slug": "vicuna",
@@ -495,7 +495,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Valparaíso",
       "slug": "valparaiso",
@@ -506,7 +506,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Viña del Mar",
       "slug": "vina-del-mar",
@@ -517,7 +517,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Concón",
       "slug": "concon",
@@ -528,7 +528,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Quilpué",
       "slug": "quilpue",
@@ -539,7 +539,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Villa Alemana",
       "slug": "villa-alemana",
@@ -550,7 +550,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Casablanca",
       "slug": "casablanca",
@@ -561,7 +561,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "La Calera",
       "slug": "la-calera",
@@ -572,7 +572,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "La Cruz",
       "slug": "la-cruz",
@@ -583,7 +583,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Hijuelas",
       "slug": "hijuelas",
@@ -594,7 +594,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Nogales",
       "slug": "nogales",
@@ -605,7 +605,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Quillota",
       "slug": "quillota",
@@ -616,7 +616,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Limache",
       "slug": "limache",
@@ -627,7 +627,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Olmué",
       "slug": "olmue",
@@ -638,7 +638,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Quintero",
       "slug": "quintero",
@@ -649,7 +649,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Puchuncaví",
       "slug": "puchuncavi",
@@ -660,7 +660,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Antonio",
       "slug": "san-antonio",
@@ -671,7 +671,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Cartagena",
       "slug": "cartagena",
@@ -682,7 +682,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "El Tabo",
       "slug": "el-tabo",
@@ -693,7 +693,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "El Quisco",
       "slug": "el-quisco",
@@ -704,7 +704,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Santo Domingo",
       "slug": "santo-domingo",
@@ -715,7 +715,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Algarrobo",
       "slug": "algarrobo",
@@ -726,7 +726,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Felipe",
       "slug": "san-felipe",
@@ -737,7 +737,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Putaendo",
       "slug": "putaendo",
@@ -748,7 +748,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Santa María",
       "slug": "santa-maria",
@@ -759,7 +759,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Panquehue",
       "slug": "panquehue",
@@ -770,7 +770,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Llaillay",
       "slug": "llaillay",
@@ -781,7 +781,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Catemu",
       "slug": "catemu",
@@ -792,7 +792,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Los Andes",
       "slug": "los-andes",
@@ -803,7 +803,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Calle Larga",
       "slug": "calle-larga",
@@ -814,7 +814,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Rinconada",
       "slug": "rinconada",
@@ -825,7 +825,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Rancagua",
       "slug": "rancagua",
@@ -836,7 +836,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Machalí",
       "slug": "machali",
@@ -847,7 +847,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Graneros",
       "slug": "graneros",
@@ -858,7 +858,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Mostazal",
       "slug": "mostazal",
@@ -869,7 +869,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Doñihue",
       "slug": "donihue",
@@ -880,7 +880,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Coltauco",
       "slug": "coltauco",
@@ -891,7 +891,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Las Cabras",
       "slug": "las-cabras",
@@ -902,7 +902,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Peumo",
       "slug": "peumo",
@@ -913,7 +913,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pichidegua",
       "slug": "pichidegua",
@@ -924,7 +924,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Requínoa",
       "slug": "requinoa",
@@ -935,7 +935,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Rengo",
       "slug": "rengo",
@@ -946,7 +946,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Malloa",
       "slug": "malloa",
@@ -957,7 +957,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Vicente",
       "slug": "san-vicente",
@@ -968,7 +968,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pichilemu",
       "slug": "pichilemu",
@@ -979,7 +979,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Navidad",
       "slug": "navidad",
@@ -990,7 +990,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Litueche",
       "slug": "litueche",
@@ -1001,7 +1001,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Marchigüe",
       "slug": "marchigüe",
@@ -1012,7 +1012,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "La Estrella",
       "slug": "la-estrella",
@@ -1023,7 +1023,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Paredones",
       "slug": "paredones",
@@ -1034,7 +1034,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Santa Cruz",
       "slug": "santa-cruz",
@@ -1045,7 +1045,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Chimbarongo",
       "slug": "chimbarongo",
@@ -1056,7 +1056,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Nancagua",
       "slug": "nancagua",
@@ -1067,7 +1067,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Placilla",
       "slug": "placilla",
@@ -1078,7 +1078,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Palmilla",
       "slug": "palmilla",
@@ -1089,7 +1089,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Peralillo",
       "slug": "peralillo",
@@ -1100,7 +1100,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Talca",
       "slug": "talca",
@@ -1111,7 +1111,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Clemente",
       "slug": "san-clemente",
@@ -1122,7 +1122,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pelarco",
       "slug": "pelarco",
@@ -1133,7 +1133,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Río Claro",
       "slug": "rio-claro",
@@ -1144,7 +1144,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Curepto",
       "slug": "curepto",
@@ -1155,7 +1155,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Constitución",
       "slug": "constitucion",
@@ -1166,7 +1166,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Empedrado",
       "slug": "empedrado",
@@ -1177,7 +1177,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Maule",
       "slug": "maule",
@@ -1188,7 +1188,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Rafael",
       "slug": "san-rafael",
@@ -1199,7 +1199,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Curicó",
       "slug": "curico",
@@ -1210,7 +1210,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Teno",
       "slug": "teno",
@@ -1221,7 +1221,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Romeral",
       "slug": "romeral",
@@ -1232,7 +1232,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Rauco",
       "slug": "rauco",
@@ -1243,7 +1243,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Hualañé",
       "slug": "hualane",
@@ -1254,7 +1254,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Licantén",
       "slug": "licanten",
@@ -1265,7 +1265,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Vichuquén",
       "slug": "vichuquen",
@@ -1276,7 +1276,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Molina",
       "slug": "molina",
@@ -1287,7 +1287,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Sagrada Familia",
       "slug": "sagrada-familia",
@@ -1298,7 +1298,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Linares",
       "slug": "linares",
@@ -1309,7 +1309,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Yerbas Buenas",
       "slug": "yerbas-buenas",
@@ -1320,7 +1320,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Colbún",
       "slug": "colbun",
@@ -1331,7 +1331,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Villa Alegre",
       "slug": "villa-alegre",
@@ -1342,7 +1342,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Javier",
       "slug": "san-javier",
@@ -1353,7 +1353,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Longaví",
       "slug": "longavi",
@@ -1364,7 +1364,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Retiro",
       "slug": "retiro",
@@ -1375,7 +1375,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Parral",
       "slug": "parral",
@@ -1386,7 +1386,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Cauquenes",
       "slug": "cauquenes",
@@ -1397,7 +1397,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Chanco",
       "slug": "chanco",
@@ -1408,7 +1408,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pelluhue",
       "slug": "pelluhue",
@@ -1419,7 +1419,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Chillán",
       "slug": "chillan",
@@ -1430,7 +1430,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Chillán Viejo",
       "slug": "chillan-viejo",
@@ -1441,7 +1441,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Bulnes",
       "slug": "bulnes",
@@ -1452,7 +1452,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Quillón",
       "slug": "quillon",
@@ -1463,7 +1463,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Ignacio",
       "slug": "san-ignacio",
@@ -1474,7 +1474,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "El Carmen",
       "slug": "el-carmen",
@@ -1485,7 +1485,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pemuco",
       "slug": "pemuco",
@@ -1496,7 +1496,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Yungay",
       "slug": "yungay",
@@ -1507,7 +1507,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pinto",
       "slug": "pinto",
@@ -1518,7 +1518,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Coihueco",
       "slug": "coihueco",
@@ -1529,7 +1529,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Carlos",
       "slug": "san-carlos",
@@ -1540,7 +1540,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Ñiquén",
       "slug": "niquen",
@@ -1551,7 +1551,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Nicolás",
       "slug": "san-nicolas",
@@ -1562,7 +1562,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Ninhue",
       "slug": "ninhue",
@@ -1573,7 +1573,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Quirihue",
       "slug": "quirihue",
@@ -1584,7 +1584,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Cobquecura",
       "slug": "cobquecura",
@@ -1595,7 +1595,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Portezuelo",
       "slug": "portezuelo",
@@ -1606,7 +1606,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Ránquil",
       "slug": "ranquil",
@@ -1617,7 +1617,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Coelemu",
       "slug": "coelemu",
@@ -1628,7 +1628,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Trehuaco",
       "slug": "trehuaco",
@@ -1639,7 +1639,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Concepción",
       "slug": "concepcion",
@@ -1650,7 +1650,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Talcahuano",
       "slug": "talcahuano",
@@ -1661,7 +1661,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Penco",
       "slug": "penco",
@@ -1672,7 +1672,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Tomé",
       "slug": "tome",
@@ -1683,7 +1683,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Hualpén",
       "slug": "hualpen",
@@ -1694,7 +1694,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Chiguayante",
       "slug": "chiguayante",
@@ -1705,7 +1705,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Pedro de la Paz",
       "slug": "san-pedro-de-la-paz",
@@ -1716,7 +1716,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Coronel",
       "slug": "coronel",
@@ -1727,7 +1727,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Lota",
       "slug": "lota",
@@ -1738,7 +1738,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Hualqui",
       "slug": "hualqui",
@@ -1749,7 +1749,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Florida",
       "slug": "florida",
@@ -1760,7 +1760,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Santa Juana",
       "slug": "santa-juana",
@@ -1771,7 +1771,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Arauco",
       "slug": "arauco",
@@ -1782,7 +1782,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Curanilahue",
       "slug": "curanilahue",
@@ -1793,7 +1793,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Lebu",
       "slug": "lebu",
@@ -1804,7 +1804,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Los Álamos",
       "slug": "los-alamos",
@@ -1815,7 +1815,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Cañete",
       "slug": "canete",
@@ -1826,7 +1826,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Contulmo",
       "slug": "contulmo",
@@ -1837,7 +1837,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Tirúa",
       "slug": "tirua",
@@ -1848,7 +1848,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Los Ángeles",
       "slug": "los-angeles",
@@ -1859,7 +1859,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Cabrero",
       "slug": "cabrero",
@@ -1870,7 +1870,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Yumbel",
       "slug": "yumbel",
@@ -1881,7 +1881,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Laja",
       "slug": "laja",
@@ -1892,7 +1892,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "San Rosendo",
       "slug": "san-rosendo",
@@ -1903,7 +1903,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Nacimiento",
       "slug": "nacimiento",
@@ -1914,7 +1914,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Mulchén",
       "slug": "mulchen",
@@ -1925,7 +1925,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Negrete",
       "slug": "negrete",
@@ -1936,7 +1936,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Quilleco",
       "slug": "quilleco",
@@ -1947,7 +1947,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Quilaco",
       "slug": "quilaco",
@@ -1958,7 +1958,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Santa Bárbara",
       "slug": "santa-barbara",
@@ -1969,7 +1969,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Alto Biobío",
       "slug": "alto-biobio",
@@ -1980,7 +1980,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Tucapel",
       "slug": "tucapel",
@@ -1991,7 +1991,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Antuco",
       "slug": "antuco",
@@ -2002,7 +2002,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Temuco",
       "slug": "temuco",
@@ -2013,7 +2013,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Padre Las Casas",
       "slug": "padre-las-casas",
@@ -2024,7 +2024,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Lautaro",
       "slug": "lautaro",
@@ -2035,7 +2035,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Perquenco",
       "slug": "perquenco",
@@ -2046,7 +2046,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Galvarino",
       "slug": "galvarino",
@@ -2057,7 +2057,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Vilcún",
       "slug": "vilcun",
@@ -2068,7 +2068,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Curarrehue",
       "slug": "curarrehue",
@@ -2079,7 +2079,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Cunco",
       "slug": "cunco",
@@ -2090,7 +2090,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Melipeuco",
       "slug": "melipeuco",
@@ -2101,7 +2101,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Nueva Imperial",
       "slug": "nueva-imperial",
@@ -2112,7 +2112,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Carahue",
       "slug": "carahue",
@@ -2123,7 +2123,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Saavedra",
       "slug": "saavedra",
@@ -2134,7 +2134,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Teodoro Schmidt",
       "slug": "teodoro-schmidt",
@@ -2145,7 +2145,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Toltén",
       "slug": "tolten",
@@ -2156,7 +2156,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Gorbea",
       "slug": "gorbea",
@@ -2167,7 +2167,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Loncoche",
       "slug": "loncoche",
@@ -2178,7 +2178,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Pitrufquén",
       "slug": "pitrufquen",
@@ -2189,7 +2189,7 @@
     }
   },
   {
-    "model": "NOMBRE_APP.city",
+    "model": "places.Commune",
     "fields": {
       "name": "Freire",
       "slug": "freire",

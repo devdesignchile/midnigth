@@ -1,0 +1,474 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Carreteo — {{ active_city|default:"Todas las ciudades" }}{% endblock %}
+
+{% block content %}
+<!-- ========= HERO CIUDAD ========= -->
+<!-- HERO / Buscador -->
+<section class="py-5 text-center">
+  <h1 class="display-4 fw-bold mb-2">A donde ir</h1>
+  <p class="text-soft mb-4" id="city-counter">
+    {% if city %}{{ city.name }} · {{ venues_count }} lugares{% else %}Ciudad – Número de lugares{% endif %}
+  </p>
+
+  <form id="city-filter-form" class="container" method="get" autocomplete="off">
+    <!-- fila 1: input grande de ciudad -->
+    <div class="row justify-content-center mb-3">
+      <div class="col-12 col-lg-8">
+        <div class="position-relative">
+          <input
+            id="city-input" ... value="{{ active_city_label }}"
+            class="form-control form-control-lg rounded-pill px-4 py-3"
+            type="text"
+            name="city"
+            value="{{ city_input_value }}"
+            placeholder="Escribe una ciudad"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-owns="city-suggestions"
+            role="combobox"
+          >
+          <!-- panel de sugerencias -->
+          <div id="city-suggestions"
+               class="list-group shadow position-absolute w-100 mt-2 d-none"
+               style="max-height: 260px; overflow:auto; z-index: 1050;">
+          </div>
+        </div>
+      </div>
+    </div>
+    
+
+    <!-- fila 2: fecha y categoria -->
+    <div class="row justify-content-center g-3">
+      <div class="col-12 col-md-3">
+          <label class="form-label small">Fecha</label>
+          <select class="form-select rounded-pill" name="when">
+            <option value="cualquier_dia"
+                    {% if active_when == "cualquier_dia" %}selected{% endif %}>
+              Cualquier día
+            </option>
+            <option value="hoy" {% if active_when == "hoy" %}selected{% endif %}>Hoy</option>
+            <option value="esta_semana" {% if active_when == "esta_semana" %}selected{% endif %}>Esta semana</option>
+          </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label small">¿Qué buscas?</label>
+        <select class="form-select rounded-pill" name="cat">
+          <option value="">Todo</option>
+          <option value="discoteque" {% if active_cat == "discoteque" %}selected{% endif %}>Discoteques</option>
+          <option value="pub" {% if active_cat == "pub" %}selected{% endif %}>Pubs</option>
+          <option value="restaurant" {% if active_cat == "restaurant" %}selected{% endif %}>Restaurantes</option>
+          <option value="rooftop" {% if active_cat == "rooftop" %}selected{% endif %}>Rooftops</option>
+          <option value="other" {% if active_cat == "other" %}selected{% endif %}>Otros</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-2 d-grid">
+        <label class="form-label opacity-0">.</label>
+        <button class="btn btn-brand rounded-pill" type="submit">Buscar</button>
+      </div>
+    </div>
+
+    <!-- conservar otros parámetros si los hubieras usado -->
+    {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+  </form>
+</section>
+
+
+
+
+
+
+<!-- ========= CONTENIDO ========= -->
+<main class="py-4 my-5" id="lugares">
+  <div class="container">
+<!-- NAV DE CATEGORÍAS (preserva city, q y when automáticamente) -->
+<div class="bg-surface-1 rounded-lg p-2 shadow-1 mb-3">
+  <ul class="nav nav-pills overflow-auto flex-nowrap gap-2" role="tablist" style="--bs-nav-link-padding-x: .25rem;">
+    {% with cat=active_cat %}
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if not cat %}active{% endif %}"
+           href="{{ cat_urls.all }}">
+          Todos
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if cat == 'pub' %}active{% endif %}"
+           href="{{ cat_urls.pub }}">
+          Pubs/Bares
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if cat == 'restaurant' %}active{% endif %}"
+           href="{{ cat_urls.restaurant }}">
+          Restaurantes
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if cat == 'rooftop' %}active{% endif %}"
+           href="{{ cat_urls.rooftop }}">
+          Rooftops
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if cat == 'discoteque' %}active{% endif %}"
+           href="{{ cat_urls.discoteque }}">
+          Discoteques
+        </a>
+      </li>
+    {% endwith %}
+  </ul>
+</div>
+
+
+{# Contenedor vacío — se rellena si needs_city == True #}
+<div id="featured-cities-container"
+     data-endpoint="{% url 'city_featured' %}"
+     data-needs-city="{% if needs_city %}1{% else %}0{% endif %}">
+</div>
+
+<!-- [START featured_cities] -->
+<!-- [START featured_cities] -->
+<section class="container my-5">
+  <h2 class="h5 mb-3">Ciudades destacadas</h2>
+  <div class="row g-3">
+    {% for c in featured_cities %}
+      <div class="col-6 col-md-3">
+        <a href="{{ c.url }}" class="text-decoration-none card-hero shadow-sm d-block rounded-4 overflow-hidden">
+          <div class="card-hero__img ratio-4x3">
+            {% if c.hero_url %}
+              <img src="{{ c.hero_url }}" alt="{{ c.name }}" class="w-100 h-100 object-fit-cover">
+            {% else %}
+              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ c.name }}" class="w-100 h-100 object-fit-cover">
+            {% endif %}
+            <div class="card-hero__overlay"></div>
+            <div class="card-hero__meta p-3">
+              <h3 class="h6 text-white mb-0">{{ c.name }}</h3>
+              <small class="text-white-50">{{ c.venues_count }} lugares</small>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+<!-- [END featured_cities] -->
+
+<!-- [END featured_cities] -->
+
+
+
+<!-- Wrapper opcional para AJAX (si usas fetch) -->
+<div id="dynamic-sections" data-json-endpoint="{% url 'city_index_json' %}">
+
+  {# ==== GRID DE LUGARES ==== #}<!-- [START featured_venues] -->
+{% if city and featured_venues %}
+<section class="container my-5">
+  <h2 class="h5 mb-3">Lugares destacados en {{ city.name }}</h2>
+  <div id="featured-venues" class="row g-3">
+    {% for v in featured_venues %}
+      {% with hero=v.cover_image %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <a href="{% url 'venue-detail' slug=v.slug %}" class="text-decoration-none card-hero shadow-sm">
+          <div class="card-hero__img">
+            {% if hero %}
+              <img src="{{ hero.url }}" alt="{{ v.name }}" class="object-fit-cover">
+            {% else %}
+              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}" class="object-fit-cover">
+            {% endif %}
+            <div class="card-hero__overlay"></div>
+            <div class="card-hero__meta">
+              <span class="badge bg-primary text-capitalize">{{ v.get_category_display }}</span>
+              <h3>{{ v.name }}</h3>
+              <div class="small">{{ v.Commune.name }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endwith %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+<!-- [END featured_venues] -->
+
+
+<!-- [START venues_grid] -->
+<section class="container">
+  <div id="venues-grid" class="row g-3">
+    {% for v in venues %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <a class="card card-event text-decoration-none h-100" href="{% url 'venue-detail' slug=v.slug %}">
+          <div class="card-cover">
+            {% if v.cover_image %}
+              <img src="{{ v.cover_image.url }}" alt="{{ v.name }}">
+            {% else %}
+              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}">
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <h4 class="h6 mb-1 text-white">{{ v.name }}</h4>
+            <div class="small text-soft">
+              {{ v.get_category_display }}{% if v.Commune %} · {{ v.Commune.name }}{% endif %}
+            </div>
+            {% if v.hours_short %}
+              <div class="small text-soft mt-1">{{ v.hours_short }}</div>
+            {% endif %}
+            {% if v.vibe_tags.all %}
+              <div class="mt-2 d-flex flex-wrap gap-1">
+                {% for t in v.vibe_tags.all|slice:":3" %}
+                  <span class="badge rounded-pill text-bg-dark">{{ t.name }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="alert alert-secondary mb-0">
+          No hay lugares publicados en {{ active_city_label|default:"todas las ciudades" }} todavía.
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+<!-- [END venues_grid] -->
+
+
+</div>  {# /dynamic-sections #}
+
+
+    <!-- ===== Mapa (estático de momento) ===== -->
+    <section id="mapa" class="mt-4">
+      <header class="d-flex align-items-end justify-content-between mb-2">
+        <div>
+          <h2 class="h6 section-title mb-0">Explorar en el mapa</h2>
+          <p class="small text-soft mt-2 mb-0">Arrastra el mapa para ver más resultados.</p>
+        </div>
+      </header>
+    </section>
+    <!-- bajo tu sección del mapa -->
+    <div id="map" class="map-shell rounded-lg" style="height:420px;"></div>
+    <script id="map-center-json"  type="application/json">{{ map_center_json|safe }}</script>
+    <script id="venues-map-json"  type="application/json">{{ venues_map_json|safe }}</script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+
+  </div>
+</main>
+<!-- Fuente JSON (desde la vista) — si no la tienes aún, no pasa nada: hay fallback -->
+<!-- Entrega la lista de nombres de ciudades para el autocomplete -->
+<script id="city-names-json" type="application/json">{{ city_names_json|safe }}</script>
+<script id="cities-fallback-json" type="application/json">[]</script>
+
+<script>
+(function() {
+  const form  = document.getElementById('city-filter-form');
+  const input = document.getElementById('city-input');
+  const panel = document.getElementById('city-suggestions');
+  if (!form || !input || !panel) return;
+
+  function parseJSONById(id){
+    try { const el = document.getElementById(id); return el && el.textContent ? JSON.parse(el.textContent) : []; }
+    catch(e){ return []; }
+  }
+
+  const citiesList = parseJSONById('city-names-json').length ? parseJSONById('city-names-json') : parseJSONById('cities-fallback-json');
+
+  const norm = s => (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
+  const debounce = (fn, ms=120) => { let t; return (...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a), ms); }; };
+
+  let currentIndex = -1;
+  const show = () => { panel.classList.remove('d-none'); input.setAttribute('aria-expanded','true'); };
+  const hide = () => { panel.classList.add('d-none'); input.setAttribute('aria-expanded','false'); currentIndex = -1; };
+
+  function createItem(name, term){
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'list-group-item list-group-item-action';
+    btn.setAttribute('role','option');
+    if (!term) btn.textContent = name;
+    else {
+      const n = norm(name), t = norm(term); const i = n.indexOf(t);
+      if (i < 0) btn.textContent = name;
+      else {
+        btn.append(document.createTextNode(name.slice(0,i)));
+        const strong = document.createElement('strong'); strong.textContent = name.slice(i, i+term.length);
+        btn.append(strong, document.createTextNode(name.slice(i+term.length)));
+      }
+    }
+    btn.addEventListener('click', ()=>{ input.value = name; hide(); form.submit(); });
+    return btn;
+  }
+
+  function rankedFilter(q){
+    const t = norm(q); if(!t) return citiesList.slice(0,12);
+    const starts = [], contains = [];
+    for (const c of citiesList){
+      const nc = norm(c);
+      if (nc.startsWith(t)) starts.push(c);
+      else if (nc.includes(t)) contains.push(c);
+    }
+    return [...starts, ...contains];
+  }
+
+  function render(list, term){
+    panel.innerHTML = '';
+    if (!list.length){
+      const empty = document.createElement('div'); empty.className = 'list-group-item text-muted'; empty.textContent = 'Sin resultados';
+      panel.append(empty); show(); return;
+    }
+    list.slice(0,10).forEach(n => panel.append(createItem(n, term)));
+    show();
+  }
+
+  const onType = debounce(v => render(rankedFilter(v), v), 120);
+  input.addEventListener('input', e => onType(e.target.value));
+  input.addEventListener('focus', () => onType(input.value));
+  input.addEventListener('keydown', (e) => {
+    const items = Array.from(panel.querySelectorAll('.list-group-item-action')); if (!items.length) return;
+    if (e.key === 'ArrowDown'){ e.preventDefault(); currentIndex = (currentIndex+1)%items.length; items.forEach(i=>i.classList.remove('active')); items[currentIndex].classList.add('active'); items[currentIndex].scrollIntoView({block:'nearest'}); }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); currentIndex = (currentIndex-1+items.length)%items.length; items.forEach(i=>i.classList.remove('active')); items[currentIndex].classList.add('active'); items[currentIndex].scrollIntoView({block:'nearest'}); }
+    else if (e.key === 'Enter'){ if (currentIndex >= 0){ e.preventDefault(); items[currentIndex].click(); } }
+    else if (e.key === 'Escape'){ hide(); }
+  });
+  document.addEventListener('click', (e)=>{ if (!panel.contains(e.target) && e.target !== input) hide(); });
+})();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const nav = document.querySelector(".nav.nav-pills");
+  if (!nav) return;
+
+  nav.addEventListener("click", async e => {
+    const link = e.target.closest("a[href]");
+    if (!link) return;
+    e.preventDefault();
+
+    // Activa visualmente el botón
+    nav.querySelectorAll(".btn-pill").forEach(b => b.classList.remove("active"));
+    link.classList.add("active");
+
+    // Muestra loading
+    const featured = document.querySelector("#featured-venues");
+    const grid = document.querySelector("#venues-grid");
+    featured && (featured.innerHTML = "<div class='text-center p-5 text-soft'>Cargando...</div>");
+    grid && (grid.innerHTML = "<div class='text-center p-5 text-soft'>Cargando...</div>");
+
+    try {
+      const url = new URL("{% url 'city_index_json' %}", window.location.origin);
+      // copiar los parámetros de la URL del link
+      const query = link.href.split("?")[1];
+      if (query) url.search = query;
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.featured) featured.innerHTML = data.featured;
+      if (data.grid) grid.innerHTML = data.grid;
+    } catch (err) {
+      console.error(err);
+      grid.innerHTML = "<div class='alert alert-danger'>Error al cargar los datos.</div>";
+    }
+  });
+});
+</script>
+<script>
+(function(){
+  // Crear mapa
+  const center = JSON.parse(document.getElementById('map-center-json').textContent || '{"lat":-33.4489,"lon":-70.6693}');
+  const map = L.map('map').setView([center.lat, center.lon], 13);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19, attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
+  const markers = L.layerGroup().addTo(map);
+
+  // utilidades
+  const cacheGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
+  const cacheSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch{} };
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+
+  async function geocode(q){
+    const url = new URL('https://nominatim.openstreetmap.org/search');
+    url.searchParams.set('q', q);
+    url.searchParams.set('format', 'json');
+    url.searchParams.set('limit', '1');
+    url.searchParams.set('countrycodes', 'cl');
+    const res = await fetch(url, { headers: {'Accept-Language':'es'} });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return (Array.isArray(data) && data[0]) ? { lat: +data[0].lat, lon: +data[0].lon } : null;
+  }
+
+  async function paint(venues, recenter){
+    markers.clearLayers();
+    let first = null;
+
+    for (let i=0;i<venues.length;i++){
+      const v = venues[i];
+      const key = `geo:${v.slug}`;
+      let coord = cacheGet(key);
+
+      if (!coord || coord.lat == null){
+        coord = await geocode(v.q);
+        cacheSet(key, coord || {lat:null, lon:null});
+        await wait(1050); // cortesía Nominatim (~1 req/seg)
+      }
+      if (!coord || coord.lat == null) continue;
+      if (!first) first = coord;
+
+      const html = `
+        <div style="min-width:220px">
+          ${v.cover ? `<img src="${v.cover}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:6px">` : ``}
+          <div class="fw-semibold">${v.name}</div>
+          <div class="small text-muted">${v.category}</div>
+          <div class="small">${v.address}</div>
+          <a class="btn btn-sm btn-primary mt-2" href="${v.url}">Ver lugar</a>
+        </div>`;
+      L.marker([coord.lat, coord.lon]).addTo(markers).bindPopup(html);
+    }
+    if (recenter && first) map.setView([first.lat, first.lon], 13);
+  }
+
+  // primera carga
+  const initialVenues = JSON.parse(document.getElementById('venues-map-json').textContent || '[]');
+  paint(initialVenues, false);
+
+  // Hook al AJAX existente de tu nav: cuando llegue JSON, repinta
+  document.addEventListener("city-json-updated", (e) => {
+    const { map_center, map_venues } = e.detail || {};
+    if (map_center) map.setView([map_center.lat, map_center.lon], 13);
+    if (Array.isArray(map_venues)) paint(map_venues, false);
+  });
+})();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  const wrap = document.getElementById("featured-cities-container");
+  if (!wrap) return;
+
+  const needs = wrap.dataset.needsCity === "1";
+  if (!needs) return; // si ya hay ciudad buscada, no cargamos destacados
+
+  const endpoint = wrap.dataset.endpoint;
+  try {
+    wrap.innerHTML = "<div class='text-center p-5 text-soft'>Cargando ciudades…</div>";
+    const res = await fetch(endpoint, { headers: { "X-Requested-With": "XMLHttpRequest" } });
+    const data = await res.json();
+    wrap.innerHTML = data.html || "";
+  } catch (e) {
+    console.error(e);
+    wrap.innerHTML = "<div class='alert alert-danger'>No se pudieron cargar las ciudades destacadas.</div>";
+  }
+});
+</script>
+
+
+
+{% endblock %}
+

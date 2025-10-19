@@ -1,4 +1,4 @@
-# app/core/dev_views.py
+# app/extras/dev_views.py
 from types import SimpleNamespace as NS
 from django.views.generic import TemplateView
 from django.utils import timezone

@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="container py-4">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <h1 class="h4 mb-0">Mis negocios</h1>
+      <div class="text-soft small">Locales asociados a tu cuenta</div>
+    </div>
+    <div class="d-flex gap-2">
+      <a href="#" class="btn btn-brand btn-pill">
+        <i class="bi bi-plus-lg me-1"></i> Agregar Sucursal
+      </a>
+    </div>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+
+  {% if venues %}
+    <div class="row g-3">
+      {% for v in venues %}
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100 bg-surface-1 border-0 shadow-1">
+            <a href="{% url 'venue-detail' slug=v.slug %}" class="text-decoration-none">
+              <div class="ratio ratio-16x9 rounded-top overflow-hidden">
+                {% if v.cover_image %}
+                  <img src="{{ v.cover_image.url }}" class="w-100 h-100" style="object-fit:cover" alt="{{ v.name }}">
+                {% else %}
+                  <img src="{% static 'img/placeholders/venue-card.jpg' %}" class="w-100 h-100" style="object-fit:cover" alt="{{ v.name }}">
+                {% endif %}
+              </div>
+            </a>
+            <div class="card-body">
+              <div class="d-flex align-items-start justify-content-between">
+                <div>
+                  <h2 class="h6 mb-1"><a class="text-reset text-decoration-none" href="{{ v.get_absolute_url }}">{{ v.name }}</a></h2>
+                  <div class="small text-soft">
+                    {{ v.get_category_display }}{% if v.commune %} · {{ v.city.commune }}{% endif %}
+                  </div>
+                </div>
+                {% if v.is_published %}
+                  <span class="badge text-bg-success-subtle">Publicado</span>
+                {% else %}
+                  <span class="badge text-bg-secondary">Borrador</span>
+                {% endif %}
+              </div>
+
+              <div class="mt-3 d-flex gap-2">
+                <a href="{{ v.get_absolute_url }}?edit=hero" class="btn btn-sm btn-ghost btn-pill">
+                  <i class="bi bi-pencil-square me-1"></i> Editar
+                </a>
+                <a href="#" class="btn btn-sm btn-ghost btn-pill d-none">Oculto</a>
+                {% if v.reservation_url %}
+                  <a href="{{ v.reservation_url }}" target="_blank" rel="noopener" class="btn btn-sm btn-ghost btn-pill">
+                    <i class="bi bi-ticket-perforated me-1"></i> Reservas
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    {# Paginación opcional #}
+    {% if is_paginated %}
+      <nav class="mt-3">
+        <ul class="pagination pagination-sm justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">‹</a></li>
+          {% endif %}
+          <li class="page-item disabled"><span class="page-link">Página {{ page_obj.number }} de {{ paginator.num_pages }}</span></li>
+          {% if page_obj.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">›</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+
+  {% else %}
+    <div class="text-center p-5 bg-surface-1 rounded-lg border-dashed">
+      <div class="mb-2"><i class="bi bi-buildings" style="font-size:2rem;"></i></div>
+      <p class="text-soft mb-3">Aún no tienes negocios asociados.</p>
+      <a href="#" class="btn btn-brand btn-pill">
+        <i class="bi bi-plus-lg me-1"></i> Crear mi primer negocio
+      </a>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

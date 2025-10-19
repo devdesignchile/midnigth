@@ -1,10 +1,724 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-</body>
-</html>
+{% block content %}
+
+<!-- ========================= HERO ========================= -->
+<header class="hero py-5 vh-100 py-lg-6 section-with-bg"
+        style="--section-bg: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1600&auto=format&fit=crop');">
+  <div class="container py-4">
+    <div class="row justify-content-center text-center g-4">
+      <div class="col-12 col-lg-8 mx-auto">
+        <h2 class="display-1 text-primary mb-4"><strong>MIDNIGHT</strong></h2>
+
+        <h1 class="display-5 fw-extrabold hero-title mb-3 reveal">
+          Descubre donde salir <span class="text-primary">hoy</span>
+        </h1>
+
+        <!-- Panel de filtros -->
+        <div class="p-3 p-md-4 rounded-lg shadow-1 reveal mx-auto" style="max-width: 900px;">
+          <div class="row g-2 justify-content-center">
+            <div class="col-12 col-md-6">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input id="q" type="search" class="form-control ring-focus"
+                       placeholder="Buscar bar, club, evento…">
+              </div>
+            </div>
+            <div class="col-6 col-md-3">
+              <select id="fecha" class="form-select">
+                <option value="hoy" selected>Hoy</option>
+                <option value="manana">Mañana</option>
+                <option value="semana">Esta semana</option>
+              </select>
+            </div>
+            <div class="col-6 col-md-2">
+              <select id="tipo" class="form-select">
+                <option value="">Tipo</option>
+                <option>Bar</option>
+                <option>Club</option>
+                <option>Evento</option>
+                <option>Rooftop</option>
+              </select>
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+              <button id="filtrar" class="btn btn-brand"><i class="bi bi-funnel"></i> Filtrar</button>
+            </div>
+          </div>
+
+          <!-- Chips -->
+          <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
+            <span class="chip active" data-tag="happy-hour"><i class="bi bi-cup-straw"></i> Happy Hour</span>
+            <span class="chip" data-tag="live"><i class="bi bi-music-note-beamed"></i> Música en vivo</span>
+            <span class="chip" data-tag="dj"><i class="bi bi-vinyl"></i> DJ</span>
+            <span class="chip" data-tag="rooftop"><i class="bi bi-cloud-sun"></i> Rooftop</span>
+            <span class="chip" data-tag="gratis"><i class="bi bi-cash-coin"></i> Gratis</span>
+          </div>
+        </div>
+
+        <!-- Botones -->
+        <div class="d-flex justify-content-center gap-3 mt-3 reveal">
+          <button id="btnFavoritos" class="btn btn-ghost"><i class="bi bi-heart"></i> Favoritos</button>
+          <button id="btnCompartir" class="btn btn-ghost"><i class="bi bi-share"></i> Compartir ciudad</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ========================= TRENDING ========================= -->
+<section id="trending" class="py-5">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-end justify-content-between mb-3">
+      <div>
+        <h2 class="h3 fw-bold mb-1">Trending de hoy</h2>
+        <p class="text-secondary mb-0">Lo más visto y guardado ahora en <span id="trend-city">La Serena</span>.</p>
+      </div>
+      <small class="text-secondary">Actualiza cada pocas horas</small>
+    </div>
+
+
+
+    <!-- Carrusel -->
+    <div id="trendCarousel4" class="carousel slide" data-bs-interval="false">
+      <div class="carousel-inner" id="trendCarouselInner"></div>
+      <button class="carousel-control-prev" type="button" data-bs-target="#trendCarousel4" data-bs-slide="prev" aria-label="Anterior">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      </button>
+      <button class="carousel-control-next" type="button" data-bs-target="#trendCarousel4" data-bs-slide="next" aria-label="Siguiente">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      </button>
+      <div class="carousel-indicators mt-3 position-static" id="trendIndicators"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= DESTACADOS (SEO) ========================= -->
+<section id="destacados" class="py-5 bg-surface-1 my-5 rounded-lg container shadow-1">
+  <header class="mb-4 text-center">
+    <h2 class="section-title mb-1">Próximos eventos destacados en <span id="seo-city">La Serena</span></h2>
+    <p class="section-sub mb-0">Agenda curada con los eventos con más interacciones, reseñas y búsquedas recientes.</p>
+  </header>
+
+  <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
+    <div class="btn-group" role="group" aria-label="Rango de tiempo">
+      <button class="btn btn-ghost active" data-range="hoy">Hoy</button>
+      <button class="btn btn-ghost" data-range="finde">Este fin de semana</button>
+      <button class="btn btn-ghost" data-range="mes">Próximo mes</button>
+    </div>
+    <div class="d-flex align-items-center gap-2">
+      <label class="text-soft small">Ordenar por</label>
+      <select id="sortDestacados" class="form-select form-select-sm" style="width:auto">
+        <option value="interacciones" selected>Interacciones</option>
+        <option value="fecha">Fecha</option>
+        <option value="rating">Rating</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Grid -->
+  <div id="gridDestacados" class="row g-4">
+    <!-- Card 1 -->
+    <div class="col-12 col-md-6 col-lg-4 d-item"
+         data-range="finde" data-interacciones="982" data-fecha="2025-09-20" data-rating="4.7">
+      <article class="card-event position-relative h-100">
+        <a class="stretched-link text-decoration-none" href="/evento/rooftop-electro-la-serena" aria-label="Rooftop Electro La Serena"></a>
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1532635241-17e820acc59f?q=80&w=1200&auto=format&fit=crop"
+               alt="Rooftop Electro La Serena - DJ set" loading="lazy">
+          <span class="position-absolute top-0 start-0 m-2 badge text-bg-warning">Sábado</span>
+          <span class="position-absolute top-0 end-0 m-2 badge text-bg-light text-dark"><i class="bi bi-graph-up"></i> Top 1</span>
+        </div>
+        <div class="p-3">
+          <h3 class="h5 mb-1">Rooftop Electro La Serena</h3>
+          <p class="text-soft mb-2"><i class="bi bi-geo"></i> Centro • 23:00–04:00</p>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="chip">DJ</span><span class="chip">Electrónica</span><span class="chip">Terraza</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="small text-soft"><i class="bi bi-heart-fill"></i> 982 interacciones</span>
+            <span class="badge text-bg-success"><i class="bi bi-star-fill"></i> 4.7</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="col-12 col-md-6 col-lg-4 d-item"
+         data-range="hoy" data-interacciones="764" data-fecha="2025-09-18" data-rating="4.5">
+      <article class="card-event position-relative h-100">
+        <a class="stretched-link text-decoration-none" href="/evento/comedy-beats" aria-label="Comedy & Beats"></a>
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1519677100203-a0e668c92439?q=80&w=1200&auto=format&fit=crop"
+               alt="Comedy & Beats - show y música" loading="lazy">
+          <span class="position-absolute top-0 start-0 m-2 badge text-bg-primary">Hoy 22:00</span>
+          <span class="position-absolute top-0 end-0 m-2 badge text-bg-light text-dark"><i class="bi bi-graph-up"></i> Top 2</span>
+        </div>
+        <div class="p-3">
+          <h3 class="h5 mb-1">Comedy & Beats</h3>
+          <p class="text-soft mb-2"><i class="bi bi-geo"></i> Centro Cultural LS</p>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="chip">Música en vivo</span><span class="chip">Stand-up</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="small text-soft"><i class="bi bi-heart-fill"></i> 764 interacciones</span>
+            <span class="badge text-bg-success"><i class="bi bi-star-fill"></i> 4.5</span>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="col-12 col-md-6 col-lg-4 d-item"
+         data-range="mes" data-interacciones="531" data-fecha="2025-10-05" data-rating="4.8">
+      <article class="card-event  h-100 position-relative ">
+        <a class="stretched-link text-decoration-none" href="/evento/fiesta-prisma" aria-label="Fiesta Prisma"></a>
+        <div class="card-cover">
+          <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1200&auto=format&fit=crop"
+               alt="Fiesta Prisma en Club Bellavista" loading="lazy">
+          <span class="position-absolute top-0 start-0 m-2 badge text-bg-info">Próx. mes</span>
+          <span class="position-absolute top-0 end-0 m-2 badge text-bg-light text-dark"><i class="bi bi-graph-up"></i> Top 3</span>
+        </div>
+        <div class="p-3">
+          <h3 class="h5 mb-1">Fiesta Prisma</h3>
+          <p class="text-soft mb-2"><i class="bi bi-geo"></i> Club Bellavista • 23:30–05:00</p>
+          <div class="d-flex flex-wrap gap-2 mb-3">
+            <span class="chip">DJ</span><span class="chip">Lista</span>
+          </div>
+          <div class="d-flex justify-content-between align-items-center">
+            <span class="small text-soft"><i class="bi bi-heart-fill"></i> 531 interacciones</span>
+            <span class="badge text-bg-success"><i class="bi bi-star-fill"></i> 4.8</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+  <div class="text-center mt-4">
+    <a href="/eventos/la-serena" class="btn btn-ghost floaty">
+      <i class="bi bi-calendar-event"></i> Ver todos los eventos en <span id="seo-city-cta">La Serena</span>
+    </a>
+  </div>
+</section>
+
+<!-- ========================= MINI MAPA ========================= -->
+<section id="mini-map" class="py-5">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="section-title mb-0">Mapa rápido</h2>
+      <div class="btn-group" role="group" aria-label="Toggle">
+        <button class="btn btn-ghost active" data-map-tab="lugares">Lugares</button>
+        <button class="btn btn-ghost" data-map-tab="eventos">Eventos</button>
+      </div>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-lg-8">
+        <div class="map-shell rounded-lg position-relative">
+          <div id="mapOverlayMini" class="position-absolute top-50 start-50 translate-middle text-center">
+            <i class="bi bi-geo-alt-fill fs-1 text-primary d-block mb-2"></i>
+            <p class="mb-0 text-soft">Mini-mapa: <b id="miniMapMode">Lugares</b></p>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-lg-4 d-grid gap-2">
+        <button class="btn btn-brand" id="btnAbrirMapa"><i class="bi bi-map"></i> Abrir mapa</button>
+        <small class="text-soft">Nota: en V1 se integra Leaflet/Mapbox. Aquí verás marcadores filtrados por la pestaña actual.</small>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= OFERTAS ========================= -->
+<section id="ofertas" class="py-5 bg-surface-1">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
+      <div>
+        <h2 class="section-title mb-1">Ofertas de locales</h2>
+        <p class="section-sub mb-0">Orden: cercanas y con vigencia próxima.</p>
+      </div>
+      <div class="d-flex gap-2 align-items-center">
+        <label class="small text-soft">Ordenar por</label>
+        <select id="sortOfertas" class="form-select form-select-sm" style="width:auto">
+          <option value="cercania" selected>Cercanía</option>
+          <option value="vigencia">Vigencia</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="gridOfertas" class="row g-4">
+      <div class="col-12 col-md-6 col-lg-4 o-item" data-dist="0.8" data-vigencia="2025-09-20T21:00:00-03:00">
+        <article class="card-event h-100">
+          <div class="card-cover">
+            <span class="position-absolute top-0 start-0 m-2 badge badge-offer">2x1 hasta 21:00</span>
+          </div>
+          <div class="p-3">
+            <h3 class="h5 mb-1">Bar Peñuelas — 2x1</h3>
+            <p class="text-soft mb-2"><i class="bi bi-geo"></i> Av. del Mar 1200 • Vigencia: hoy 21:00</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-brand"><i class="bi bi-qr-code"></i> Canjear</button>
+              <button class="btn btn-ghost"><i class="bi bi-upc-scan"></i> Mostrar en barra</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 o-item" data-dist="2.1" data-vigencia="2025-09-20T23:00:00-03:00">
+        <article class="card-event h-100">
+          <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge badge-offer">Happy Hour 19–23</span></div>
+          <div class="p-3">
+            <h3 class="h5 mb-1">Río Pub — HH</h3>
+            <p class="text-soft mb-2"><i class="bi bi-geo"></i> Centro • Vigencia: hoy 23:00</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-brand"><i class="bi bi-qr-code"></i> Canjear</button>
+              <button class="btn btn-ghost"><i class="bi bi-upc-scan"></i> Mostrar en barra</button>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12 col-md-6 col-lg-4 o-item" data-dist="1.4" data-vigencia="2025-09-21T00:30:00-03:00">
+        <article class="card-event h-100">
+          <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge badge-offer">Cover gratis hasta 00:30</span></div>
+          <div class="p-3">
+            <h3 class="h5 mb-1">Club Prisma — Cover</h3>
+            <p class="text-soft mb-2"><i class="bi bi-geo"></i> Bellavista • Vigencia: 00:30</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-brand"><i class="bi bi-qr-code"></i> Canjear</button>
+              <button class="btn btn-ghost"><i class="bi bi-upc-scan"></i> Mostrar en barra</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= PRÓXIMOS EVENTOS (TABS) ========================= -->
+<section id="eventos" class="py-5">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="section-title mb-0">Próximos eventos</h2>
+      <ul class="nav nav-pills" id="tabsEventos" role="tablist">
+        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-hoy" type="button">Hoy</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-manana" type="button">Mañana</button></li>
+        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-finde" type="button">Finde</button></li>
+      </ul>
+    </div>
+
+    <div class="tab-content">
+      <!-- HOY -->
+      <div class="tab-pane fade show active" id="tab-hoy">
+        <div class="row g-4">
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-event h-100">
+              <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge text-bg-primary">Hoy 22:00</span></div>
+              <div class="p-3">
+                <h3 class="h5 mb-1">Comedy & Beats</h3>
+                <p class="text-soft mb-2"><i class="bi bi-geo"></i> Centro Cultural LS</p>
+                <div class="d-flex gap-2">
+                  <a href="/entradas/comedy-beats" class="btn btn-brand"><i class="bi bi-ticket-perforated"></i> Entradas</a>
+                  <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAÑANA -->
+      <div class="tab-pane fade" id="tab-manana">
+        <div class="row g-4">
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-event h-100">
+              <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge text-bg-warning">Mañana 23:00</span></div>
+              <div class="p-3">
+                <h3 class="h5 mb-1">Sunset Rooftop</h3>
+                <p class="text-soft mb-2"><i class="bi bi-geo"></i> Mirador LS • 23:00–03:30</p>
+                <div class="d-flex gap-2">
+                  <a href="/entradas/sunset-rooftop" class="btn btn-brand"><i class="bi bi-ticket-perforated"></i> Entradas</a>
+                  <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+
+      <!-- FINDE -->
+      <div class="tab-pane fade" id="tab-finde">
+        <div class="row g-4">
+          <div class="col-12 col-md-6 col-lg-4">
+            <article class="card-event h-100">
+              <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge text-bg-success">Sábado</span></div>
+              <div class="p-3">
+                <h3 class="h5 mb-1">Fiesta Prisma</h3>
+                <p class="text-soft mb-2"><i class="bi bi-geo"></i> Club Bellavista • 23:30–05:00</p>
+                <div class="d-flex gap-2">
+                  <a href="/entradas/fiesta-prisma" class="btn btn-brand"><i class="bi bi-ticket-perforated"></i> Entradas</a>
+                  <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
+                </div>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= TOP LUGARES ========================= -->
+<section id="top-lugares" class="py-5 bg-surface-1">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between mb-3">
+      <h2 class="section-title mb-0">Top lugares en <span id="city-top">La Serena</span></h2>
+      <small class="text-soft">Basado en rating, reseñas y actividad reciente</small>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-12 col-sm-6 col-lg-3">
+        <article class="card-event h-100">
+          <div class="card-cover"></div>
+          <div class="p-3">
+            <h3 class="h6 mb-1">Bar Peñuelas</h3>
+            <p class="small text-soft mb-3"><i class="bi bi-clock"></i> Abierto ahora • Cierra 02:00</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-ghost"><i class="bi bi-heart"></i> Guardar</button>
+              <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <article class="card-event h-100">
+          <div class="card-cover"></div>
+          <div class="p-3">
+            <h3 class="h6 mb-1">Río Pub</h3>
+            <p class="small text-soft mb-3"><i class="bi bi-clock"></i> Abierto ahora • Cierra 01:00</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-ghost"><i class="bi bi-heart"></i> Guardar</button>
+              <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <article class="card-event h-100">
+          <div class="card-cover"></div>
+          <div class="p-3">
+            <h3 class="h6 mb-1">Club Prisma</h3>
+            <p class="small text-soft mb-3"><i class="bi bi-clock"></i> Abre 23:30</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-ghost"><i class="bi bi-heart"></i> Guardar</button>
+              <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="col-12 col-sm-6 col-lg-3">
+        <article class="card-event h-100">
+          <div class="card-cover"></div>
+          <div class="p-3">
+            <h3 class="h6 mb-1">La Azotea</h3>
+            <p class="small text-soft mb-3"><i class="bi bi-clock"></i> Abierto ahora • Cierra 00:30</p>
+            <div class="d-flex gap-2">
+              <button class="btn btn-ghost"><i class="bi bi-heart"></i> Guardar</button>
+              <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= COLECCIONES ========================= -->
+<section id="colecciones" class="py-5">
+  <div class="container">
+    <h2 class="section-title mb-3">Colecciones</h2>
+    <div class="d-flex flex-wrap gap-2">
+      <span class="chip"><i class="bi bi-people"></i> Para ir en grupo</span>
+      <span class="chip"><i class="bi bi-briefcase"></i> After office</span>
+      <span class="chip"><i class="bi bi-music-note-beamed"></i> Con música en vivo</span>
+      <span class="chip"><i class="bi bi-cloud-sun"></i> Rooftops</span>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= BLOQUE PARA LOCALES ========================= -->
+<section id="para-locales" class="py-5 bg-surface-1">
+  <div class="container">
+    <div class="bg-surface-2 rounded-lg p-4 p-md-5 shadow-1">
+      <div class="row g-4 align-items-center">
+        <div class="col-12 col-lg-7">
+          <h2 class="section-title mb-2">Atrae más público cuando lo necesitas</h2>
+          <p class="text-soft mb-3">Publica ofertas con vigencia, destaca tus eventos y mide resultados en tiempo real.</p>
+          <ul class="text-soft mb-0">
+            <li>Publica tu local en minutos</li>
+            <li>Sube ofertas y controla cupos</li>
+            <li>Destaca tu evento a la audiencia correcta</li>
+          </ul>
+        </div>
+        <div class="col-12 col-lg-5 text-lg-end">
+          <a href="/registro/local" class="btn btn-brand"><i class="bi bi-building-add"></i> Crear cuenta de local</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= SEO + CONFIANZA ========================= -->
+<section id="seo-confianza" class="py-5">
+  <div class="container">
+    <h2 class="section-title mb-2">Salir en <span id="city-seo">La Serena</span></h2>
+    <p class="section-sub">Guía breve para encontrar los mejores panoramas hoy.</p>
+    <div class="row g-4">
+      <div class="col-12 col-lg-8">
+        <p class="text-soft">
+          ¿Buscas dónde salir hoy en <b id="city-seo-inline">La Serena</b>? Aquí encuentras bares, clubs y eventos con información al día:
+          horarios, entradas y ofertas con vigencia. Filtra por tipo de lugar o música y guarda tus favoritos para decidir más rápido.
+        </p>
+        <p class="text-soft mb-0">
+          Priorizamos locales verificados y eventos con alta interacción para que tu noche tenga menos dudas y más aciertos. Sin comisiones
+          al usuario, y con canjes simples desde el móvil en la barra.
+        </p>
+      </div>
+      <div class="col-12 col-lg-4">
+        <div class="d-flex flex-wrap gap-2">
+          <span class="chip"><i class="bi bi-patch-check"></i> Locales verificados</span>
+          <span class="chip"><i class="bi bi-hourglass-split"></i> Ofertas con vigencia</span>
+          <span class="chip"><i class="bi bi-emoji-smile"></i> Sin comisiones al usuario</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================= FAQ ========================= -->
+<section id="faq" class="py-5 bg-surface-1">
+  <div class="container">
+    <h2 class="section-title mb-3">Preguntas frecuentes</h2>
+    <div class="accordion" id="faqCorto">
+      <div class="accordion-item bg-surface-2">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq1">
+            ¿Cómo funcionan las ofertas?
+          </button>
+        </h2>
+        <div id="fq1" class="accordion-collapse collapse" data-bs-parent="#faqCorto">
+          <div class="accordion-body">
+            Las ofertas tienen vigencia y cupos. Toca “Canjear” y muestra el código en barra antes de su vencimiento.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item bg-surface-2 mt-2">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq2">
+            ¿Cobran por usar la app?
+          </button>
+        </h2>
+        <div id="fq2" class="accordion-collapse collapse" data-bs-parent="#faqCorto">
+          <div class="accordion-body">
+            No cobramos comisiones al usuario. Los locales pueden elegir planes para destacar y medir resultados.
+          </div>
+        </div>
+      </div>
+
+      <div class="accordion-item bg-surface-2 mt-2">
+        <h2 class="accordion-header">
+          <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq3">
+            ¿Puedo publicar mi evento?
+          </button>
+        </h2>
+        <div id="fq3" class="accordion-collapse collapse" data-bs-parent="#faqCorto">
+          <div class="accordion-body">
+            Sí. Crea una cuenta de organizador y sube la información de tu evento con fecha, venue y ticketing.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(() => {
+  const $$ = (s,c=document)=>[...c.querySelectorAll(s)];
+  const $  = (s,c=document)=>c.querySelector(s);
+
+  // ====== TRENDING (render 4 por slide) ======
+  const items = [
+    {title:'Rooftop Electro', type:'evento',  tags:['rooftop','techno'], time:'Hoy 23:00', venue:'Centro', href:'/entradas/rooftop-electro', cta:'Entradas', badge:'Hoy 23:00', badgeVariant:'primary', img:'https://images.unsplash.com/photo-1532635241-17e820acc59f?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Bar Urbano — 2×1', type:'lugar', tags:['reggaeton','2x1'],    time:'Hasta 00:00', venue:'Av. Principal', href:'#', cta:'Canjear', badge:'2×1', badgeVariant:'warning', img:'https://images.unsplash.com/photo-1521017432531-fbd92d05cbe6?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Open Mic Stand-up', type:'evento', tags:['standup','gratis'],  time:'Hoy 21:30', venue:'Teatro Centro', href:'/evento/open-mic', cta:'Más info', badge:'Gratis', badgeVariant:'success', img:'https://images.unsplash.com/photo-1488998527040-85054a85150e?q=80&w=1200&auto=format&fit=crop'},
+    {title:'La Azotea',        type:'lugar', tags:['rooftop','2x1'],       time:'2×1 19–22', venue:'Mirador LS', href:'#', cta:'Canjear', badge:'Rooftop', badgeVariant:'info', img:'https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Tech Sessions',    type:'evento', tags:['techno'],             time:'DJ invitado', venue:'Club Prisma', href:'/entradas/tech-sessions', cta:'Entradas', badge:'DJ', badgeVariant:'secondary', img:'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Flow House',       type:'lugar', tags:['reggaeton'],           time:'Nueva pista', venue:'Barrio Centro', href:'#', cta:'Guardar', badge:'Nuevo', badgeVariant:'danger', img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Stand-up & Friends',type:'evento', tags:['standup','gratis'],  time:'Entrada gratis', venue:'Espacio Cultural', href:'/evento/standup-friends', cta:'Más info', badge:'Free', badgeVariant:'success', img:'https://images.unsplash.com/photo-1519751138087-5a3a3f54a3b1?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Sky Bar',          type:'lugar', tags:['rooftop','reggaeton'], time:'Vista 360°', venue:'Costa LS', href:'#', cta:'Ver en mapa', badge:'Vista 360°', badgeVariant:'info', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Bassment',         type:'evento', tags:['techno'],             time:'Live set', venue:'Subsuelo BCN', href:'/entradas/bassment', cta:'Entradas', badge:'Live', badgeVariant:'dark', img:'https://images.unsplash.com/photo-1511108690759-009324a90311?q=80&w=1200&auto=format&fit=crop'}
+  ];
+  const $inner = $('#trendCarouselInner');
+  const $indis = $('#trendIndicators');
+  const perSlide = 4;
+
+  const card = (it)=>`
+    <article class="card-trend h-100">
+      <div class="cover">
+        <img src="${it.img}" alt="${it.title}">
+        <span class="position-absolute top-0 start-0 m-2 badge badge-soft">${it.type==='evento' ? 'Evento' : 'Lugar'}</span>
+        <span class="position-absolute top-0 end-0 m-2 badge text-bg-${it.badgeVariant}">${it.badge}</span>
+      </div>
+      <div class="body">
+        <h3 class="title">${it.title}</h3>
+        <p class="meta mb-3"><i class="bi bi-geo"></i> ${it.venue} • ${it.time}</p>
+        <div class="d-flex gap-2">
+          <a href="${it.href}" class="btn btn-sm btn-primary btn-pill">${it.cta}</a>
+          <button class="btn btn-sm btn-outline-secondary btn-pill"><i class="bi bi-heart"></i></button>
+        </div>
+      </div>
+    </article>`;
+
+  function renderSlides(tag='all'){
+    const list = items.filter(it => tag==='all' ? true : it.tags.includes(tag));
+    $inner.innerHTML = ''; $indis.innerHTML = '';
+    if(!list.length){
+      $inner.innerHTML = `<div class="carousel-item active"><div class="grid"><div class="text-center text-secondary py-5">Sin resultados para “${tag}”.</div></div></div>`;
+      return;
+    }
+    for(let i=0;i<list.length;i+=perSlide){
+      const group = list.slice(i,i+perSlide).map(card).join('');
+      $inner.insertAdjacentHTML('beforeend', `<div class="carousel-item ${i===0?'active':''}"><div class="grid">${group}</div></div>`);
+      $indis.insertAdjacentHTML('beforeend', `<button type="button" data-bs-target="#trendCarousel4" data-bs-slide-to="${i/perSlide}" ${i===0?'class="active" aria-current="true"':''} aria-label="Slide ${i/perSlide+1}"></button>`);
+    }
+  }
+  $$('#trendChips [data-tag]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      $$('#trendChips [data-tag]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderSlides(btn.dataset.tag);
+      bootstrap.Carousel.getOrCreateInstance('#trendCarousel4').to(0);
+    });
+  });
+  const city = document.getElementById('city-current')?.textContent?.trim() || 'La Serena';
+  const trendCityEl = document.getElementById('trend-city');
+  if(trendCityEl) trendCityEl.textContent = city;
+  renderSlides('all');
+
+  // ====== MINI MAPA ======
+  $$('#mini-map [data-map-tab]').forEach(b=>{
+    b.addEventListener('click', ()=>{
+      $$('#mini-map [data-map-tab]').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      $('#miniMapMode').textContent = b.dataset.mapTab.charAt(0).toUpperCase()+b.dataset.mapTab.slice(1);
+    });
+  });
+  $('#btnAbrirMapa')?.addEventListener('click', ()=>{
+    const o = $('#mapOverlayMini');
+    o.innerHTML = '<div class="text-soft">Abriendo mapa completo…</div>';
+  });
+
+  // ====== OFERTAS (orden) ======
+  const gridOf = $('#gridOfertas');
+  const ofertas = $$('.o-item', gridOf);
+  function sortOfertas(key){
+    const items = [...ofertas];
+    items.sort((a,b)=> key==='vigencia'
+      ? (new Date(a.dataset.vigencia)) - (new Date(b.dataset.vigencia))
+      : (+a.dataset.dist) - (+b.dataset.dist)
+    );
+    items.forEach(el=>gridOf.appendChild(el));
+  }
+  $('#sortOfertas').addEventListener('change', e=>sortOfertas(e.target.value));
+  sortOfertas('cercania');
+
+  // ====== Reveal on scroll ======
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); obs.unobserve(e.target);} });
+  },{threshold:.12});
+  $$('.reveal').forEach(el=>obs.observe(el));
+
+  // ====== Chips de filtros del hero ======
+  $$('.chip').forEach(ch=> ch.addEventListener('click', ()=> ch.classList.toggle('active')));
+
+  // ====== Compartir / Favoritos demo ======
+  const toastEl = document.getElementById('toast');
+  if(toastEl){
+    const toast = new bootstrap.Toast(toastEl);
+    document.getElementById('btnFavoritos')?.addEventListener('click', ()=>{
+      toastEl.querySelector('.toast-body').textContent = 'Función de favoritos del MVP (localStorage).';
+      toast.show();
+    });
+    document.getElementById('btnCompartir')?.addEventListener('click', async ()=>{
+      const ciudad = document.getElementById('ciudad-label')?.textContent || 'tu ciudad';
+      const shareData = { title:'Carreteo', text:`Mira qué hacer hoy en ${ciudad}`, url:location.href };
+      try{ await navigator.share(shareData); } catch { await navigator.clipboard.writeText(location.href); }
+      toastEl.querySelector('.toast-body').textContent = 'Enlace listo para compartir.';
+      toast.show();
+    });
+  }
+})();
+</script>
+
+<!-- ====== JSON-LD (SEO) ====== -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Próximos eventos destacados en La Serena",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "url": "https://tusitio.com/evento/rooftop-electro-la-serena",
+      "item": {
+        "@type": "Event",
+        "name": "Rooftop Electro La Serena",
+        "startDate": "2025-09-20T23:00:00-03:00",
+        "endDate": "2025-09-21T04:00:00-03:00",
+        "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+        "eventStatus": "https://schema.org/EventScheduled",
+        "location": { "@type": "Place", "name": "Centro", "address": "La Serena, Chile" },
+        "image": ["https://images.unsplash.com/photo-1532635241-17e820acc59f?q=80&w=1200&auto=format&fit=crop"],
+        "description": "DJ set en terraza con vista, electrónica y ambiente.",
+        "offers": {"@type":"Offer","availability":"https://schema.org/InStock","price":"0","priceCurrency":"CLP","url":"https://tusitio.com/evento/rooftop-electro-la-serena"}
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "url": "https://tusitio.com/evento/comedy-beats",
+      "item": {
+        "@type": "Event",
+        "name": "Comedy & Beats",
+        "startDate": "2025-09-18T22:00:00-03:00",
+        "location": { "@type":"Place","name":"Centro Cultural LS","address":"La Serena, Chile" },
+        "image": ["https://images.unsplash.com/photo-1519677100203-a0e668c92439?q=80&w=1200&auto=format&fit=crop"],
+        "description": "Show de comedia con música en vivo.",
+        "offers": {"@type":"Offer","price":"0","priceCurrency":"CLP","url":"https://tusitio.com/evento/comedy-beats"}
+      }
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "url": "https://tusitio.com/evento/fiesta-prisma",
+      "item": {
+        "@type": "Event",
+        "name": "Fiesta Prisma",
+        "startDate": "2025-10-05T23:30:00-03:00",
+        "location": { "@type":"Place","name":"Club Bellavista","address":"Santiago, Chile" },
+        "image": ["https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1200&auto=format&fit=crop"],
+        "description": "Noche electrónica con lista y DJs invitados.",
+        "offers": {"@type":"Offer","price":"0","priceCurrency":"CLP","url":"https://tusitio.com/evento/fiesta-prisma"}
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}

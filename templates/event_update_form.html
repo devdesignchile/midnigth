@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="container-fluid min-vh-100 d-flex align-items-center py-4">
+  <div class="container">
+    <div class="row justify-content-center">
+      <!-- ancho: 100% en móvil, estrechando en pantallas grandes -->
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6">
+
+        <form method="post" enctype="multipart/form-data" action=""
+              class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-body">
+          {% csrf_token %}
+
+          {{ form.non_field_errors }}
+
+          {% for field in form %}
+            <div class="mb-3">
+              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.help_text %}
+                <div class="form-text">{{ field.help_text }}</div>
+              {% endif %}
+              {% for err in field.errors %}
+                <div class="invalid-feedback d-block">{{ err }}</div>
+              {% endfor %}
+            </div>
+          {% endfor %}
+
+          <div class="d-grid">
+            <button class="btn btn-primary py-2">Guardar</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

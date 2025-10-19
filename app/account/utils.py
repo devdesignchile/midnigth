@@ -1,25 +1,25 @@
-# app/accounts/utils.py
+# app/accounts/validators.py
 import re
+from django.core.exceptions import ValidationError
 
-RUT_RE = re.compile(r"^(\d{1,3}(?:\.\d{3})*|\d{1,8})-([\dkK])$")
+RUT_RE = re.compile(r"^\d{7,8}-[\dkK]$")
 
-def rut_is_valid(rut_str: str) -> bool:
-    """
-    Valida RUT Chileno. Acepta '12.345.678-5' o '12345678-5'.
-    """
-    if not rut_str:
+def rut_is_valid(rut: str) -> bool:
+    # Valida formato y dígito verificador (MVP: formato + DV básico)
+    rut = rut.strip()
+    if not RUT_RE.match(rut):
         return False
-    m = RUT_RE.match(rut_str)
-    if not m:
-        return False
-    number = m.group(1).replace(".", "")
-    dv = m.group(2).upper()
-
-    s = 0
-    multiplier = 2
-    for digit in map(int, reversed(number)):
-        s += digit * multiplier
-        multiplier = 2 if multiplier == 7 else multiplier + 1
-    res = 11 - (s % 11)
-    dv_calc = "0" if res == 11 else "K" if res == 10 else str(res)
+    cuerpo, dv = rut.split("-")
+    dv = dv.lower()
+    suma = 0
+    factor = 2
+    for c in reversed(cuerpo):
+        suma += int(c) * factor
+        factor = 2 if factor == 7 else factor + 1
+    res = 11 - (suma % 11)
+    dv_calc = "0" if res == 11 else "k" if res == 10 else str(res)
     return dv == dv_calc
+
+def validate_rut(value: str):
+    if not rut_is_valid(value):
+        raise ValidationError("RUT inválido. Use formato 12345678-9")

@@ -1,10 +1,106 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% block content %}
 
-</body>
-</html>
+<section class="min-vh-100 choice-hero d-flex align-items-center">
+  <div class="container py-5">
+    <div class="mx-auto" style="max-width: 640px;">
+
+      <!-- Título -->
+      <h1 class="display-5 fw-bold text-center text-white mb-2">
+        Crear Cuenta Empresa
+      </h1>
+      <p class="text-center text-white-50 mb-4">
+        ¿Estás Registrado?
+        <a href="{% url 'login' %}" class="link-light text-decoration-underline">Log in here.</a>
+      </p>
+
+      <!-- Panel -->
+      <div class="card border-0 shadow-lg" style="background:rgba(0,0,0,.15); backdrop-filter: blur(8px);">
+        <div class="card-body p-4 p-md-5">
+
+          <form method="post" novalidate class="d-grid gap-3">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger mb-2">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <!-- Nombre de empresa -->
+            <div>
+              <label for="{{ form.venue_name.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Nombre de empresa
+              </label>
+              {{ form.venue_name }}
+              {{ form.venue_name.errors }}
+            </div>
+          
+           <!-- 🔹 Nombre administrador (FALTABA) -->
+            <div>
+              <label for="{{ form.admin_name.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Nombre administrador
+              </label>
+              {{ form.admin_name }}
+              {% if form.admin_name.errors %}
+                <div class="text-danger small mt-1">{{ form.admin_name.errors|join:", " }}</div>
+              {% endif %}
+            </div>
+
+            <!-- Email corporativo -->
+            <div>
+              <label for="{{ form.company_email.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Email corporativo
+              </label>
+              {{ form.company_email }}
+              <small class="d-block text-center text-uppercase mt-2" style="color:#c7c9ff; opacity:.9;">
+                Solo se acepta dominio corporativo
+              </small>
+              {{ form.company_email.errors }}
+            </div>
+
+            <!-- RUT de empresa -->
+            <div>
+              <label for="{{ form.rut_comercio.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                RUT de empresa
+              </label>
+              {{ form.rut_comercio }}
+              {% if form.rut_comercio.help_text %}
+                <small class="text-white-50">{{ form.rut_comercio.help_text }}</small>
+              {% endif %}
+              {{ form.rut_comercio.errors }}
+            </div>
+
+            <!-- Contraseña -->
+            <div>
+              <label for="{{ form.password1.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Contraseña
+              </label>
+              {{ form.password1 }}
+              {{ form.password1.errors }}
+            </div>
+
+            <!-- Confirmar contraseña -->
+            <div>
+              <label for="{{ form.password2.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Contraseña
+              </label>
+              {{ form.password2 }}
+              {{ form.password2.errors }}
+            </div>
+
+            <!-- Botón -->
+            <div class="pt-2">
+              <button class="btn btn-light fw-bold text-uppercase px-4 py-2 d-block mx-auto"
+                      type="submit" style="min-width: 220px;">
+                Registrarse
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

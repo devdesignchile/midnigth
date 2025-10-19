@@ -1,10 +1,102 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{# templates/accounts/login.html #}
+{% extends "base.html" %}
+{% block content %}
 
-</body>
-</html>
+<section class="min-vh-100 d-flex align-items-center choice-hero">
+  <div class="container py-5">
+    <div class="mx-auto col-lg-6">
+
+      <div class="card border-0 shadow-lg"
+           style="background:rgba(8,8,14,.75); backdrop-filter: blur(8px); border-radius: 1rem;">
+        <div class="card-body p-4 p-md-5">
+
+          <h2 class="h3 fw-bold text-center text-white mb-4">Log in</h2>
+
+          {% if messages %}
+            {% for m in messages %}
+              <div class="alert alert-{{ m.tags }} mb-3">{{ m }}</div>
+            {% endfor %}
+          {% endif %}
+
+          <form method="post" novalidate class="d-grid gap-3">
+            {% csrf_token %}
+
+            <!-- Email -->
+            <div>
+              <label for="{{ form.email.id_for_label }}"
+                     class="form-label text-uppercase small fw-semibold text-white-50">Correo</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent text-white border-0">
+                  <i class="bi bi-person"></i>
+                </span>
+                {{ form.email }}
+              </div>
+              {{ form.email.errors }}
+            </div>
+
+            <!-- Password -->
+            <div>
+              <label for="{{ form.password.id_for_label }}"
+                     class="form-label text-uppercase small fw-semibold text-white-50">Contraseña</label>
+              <div class="input-group">
+                <span class="input-group-text bg-transparent text-white border-0">
+                  <i class="bi bi-lock"></i>
+                </span>
+                {{ form.password }}
+                <button type="button" class="btn btn-sm btn-outline-light border-0" id="togglePwd"
+                        aria-label="Mostrar u ocultar contraseña">
+                  <i class="bi bi-eye"></i>
+                </button>
+              </div>
+              {{ form.password.errors }}
+            </div>
+
+            <!-- Remember / Forgot -->
+            <div class="d-flex justify-content-between align-items-center">
+              <div class="form-check">
+                {{ form.remember }} <label class="form-check-label text-white-50" for="{{ form.remember.id_for_label }}">Recordarme</label>
+              </div>
+              <a href="#" class="link-light small opacity-75">¿Olvidaste la contraseña?</a>  <!--- url password reset  -->
+            </div>
+
+            <!-- CTA -->
+            <button class="btn w-100 text-white fw-semibold py-2"
+                    type="submit"
+                    style="
+                      background: linear-gradient(90deg,#7a3cff 0%, #ff3cac 50%, #7a3cff 100%);
+                      border: 0; border-radius: 999px;
+                      box-shadow: 0 10px 30px rgba(0,0,0,.35);
+                    ">
+              Log in
+            </button>
+
+            <p class="text-center text-white-50 mt-2 mb-0">
+              ¿No tienes cuenta?
+              <a href="{% url 'signup-company' %}" class="link-light text-decoration-underline">Regístrate</a>
+            </p>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Toggle mostrar/ocultar contraseña
+  (function(){
+    const btn = document.getElementById('togglePwd');
+    const input = document.getElementById('passwordField');
+    if(btn && input){
+      btn.addEventListener('click', () => {
+        const isPwd = input.getAttribute('type') === 'password';
+        input.setAttribute('type', isPwd ? 'text' : 'password');
+        btn.innerHTML = isPwd ? '<i class="bi bi-eye-slash"></i>' : '<i class="bi bi-eye"></i>';
+      });
+    }
+  })();
+</script>
+{% endblock %}

@@ -1,10 +1,127 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{# templates/accounts/signup_guest.html #}
+{% extends "base.html" %}
+{% block content %}
 
-</body>
-</html>
+<section class="min-vh-100 d-flex align-items-center choice-hero ">
+  <div class="container py-5">
+    <div class="mx-auto" style="max-width: 640px;">
+
+      <!-- Título -->
+      <h1 class="display-5 fw-bold text-center text-white mb-2">
+        Crear Cuenta — Persona
+      </h1>
+      <p class="text-center text-white-50 mb-4">
+        ¿Estás Registrado?
+        <a href="{% url 'login' %}" class="link-light text-decoration-underline">Log in here.</a>
+      </p>
+
+      <!-- Panel -->
+      <div class="card border-0 shadow-lg" style="background:rgba(0,0,0,.15); backdrop-filter: blur(8px);">
+        <div class="card-body p-4 p-md-5">
+
+          <form method="post" novalidate class="d-grid gap-3">
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+              <div class="alert alert-danger mb-2">{{ form.non_field_errors }}</div>
+            {% endif %}
+
+            <!-- Nombre -->
+            <div>
+              <label for="{{ form.first_name.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Nombre
+              </label>
+              {{ form.first_name }}
+              {{ form.first_name.errors }}
+            </div>
+
+            <!-- Apellido -->
+            <div>
+              <label for="{{ form.last_name.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Apellido
+              </label>
+              {{ form.last_name }}
+              {{ form.last_name.errors }}
+            </div>
+
+            <!-- Fecha de nacimiento -->
+            <div>
+              <label for="{{ form.birth_date.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Fecha de nacimiento
+              </label>
+              {{ form.birth_date }}
+              {{ form.birth_date.errors }}
+            </div>
+
+            <!-- Correo -->
+            <div>
+              <label for="{{ form.email.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Correo
+              </label>
+              {{ form.email }}
+              {{ form.email.errors }}
+            </div>
+
+            <!-- Ciudad -->
+            <label for="{{ form.city.id_for_label }}" class="form-label text-uppercase small fw-semibold text-dark-50">
+              Ciudad
+            </label>
+            {{ form.city }}
+            {% if form.city.errors %}
+              <div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>
+            {% endif %}
+
+
+            <!-- Contraseña -->
+            <div>
+              <label for="{{ form.password1.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Contraseña
+              </label>
+              {{ form.password1 }}
+              {{ form.password1.errors }}
+            </div>
+
+            <!-- Confirmar contraseña -->
+            <div>
+              <label for="{{ form.password2.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                Contraseña
+              </label>
+              {{ form.password2 }}
+              {{ form.password2.errors }}
+            </div>
+
+            <!-- Botón -->
+            <div class="pt-2">
+              <button class="btn btn-light fw-bold text-uppercase px-4 py-2 d-block mx-auto"
+                      type="submit" style="min-width: 220px;">
+                Registrarse
+              </button>
+            </div>
+
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const el = document.getElementById('id_city');   // Django genera este id
+  if (!el) return;
+
+  new Choices(el, {
+    position: 'bottom',       // fuerza abrir hacia abajo
+    searchEnabled: true,      // 🔎 escribe y filtra
+    searchChoices: true,
+    itemSelectText: '',
+    shouldSort: true,
+      
+  });
+});
+</script>
+{% endblock %}
+
+
+{% endblock %}

@@ -1,10 +1,67 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+{% load static %}
 
-</body>
-</html>
+{% block content %}
+<div class="container py-4">
+  <h1 class="h3 mb-3">Editar: {{ venue.name }}</h1>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <div class="row g-3">
+      {% for field in form %}
+        {% if field.name == "vibe_tags" %}
+          <!-- Chips de tags -->
+          <div class="col-12 mb-5">
+            <label class="form-label small text-uppercase fw-semibold">Ambiente / Vibes</label>
+
+            <!-- Oculta el widget nativo por si acaso -->
+            <div class="d-none">
+              {{ field }}
+            </div>
+
+            <div class="tag-picker ">
+              {% for t in all_tags %}
+                <div class="tag-chip">
+                  <input
+                    type="checkbox"
+                    id="tag_{{ t.id }}"
+                    name="vibe_tags"
+                    value="{{ t.id }}"
+                    {% if t.id in selected_tag_ids %}checked{% endif %}
+                  >
+                  <label for="tag_{{ t.id }}">{{ t.name }}</label>
+                </div>
+              {% endfor %}
+            </div>
+
+            {% if field.errors %}
+              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {% endif %}
+            <div class="form-text">Selecciona uno o más (Bailable, Reggaetón, Terraza, etc.).</div>
+          </div>
+        {% else %}
+          <!-- Render normal para el resto de campos -->
+          <div class="col-12 {% if field.field.widget.input_type != 'textarea' %}col-md-6{% endif %}">
+            <label class="form-label small text-uppercase fw-semibold" for="{{ field.id_for_label }}">
+              {{ field.label }}
+            </label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="d-flex gap-2 mt-4">
+      <a class="btn btn-outline-secondary" href="{% url 'venue-detail' slug=venue.slug %}">Cancelar</a>
+      <button class="btn btn-primary" type="submit">Guardar cambios</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,10 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<div class="container py-4">
+  <h1 class="h5 mb-3">Mis solicitudes</h1>
+  <ul class="list-group">
+    {% for c in claims %}
+      <li class="list-group-item d-flex justify-content-between">
+        <span>{{ c.venue.name }} — {{ c.company_email }} ({{ c.company_rut }})</span>
+        <span class="badge text-bg-secondary">{{ c.get_status_display }}</span>
+      </li>
+    {% empty %}
+      <li class="list-group-item">Aún no has hecho solicitudes.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
