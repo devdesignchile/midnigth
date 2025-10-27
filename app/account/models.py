@@ -41,6 +41,7 @@ class OwnerProfile(models.Model):
 
 class GuestProfile(models.Model):
     """Datos solo para asistentes."""
+    foto_personal = models.ImageField("Foto personal", upload_to="guest_photos/", blank=True, null=True)
     profile     = models.OneToOneField(Profile, on_delete=models.CASCADE, related_name="guest")
     first_name  = models.CharField("Nombre", max_length=80)
     last_name   = models.CharField("Apellido", max_length=80)

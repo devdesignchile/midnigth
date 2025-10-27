@@ -316,3 +316,55 @@ class VenueForm(forms.ModelForm):
         ]
 
 
+# app/accounts/forms.py
+from django import forms
+from .models import OwnerProfile, GuestProfile
+from django.utils.translation import gettext_lazy as _
+
+class OwnerProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = OwnerProfile
+        fields = [
+            "venue_name", "admin_name", "rut_comercio",
+            "company_email", "company_domain",
+        ]
+        widgets = {
+            "venue_name":    forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre comercial del local"}),
+            "admin_name":    forms.TextInput(attrs={"class": "form-control", "placeholder": "Nombre del administrador"}),
+            "rut_comercio":  forms.TextInput(attrs={"class": "form-control", "placeholder": "12.345.678-5"}),
+            "company_email": forms.EmailInput(attrs={"class": "form-control", "placeholder": "correo@tuempresa.cl"}),
+            "company_domain":forms.TextInput(attrs={"class": "form-control", "placeholder": "tuempresa.cl"}),
+        }
+        labels = {
+            "venue_name":    _("Nombre del local"),
+            "admin_name":    _("Administrador"),
+            "rut_comercio":  _("RUT comercio"),
+            "company_email": _("Correo corporativo"),
+            "company_domain":_("Dominio comercial"),
+        }
+
+
+class GuestProfileUpdateForm(forms.ModelForm):
+    # Mejor UX: date input nativo + placeholder + opcional
+    birth_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"type": "date", "class": "form-control"}),
+        label=_("Fecha de nacimiento")
+    )
+
+    class Meta:
+        model = GuestProfile
+        fields = ["foto_personal", "first_name", "last_name", "birth_date", "city"]
+        widgets = {
+            "foto_personal": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "first_name":    forms.TextInput(attrs={"class": "form-control", "placeholder": "Tu nombre"}),
+            "last_name":     forms.TextInput(attrs={"class": "form-control", "placeholder": "Tu apellido"}),
+            # city es CharField: usamos <datalist> en el template para sugerencias
+            "city":          forms.TextInput(attrs={"class": "form-control", "list": "cities", "placeholder": "Ciudad"}),
+        }
+        labels = {
+            "foto_personal": _("Foto de perfil"),
+            "first_name": _("Nombre"),
+            "last_name": _("Apellido"),
+            "city": _("Ciudad"),
+        }

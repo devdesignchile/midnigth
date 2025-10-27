@@ -1,9 +1,10 @@
 from django.urls import path
 from .views import HomeView, VenueDetailView, VenueUpdateView, MyVenuesListView, EventCreateView, EventUpdateView, VenueGalleryUploadView, CityVenueListView
-from .views import CityVenueListView, CityVenueListJsonView, FeaturedCitiesView
+from .views import CityVenueListView, CityVenueListJsonView, FeaturedCitiesView, VenueSearchView, EventListView
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
+    path("buscar/", VenueSearchView.as_view(), name="venue_search"),
     path("owner/mis-negocios/", MyVenuesListView.as_view(), name="list_venues-owner"),
     path("lugar/<slug:slug>/", VenueDetailView.as_view(), name="venue-detail"),
     path("lugar/<slug:slug>/editar/", VenueUpdateView.as_view(), name="venue-update"),
@@ -14,4 +15,5 @@ urlpatterns = [
     path("city/", CityVenueListView.as_view(), name="city_index"),
     path("city/json/", CityVenueListJsonView.as_view(), name="city_index_json"),
     path("city/featured/", FeaturedCitiesView.as_view(), name="city_featured"),
+    path("eventos/", EventListView.as_view(), name="events-detail"),
 ]

@@ -1,71 +1,129 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 
-<!-- ========================= HERO ========================= -->
-<header class="hero py-5 vh-100 py-lg-6 section-with-bg"
+
+<!-- Hero con imagen de fondo -->
+<header class="hero py-5 vh-50 py-lg-6 section-with-bg"
         style="--section-bg: url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1600&auto=format&fit=crop');">
   <div class="container py-4">
     <div class="row justify-content-center text-center g-4">
       <div class="col-12 col-lg-8 mx-auto">
         <h2 class="display-1 text-primary mb-4"><strong>MIDNIGHT</strong></h2>
-
-        <h1 class="display-5 fw-extrabold hero-title mb-3 reveal">
-          Descubre donde salir <span class="text-primary">hoy</span>
+        <h1 class="display-5 fw-extrabold hero-title mb-3 ">
+          Descubre dónde salir <span class="text-primary">hoy</span>
         </h1>
 
-        <!-- Panel de filtros -->
-        <div class="p-3 p-md-4 rounded-lg shadow-1 reveal mx-auto" style="max-width: 900px;">
-          <div class="row g-2 justify-content-center">
+        <!-- Panel de filtros centrado -->
+        <div class="p-3 p-md-4 rounded-lg shadow-1  mx-auto" style="max-width: 900px;">
+          <form action="{% url 'venue_search' %}" method="get" class="row g-2 justify-content-center">
             <div class="col-12 col-md-6">
               <div class="input-group">
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
-                <input id="q" type="search" class="form-control ring-focus"
+                <input id="q" name="q" type="search" class="form-control ring-focus"
                        placeholder="Buscar bar, club, evento…">
               </div>
             </div>
-            <div class="col-6 col-md-3">
-              <select id="fecha" class="form-select">
-                <option value="hoy" selected>Hoy</option>
-                <option value="manana">Mañana</option>
-                <option value="semana">Esta semana</option>
-              </select>
-            </div>
-            <div class="col-6 col-md-2">
-              <select id="tipo" class="form-select">
-                <option value="">Tipo</option>
-                <option>Bar</option>
-                <option>Club</option>
-                <option>Evento</option>
-                <option>Rooftop</option>
-              </select>
-            </div>
             <div class="col-12 col-md-2 d-grid">
-              <button id="filtrar" class="btn btn-brand"><i class="bi bi-funnel"></i> Filtrar</button>
+              <button type="submit" class="btn btn-brand">
+                <i class="bi bi-search"></i> Buscar
+              </button>
             </div>
-          </div>
-
-          <!-- Chips -->
-          <div class="d-flex flex-wrap justify-content-center gap-2 mt-3">
-            <span class="chip active" data-tag="happy-hour"><i class="bi bi-cup-straw"></i> Happy Hour</span>
-            <span class="chip" data-tag="live"><i class="bi bi-music-note-beamed"></i> Música en vivo</span>
-            <span class="chip" data-tag="dj"><i class="bi bi-vinyl"></i> DJ</span>
-            <span class="chip" data-tag="rooftop"><i class="bi bi-cloud-sun"></i> Rooftop</span>
-            <span class="chip" data-tag="gratis"><i class="bi bi-cash-coin"></i> Gratis</span>
-          </div>
+          </form>
         </div>
 
-        <!-- Botones -->
-        <div class="d-flex justify-content-center gap-3 mt-3 reveal">
-          <button id="btnFavoritos" class="btn btn-ghost"><i class="bi bi-heart"></i> Favoritos</button>
-          <button id="btnCompartir" class="btn btn-ghost"><i class="bi bi-share"></i> Compartir ciudad</button>
-        </div>
+        {# opcional: ciudad actual para otros scripts #}
+        <span id="city-current" class="visually-hidden">{{ active_city_label }}</span>
       </div>
     </div>
   </div>
 </header>
 
-<!-- ========================= TRENDING ========================= -->
+{# Exporta trending_items UNA sola vez, fuera del header #}
+{{ trending_items|json_script:"trending-data" }}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const dataNode = document.getElementById("trending-data");
+  if (!dataNode) return;
+
+  // Máximo 4 (por si acaso)
+  const allItems = (JSON.parse(dataNode.textContent || "[]") || []).slice(0, 4);
+
+  const cityEl = document.getElementById("trend-city");
+  if (cityEl) cityEl.textContent = "{{ active_city_label }}";
+
+  let activeTag = "all";
+  const chips = document.querySelectorAll("#trendChips [data-tag]");
+  chips.forEach(btn => {
+    btn.addEventListener("click", () => {
+      chips.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeTag = btn.dataset.tag;
+      render();
+    });
+  });
+
+  const inner = document.getElementById("trendCarouselInner");
+  const indicators = document.getElementById("trendIndicators");
+
+  function render(){
+    const items = activeTag === "all"
+      ? allItems
+      : allItems.filter(x => (x.tags || []).includes(activeTag));
+
+    inner.innerHTML = "";
+    indicators.innerHTML = "";
+
+    // Una sola slide con hasta 4 cards
+    const slides = [items];
+
+    slides.forEach((chunk, idx) => {
+      const slide = document.createElement("div");
+      slide.className = `carousel-item${idx === 0 ? " active" : ""}`;
+
+      const grid = document.createElement("div");
+      grid.className = "grid p-1";
+      slide.appendChild(grid);
+
+      chunk.forEach(card => {
+        const el = document.createElement("div");
+        el.className = "card-trend";
+
+        const externalAttrs = card.external ? ' target="_blank" rel="noopener"' : '';
+
+        el.innerHTML = `
+          <a class="text-decoration-none" href="${card.href}"${externalAttrs}>
+            <div class="cover position-relative">
+              ${card.img ? `<img src="${card.img}" alt="${card.title}">` : ""}
+              <span class="badge badge-soft position-absolute m-2">${card.badge ?? ""}</span>
+            </div>
+            <div class="body">
+              <div class="title">${card.title}</div>
+              <div class="meta">${card.venue}${card.time ? " · " + card.time : ""}</div>
+            </div>
+          </a>`;
+        grid.appendChild(el);
+      });
+
+      inner.appendChild(slide);
+
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.setAttribute("data-bs-target", "#trendCarousel4");
+      dot.setAttribute("data-bs-slide-to", String(idx));
+      if (idx === 0) dot.classList.add("active");
+      indicators.appendChild(dot);
+    });
+  }
+
+  render();
+});
+</script>
+
+
+<!-- ============== Trending de hoy (Carrusel 4x) ============== -->
 <section id="trending" class="py-5">
   <div class="container">
     <div class="d-flex flex-wrap align-items-end justify-content-between mb-3">
@@ -73,162 +131,214 @@
         <h2 class="h3 fw-bold mb-1">Trending de hoy</h2>
         <p class="text-secondary mb-0">Lo más visto y guardado ahora en <span id="trend-city">La Serena</span>.</p>
       </div>
-      <small class="text-secondary">Actualiza cada pocas horas</small>
     </div>
 
-
+    <!-- Chips -->
+    <div id="trendChips" class="d-flex flex-wrap gap-2 mb-4">
+      <button class="btn btn-sm btn-outline-secondary active" data-tag="all">Todo</button>
+      <button class="btn btn-sm btn-outline-secondary" data-tag="techno">Techno</button>
+      <button class="btn btn-sm btn-outline-secondary" data-tag="reggaeton">Reggaetón</button>
+      <button class="btn btn-sm btn-outline-secondary" data-tag="rooftop">Rooftop</button>
+      <button class="btn btn-sm btn-outline-secondary" data-tag="standup">Stand-up</button>
+      <button class="btn btn-sm btn-outline-secondary" data-tag="2x1">2×1</button>
+      <button class="btn btn-sm btn-outline-secondary" data-tag="gratis">Gratis</button>
+    </div>
 
     <!-- Carrusel -->
     <div id="trendCarousel4" class="carousel slide" data-bs-interval="false">
-      <div class="carousel-inner" id="trendCarouselInner"></div>
+      <div class="carousel-inner" id="trendCarouselInner">
+        <!-- Las slides se renderizan por JS -->
+      </div>
+
       <button class="carousel-control-prev" type="button" data-bs-target="#trendCarousel4" data-bs-slide="prev" aria-label="Anterior">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       </button>
       <button class="carousel-control-next" type="button" data-bs-target="#trendCarousel4" data-bs-slide="next" aria-label="Siguiente">
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
       </button>
+
+      <!-- Indicadores -->
       <div class="carousel-indicators mt-3 position-static" id="trendIndicators"></div>
     </div>
   </div>
 </section>
 
-<!-- ========================= DESTACADOS (SEO) ========================= -->
+<!-- ====== Estilos suaves para las cards (no futuristas) ====== -->
+
+<!-- ============== JS: render dinámico (4 por slide) ============== -->
+<script>
+(() => {
+  const $$ = (s,c=document)=>[...c.querySelectorAll(s)];
+  const $  = (s,c=document)=>c.querySelector(s);
+
+  // Fuente de datos (ejemplo). type: 'evento' | 'lugar'
+  const items = [
+    {title:'Rooftop Electro', type:'evento',  tags:['rooftop','techno'], time:'Hoy 23:00', venue:'Centro', href:'/entradas/rooftop-electro', cta:'Entradas', badge:'Hoy 23:00', badgeVariant:'primary', img:'https://images.unsplash.com/photo-1532635241-17e820acc59f?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Bar Urbano — 2×1', type:'lugar', tags:['reggaeton','2x1'],    time:'Hasta 00:00', venue:'Av. Principal', href:'#', cta:'Canjear', badge:'2×1', badgeVariant:'warning', img:'https://images.unsplash.com/photo-1521017432531-fbd92d05cbe6?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Open Mic Stand-up', type:'evento', tags:['standup','gratis'],  time:'Hoy 21:30', venue:'Teatro Centro', href:'/evento/open-mic', cta:'Más info', badge:'Gratis', badgeVariant:'success', img:'https://images.unsplash.com/photo-1488998527040-85054a85150e?q=80&w=1200&auto=format&fit=crop'},
+    {title:'La Azotea',        type:'lugar', tags:['rooftop','2x1'],       time:'2×1 19–22', venue:'Mirador LS', href:'#', cta:'Canjear', badge:'Rooftop', badgeVariant:'info', img:'https://images.unsplash.com/photo-1504805572947-34fad45aed93?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Tech Sessions',    type:'evento', tags:['techno'],             time:'DJ invitado', venue:'Club Prisma', href:'/entradas/tech-sessions', cta:'Entradas', badge:'DJ', badgeVariant:'secondary', img:'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Flow House',       type:'lugar', tags:['reggaeton'],           time:'Nueva pista', venue:'Barrio Centro', href:'#', cta:'Guardar', badge:'Nuevo', badgeVariant:'danger', img:'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Stand-up & Friends',type:'evento', tags:['standup','gratis'],  time:'Entrada gratis', venue:'Espacio Cultural', href:'/evento/standup-friends', cta:'Más info', badge:'Free', badgeVariant:'success', img:'https://images.unsplash.com/photo-1519751138087-5a3a3f54a3b1?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Sky Bar',          type:'lugar', tags:['rooftop','reggaeton'], time:'Vista 360°', venue:'Costa LS', href:'#', cta:'Ver en mapa', badge:'Vista 360°', badgeVariant:'info', img:'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?q=80&w=1200&auto=format&fit=crop'},
+    {title:'Bassment',         type:'evento', tags:['techno'],             time:'Live set', venue:'Subsuelo BCN', href:'/entradas/bassment', cta:'Entradas', badge:'Live', badgeVariant:'dark', img:'https://images.unsplash.com/photo-1511108690759-009324a90311?q=80&w=1200&auto=format&fit=crop'}
+  ];
+
+  const $inner = $('#trendCarouselInner');
+  const $indis = $('#trendIndicators');
+  const perSlide = 4; // 4 por slide en desktop (se adapta con CSS a 2/1)
+
+  function cardTemplate(it){
+    return `
+    <article class="card-trend h-100">
+      <div class="cover">
+        <img src="${it.img}" alt="${it.title}">
+        <span class="position-absolute top-0 start-0 m-2 badge badge-soft">${it.type==='evento' ? 'Evento' : 'Lugar'}</span>
+        <span class="position-absolute top-0 end-0 m-2 badge text-bg-${it.badgeVariant}">${it.badge}</span>
+      </div>
+      <div class="body">
+        <h3 class="title">${it.title}</h3>
+        <p class="meta mb-3"><i class="bi bi-geo"></i> ${it.venue} • ${it.time}</p>
+        <div class="d-flex gap-2">
+          <a href="${it.href}" class="btn btn-sm btn-primary btn-pill">${it.cta}</a>
+          <button class="btn btn-sm btn-outline-secondary btn-pill"><i class="bi bi-heart"></i></button>
+        </div>
+      </div>
+    </article>`;
+  }
+
+  function renderSlides(tag='all'){
+    // filtra por chip
+    const filtered = items.filter(it => tag==='all' ? true : it.tags.includes(tag));
+    // construir slides de a 4
+    $inner.innerHTML = '';
+    $indis.innerHTML = '';
+    if(!filtered.length){
+      $inner.innerHTML = `<div class="carousel-item active"><div class="grid"><div class="text-center text-secondary py-5">Sin resultados para “${tag}”.</div></div></div>`;
+      return;
+    }
+    const chunks = [];
+    for(let i=0; i<filtered.length; i+=perSlide){ chunks.push(filtered.slice(i, i+perSlide)); }
+
+    chunks.forEach((group, idx)=>{
+      const cards = group.map(cardTemplate).join('');
+      const itemHTML = `
+        <div class="carousel-item ${idx===0?'active':''}">
+          <div class="grid">${cards}</div>
+        </div>`;
+      $inner.insertAdjacentHTML('beforeend', itemHTML);
+      $indis.insertAdjacentHTML('beforeend',
+        `<button type="button" data-bs-target="#trendCarousel4" data-bs-slide-to="${idx}" ${idx===0?'class="active" aria-current="true"':''} aria-label="Slide ${idx+1}"></button>`);
+    });
+  }
+
+  // Chips
+  $$('#trendChips [data-tag]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      $$('#trendChips [data-tag]').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      renderSlides(btn.dataset.tag);
+      // reset carousel a slide 0
+      const car = bootstrap.Carousel.getOrCreateInstance('#trendCarousel4');
+      car.to(0);
+    });
+  });
+
+  // Ciudad (si tu app ya la tiene)
+  const city = document.getElementById('city-current')?.textContent?.trim() || 'La Serena';
+  const trendCityEl = document.getElementById('trend-city');
+  if(trendCityEl) trendCityEl.textContent = city;
+
+  // Init
+  renderSlides('all');
+})();
+</script>
+
+
+<!-- ===================== Próximos eventos destacados (SEO) ===================== -->
 <section id="destacados" class="py-5 bg-surface-1 my-5 rounded-lg container shadow-1">
   <header class="mb-4 text-center">
-    <h2 class="section-title mb-1">Próximos eventos destacados en <span id="seo-city">La Serena</span></h2>
-    <p class="section-sub mb-0">Agenda curada con los eventos con más interacciones, reseñas y búsquedas recientes.</p>
+    <h2 class="section-title mb-1">Visita los lugares destacados en <span id="seo-city">La Serena</span></h2>
+    <p class="section-sub mb-0">
+      Agenda curada con los eventos con más interacciones, reseñas y búsquedas recientes.
+    </p>
   </header>
 
-  <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center mb-3">
-    <div class="btn-group" role="group" aria-label="Rango de tiempo">
-      <button class="btn btn-ghost active" data-range="hoy">Hoy</button>
-      <button class="btn btn-ghost" data-range="finde">Este fin de semana</button>
-      <button class="btn btn-ghost" data-range="mes">Próximo mes</button>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <label class="text-soft small">Ordenar por</label>
-      <select id="sortDestacados" class="form-select form-select-sm" style="width:auto">
-        <option value="interacciones" selected>Interacciones</option>
-        <option value="fecha">Fecha</option>
-        <option value="rating">Rating</option>
-      </select>
-    </div>
-  </div>
 
   <!-- Grid -->
-  <div id="gridDestacados" class="row g-4">
-    <!-- Card 1 -->
-    <div class="col-12 col-md-6 col-lg-4 d-item"
-         data-range="finde" data-interacciones="982" data-fecha="2025-09-20" data-rating="4.7">
-      <article class="card-event position-relative h-100">
-        <a class="stretched-link text-decoration-none" href="/evento/rooftop-electro-la-serena" aria-label="Rooftop Electro La Serena"></a>
-        <div class="card-cover">
-          <img src="https://images.unsplash.com/photo-1532635241-17e820acc59f?q=80&w=1200&auto=format&fit=crop"
-               alt="Rooftop Electro La Serena - DJ set" loading="lazy">
-          <span class="position-absolute top-0 start-0 m-2 badge text-bg-warning">Sábado</span>
-          <span class="position-absolute top-0 end-0 m-2 badge text-bg-light text-dark"><i class="bi bi-graph-up"></i> Top 1</span>
-        </div>
-        <div class="p-3">
-          <h3 class="h5 mb-1">Rooftop Electro La Serena</h3>
-          <p class="text-soft mb-2"><i class="bi bi-geo"></i> Centro • 23:00–04:00</p>
-          <div class="d-flex flex-wrap gap-2 mb-3">
-            <span class="chip">DJ</span><span class="chip">Electrónica</span><span class="chip">Terraza</span>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <span class="small text-soft"><i class="bi bi-heart-fill"></i> 982 interacciones</span>
-            <span class="badge text-bg-success"><i class="bi bi-star-fill"></i> 4.7</span>
-          </div>
-        </div>
-      </article>
-    </div>
+<div id="gridDestacados" class="row g-4">
+  {% if featured_venues %}
+    {% for v in featured_venues %}
+      <div class="col-12 col-md-6 col-lg-4 d-item"
+           data-range="hoy"
+           data-interacciones="{{ v.interactions|default:0 }}"
+           data-fecha="{{ v.updated_at|date:'Y-m-d' }}"
+           data-rating="{{ v.rating|default:'4.5' }}">
+        <article class="card-event position-relative h-100">
+          <a class="stretched-link text-decoration-none"
+             href="{% url 'venue-detail' slug=v.slug %}"
+             aria-label="{{ v.name }}"></a>
 
-    <!-- Card 2 -->
-    <div class="col-12 col-md-6 col-lg-4 d-item"
-         data-range="hoy" data-interacciones="764" data-fecha="2025-09-18" data-rating="4.5">
-      <article class="card-event position-relative h-100">
-        <a class="stretched-link text-decoration-none" href="/evento/comedy-beats" aria-label="Comedy & Beats"></a>
-        <div class="card-cover">
-          <img src="https://images.unsplash.com/photo-1519677100203-a0e668c92439?q=80&w=1200&auto=format&fit=crop"
-               alt="Comedy & Beats - show y música" loading="lazy">
-          <span class="position-absolute top-0 start-0 m-2 badge text-bg-primary">Hoy 22:00</span>
-          <span class="position-absolute top-0 end-0 m-2 badge text-bg-light text-dark"><i class="bi bi-graph-up"></i> Top 2</span>
-        </div>
-        <div class="p-3">
-          <h3 class="h5 mb-1">Comedy & Beats</h3>
-          <p class="text-soft mb-2"><i class="bi bi-geo"></i> Centro Cultural LS</p>
-          <div class="d-flex flex-wrap gap-2 mb-3">
-            <span class="chip">Música en vivo</span><span class="chip">Stand-up</span>
-          </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <span class="small text-soft"><i class="bi bi-heart-fill"></i> 764 interacciones</span>
-            <span class="badge text-bg-success"><i class="bi bi-star-fill"></i> 4.5</span>
-          </div>
-        </div>
-      </article>
-    </div>
+          <div class="card-cover">
+            {% if v.cover_image %}
+              <img src="{{ v.cover_image.url }}" alt="{{ v.name }}" loading="lazy">
+            {% elif v.gallery_venue %}
+              <img src="{{ v.gallery_venue.url }}" alt="{{ v.name }}" loading="lazy">
+            {% else %}
+              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}" loading="lazy">
+            {% endif %}
 
-    <!-- Card 3 -->
-    <div class="col-12 col-md-6 col-lg-4 d-item"
-         data-range="mes" data-interacciones="531" data-fecha="2025-10-05" data-rating="4.8">
-      <article class="card-event  h-100 position-relative ">
-        <a class="stretched-link text-decoration-none" href="/evento/fiesta-prisma" aria-label="Fiesta Prisma"></a>
-        <div class="card-cover">
-          <img src="https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?q=80&w=1200&auto=format&fit=crop"
-               alt="Fiesta Prisma en Club Bellavista" loading="lazy">
-          <span class="position-absolute top-0 start-0 m-2 badge text-bg-info">Próx. mes</span>
-          <span class="position-absolute top-0 end-0 m-2 badge text-bg-light text-dark"><i class="bi bi-graph-up"></i> Top 3</span>
-        </div>
-        <div class="p-3">
-          <h3 class="h5 mb-1">Fiesta Prisma</h3>
-          <p class="text-soft mb-2"><i class="bi bi-geo"></i> Club Bellavista • 23:30–05:00</p>
-          <div class="d-flex flex-wrap gap-2 mb-3">
-            <span class="chip">DJ</span><span class="chip">Lista</span>
+            {# Badges superiores #}
+            <span class="position-absolute top-0 start-0 m-2 badge text-bg-warning">
+              {{ v.get_category_display|default:"Lugar" }}
+            </span>
+            {% if v.is_advertised or v.is_featured %}
+              <span class="position-absolute top-0 end-0 m-2 badge text-bg-light text-dark">
+                <i class="bi bi-megaphone"></i> Publicitado
+              </span>
+            {% endif %}
           </div>
-          <div class="d-flex justify-content-between align-items-center">
-            <span class="small text-soft"><i class="bi bi-heart-fill"></i> 531 interacciones</span>
-            <span class="badge text-bg-success"><i class="bi bi-star-fill"></i> 4.8</span>
-          </div>
-        </div>
-      </article>
-    </div>
-  </div>
 
-  <div class="text-center mt-4">
-    <a href="/eventos/la-serena" class="btn btn-ghost floaty">
-      <i class="bi bi-calendar-event"></i> Ver todos los eventos en <span id="seo-city-cta">La Serena</span>
-    </a>
-  </div>
+          <div class="p-3">
+            <h3 class="h5 mb-1">{{ v.name }}</h3>
+            <p class="text-soft mb-2">
+              <i class="bi bi-geo"></i>
+              {{ v.Commune.name }}
+              {% if v.address %} • {{ v.address }}{% endif %}
+            </p>
+
+            {# Chips rápidos (opcional, ajusta a tus campos) #}
+            <div class="d-flex flex-wrap gap-2 mb-3">
+              {% if v.experience_venue %}<span class="chip">{{ v.experience_venue|truncatechars:18 }}</span>{% endif %}
+              {% if v.dress_code %}<span class="chip">{{ v.dress_code }}</span>{% endif %}
+              {% if v.payment_methods %}<span class="chip">{{ v.payment_methods|truncatechars:14 }}</span>{% endif %}
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <span class="small text-soft">
+                <i class="bi bi-heart-fill"></i>
+                {{ v.interactions|default:0 }} interacciones
+              </span>
+              <span class="badge text-bg-success">
+                <i class="bi bi-star-fill"></i>
+                {{ v.rating|default:"4.5" }}
+              </span>
+            </div>
+          </div>
+        </article>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="col-12">
+      <div class="alert alert-secondary mb-0">
+        Aún no hay locales publicados en {{ active_city_label }}.
+      </div>
+    </div>
+  {% endif %}
+</div>
 </section>
 
-<!-- ========================= MINI MAPA ========================= -->
-<section id="mini-map" class="py-5">
-  <div class="container">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="section-title mb-0">Mapa rápido</h2>
-      <div class="btn-group" role="group" aria-label="Toggle">
-        <button class="btn btn-ghost active" data-map-tab="lugares">Lugares</button>
-        <button class="btn btn-ghost" data-map-tab="eventos">Eventos</button>
-      </div>
-    </div>
-
-    <div class="row g-4">
-      <div class="col-12 col-lg-8">
-        <div class="map-shell rounded-lg position-relative">
-          <div id="mapOverlayMini" class="position-absolute top-50 start-50 translate-middle text-center">
-            <i class="bi bi-geo-alt-fill fs-1 text-primary d-block mb-2"></i>
-            <p class="mb-0 text-soft">Mini-mapa: <b id="miniMapMode">Lugares</b></p>
-          </div>
-        </div>
-      </div>
-      <div class="col-12 col-lg-4 d-grid gap-2">
-        <button class="btn btn-brand" id="btnAbrirMapa"><i class="bi bi-map"></i> Abrir mapa</button>
-        <small class="text-soft">Nota: en V1 se integra Leaflet/Mapbox. Aquí verás marcadores filtrados por la pestaña actual.</small>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================= OFERTAS ========================= -->
+<!-- ===================== Ofertas de locales (MVP clave) ===================== -->
 <section id="ofertas" class="py-5 bg-surface-1">
   <div class="container">
     <div class="d-flex flex-wrap align-items-center justify-content-between mb-3">
@@ -236,218 +346,159 @@
         <h2 class="section-title mb-1">Ofertas de locales</h2>
         <p class="section-sub mb-0">Orden: cercanas y con vigencia próxima.</p>
       </div>
-      <div class="d-flex gap-2 align-items-center">
-        <label class="small text-soft">Ordenar por</label>
-        <select id="sortOfertas" class="form-select form-select-sm" style="width:auto">
-          <option value="cercania" selected>Cercanía</option>
-          <option value="vigencia">Vigencia</option>
-        </select>
-      </div>
     </div>
 
-    <div id="gridOfertas" class="row g-4">
-      <div class="col-12 col-md-6 col-lg-4 o-item" data-dist="0.8" data-vigencia="2025-09-20T21:00:00-03:00">
-        <article class="card-event h-100">
+<div id="gridOfertas" class="row g-4">
+  {% if offers_items %}
+    {% for o in offers_items %}
+      <div class="col-12 col-md-6 col-lg-4 o-item"
+           data-dist="{{ o.dist|default:'' }}"
+           data-vigencia="{{ o.vigencia_iso|default:'' }}">
+        <article class="card-event h-100 position-relative">
+          <a class="stretched-link text-decoration-none" href="{{ o.href }}" aria-label="{{ o.title }}"></a>
+
           <div class="card-cover">
-            <span class="position-absolute top-0 start-0 m-2 badge badge-offer">2x1 hasta 21:00</span>
+            {% if o.img %}
+              <img src="{{ o.img }}" alt="{{ o.title }}" loading="lazy">
+            {% else %}
+              {% load static %}
+              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ o.title }}" loading="lazy">
+            {% endif %}
+            <span class="position-absolute top-0 start-0 m-2 badge badge-offer">{{ o.badge }}</span>
           </div>
+
           <div class="p-3">
-            <h3 class="h5 mb-1">Bar Peñuelas — 2x1</h3>
-            <p class="text-soft mb-2"><i class="bi bi-geo"></i> Av. del Mar 1200 • Vigencia: hoy 21:00</p>
+            <h3 class="h5 mb-1">{{ o.title }}</h3>
+            <p class="text-soft mb-2">
+              <i class="bi bi-geo"></i> {{ o.subtitle }}
+            </p>
             <div class="d-flex gap-2">
-              <button class="btn btn-brand"><i class="bi bi-qr-code"></i> Canjear</button>
-              <button class="btn btn-ghost"><i class="bi bi-upc-scan"></i> Mostrar en barra</button>
+              <a class="btn btn-brand" href="{{ o.href }}">
+                <i class="bi bi-qr-code"></i> Canjear
+              </a>
+              <a class="btn btn-ghost" href="{{ o.href }}">
+                <i class="bi bi-upc-scan"></i> Mostrar en barra
+              </a>
             </div>
           </div>
         </article>
       </div>
-
-      <div class="col-12 col-md-6 col-lg-4 o-item" data-dist="2.1" data-vigencia="2025-09-20T23:00:00-03:00">
-        <article class="card-event h-100">
-          <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge badge-offer">Happy Hour 19–23</span></div>
-          <div class="p-3">
-            <h3 class="h5 mb-1">Río Pub — HH</h3>
-            <p class="text-soft mb-2"><i class="bi bi-geo"></i> Centro • Vigencia: hoy 23:00</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-brand"><i class="bi bi-qr-code"></i> Canjear</button>
-              <button class="btn btn-ghost"><i class="bi bi-upc-scan"></i> Mostrar en barra</button>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <div class="col-12 col-md-6 col-lg-4 o-item" data-dist="1.4" data-vigencia="2025-09-21T00:30:00-03:00">
-        <article class="card-event h-100">
-          <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge badge-offer">Cover gratis hasta 00:30</span></div>
-          <div class="p-3">
-            <h3 class="h5 mb-1">Club Prisma — Cover</h3>
-            <p class="text-soft mb-2"><i class="bi bi-geo"></i> Bellavista • Vigencia: 00:30</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-brand"><i class="bi bi-qr-code"></i> Canjear</button>
-              <button class="btn btn-ghost"><i class="bi bi-upc-scan"></i> Mostrar en barra</button>
-            </div>
-          </div>
-        </article>
+    {% endfor %}
+  {% else %}
+    <div class="col-12">
+      <div class="alert alert-secondary mb-0">
+        Aún no hay ofertas activas en {{ active_city_label }}.
       </div>
     </div>
+  {% endif %}
+</div>
+
+
   </div>
 </section>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const grid = document.getElementById("gridOfertas");
+  const select = document.getElementById("sortOfertas");
 
-<!-- ========================= PRÓXIMOS EVENTOS (TABS) ========================= -->
-<section id="eventos" class="py-5">
+  function sortCards(mode) {
+    const cards = Array.from(grid.querySelectorAll(".o-item"));
+    cards.sort((a, b) => {
+      if (mode === "vigencia") {
+        const va = a.dataset.vigencia || "";
+        const vb = b.dataset.vigencia || "";
+        return va.localeCompare(vb); // ISO ordena bien por string
+      } else {
+        const da = parseFloat(a.dataset.dist || "9999");
+        const db = parseFloat(b.dataset.dist || "9999");
+        return da - db;
+      }
+    });
+    cards.forEach(c => grid.appendChild(c));
+  }
+
+  select.addEventListener("change", e => sortCards(e.target.value));
+  sortCards(select.value);
+});
+</script>
+
+
+
+
+<!-- ===================== Mini-mapa + Toggle Lugares/Eventos ===================== -->
+<section id="mini-map" class="py-5">
   <div class="container">
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="section-title mb-0">Próximos eventos</h2>
-      <ul class="nav nav-pills" id="tabsEventos" role="tablist">
-        <li class="nav-item"><button class="nav-link active" data-bs-toggle="pill" data-bs-target="#tab-hoy" type="button">Hoy</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-manana" type="button">Mañana</button></li>
-        <li class="nav-item"><button class="nav-link" data-bs-toggle="pill" data-bs-target="#tab-finde" type="button">Finde</button></li>
-      </ul>
-    </div>
-
-    <div class="tab-content">
-      <!-- HOY -->
-      <div class="tab-pane fade show active" id="tab-hoy">
-        <div class="row g-4">
-          <div class="col-12 col-md-6 col-lg-4">
-            <article class="card-event h-100">
-              <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge text-bg-primary">Hoy 22:00</span></div>
-              <div class="p-3">
-                <h3 class="h5 mb-1">Comedy & Beats</h3>
-                <p class="text-soft mb-2"><i class="bi bi-geo"></i> Centro Cultural LS</p>
-                <div class="d-flex gap-2">
-                  <a href="/entradas/comedy-beats" class="btn btn-brand"><i class="bi bi-ticket-perforated"></i> Entradas</a>
-                  <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-
-      <!-- MAÑANA -->
-      <div class="tab-pane fade" id="tab-manana">
-        <div class="row g-4">
-          <div class="col-12 col-md-6 col-lg-4">
-            <article class="card-event h-100">
-              <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge text-bg-warning">Mañana 23:00</span></div>
-              <div class="p-3">
-                <h3 class="h5 mb-1">Sunset Rooftop</h3>
-                <p class="text-soft mb-2"><i class="bi bi-geo"></i> Mirador LS • 23:00–03:30</p>
-                <div class="d-flex gap-2">
-                  <a href="/entradas/sunset-rooftop" class="btn btn-brand"><i class="bi bi-ticket-perforated"></i> Entradas</a>
-                  <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-
-      <!-- FINDE -->
-      <div class="tab-pane fade" id="tab-finde">
-        <div class="row g-4">
-          <div class="col-12 col-md-6 col-lg-4">
-            <article class="card-event h-100">
-              <div class="card-cover"><span class="position-absolute top-0 start-0 m-2 badge text-bg-success">Sábado</span></div>
-              <div class="p-3">
-                <h3 class="h5 mb-1">Fiesta Prisma</h3>
-                <p class="text-soft mb-2"><i class="bi bi-geo"></i> Club Bellavista • 23:30–05:00</p>
-                <div class="d-flex gap-2">
-                  <a href="/entradas/fiesta-prisma" class="btn btn-brand"><i class="bi bi-ticket-perforated"></i> Entradas</a>
-                  <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
-                </div>
-              </div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ========================= TOP LUGARES ========================= -->
-<section id="top-lugares" class="py-5 bg-surface-1">
-  <div class="container">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="section-title mb-0">Top lugares en <span id="city-top">La Serena</span></h2>
-      <small class="text-soft">Basado en rating, reseñas y actividad reciente</small>
+      <h2 class="section-title mb-0">Mapa rápido</h2>
     </div>
 
     <div class="row g-4">
-      <div class="col-12 col-sm-6 col-lg-3">
-        <article class="card-event h-100">
-          <div class="card-cover"></div>
-          <div class="p-3">
-            <h3 class="h6 mb-1">Bar Peñuelas</h3>
-            <p class="small text-soft mb-3"><i class="bi bi-clock"></i> Abierto ahora • Cierra 02:00</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-ghost"><i class="bi bi-heart"></i> Guardar</button>
-              <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <div class="col-12 col-sm-6 col-lg-3">
-        <article class="card-event h-100">
-          <div class="card-cover"></div>
-          <div class="p-3">
-            <h3 class="h6 mb-1">Río Pub</h3>
-            <p class="small text-soft mb-3"><i class="bi bi-clock"></i> Abierto ahora • Cierra 01:00</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-ghost"><i class="bi bi-heart"></i> Guardar</button>
-              <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <div class="col-12 col-sm-6 col-lg-3">
-        <article class="card-event h-100">
-          <div class="card-cover"></div>
-          <div class="p-3">
-            <h3 class="h6 mb-1">Club Prisma</h3>
-            <p class="small text-soft mb-3"><i class="bi bi-clock"></i> Abre 23:30</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-ghost"><i class="bi bi-heart"></i> Guardar</button>
-              <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
-            </div>
-          </div>
-        </article>
-      </div>
-
-      <div class="col-12 col-sm-6 col-lg-3">
-        <article class="card-event h-100">
-          <div class="card-cover"></div>
-          <div class="p-3">
-            <h3 class="h6 mb-1">La Azotea</h3>
-            <p class="small text-soft mb-3"><i class="bi bi-clock"></i> Abierto ahora • Cierra 00:30</p>
-            <div class="d-flex gap-2">
-              <button class="btn btn-ghost"><i class="bi bi-heart"></i> Guardar</button>
-              <a href="#mini-map" class="btn btn-ghost"><i class="bi bi-geo-alt"></i> Ver en mapa</a>
-            </div>
-          </div>
-        </article>
+      <div class="col-12 col-lg-8">
+        <div class="map-shell rounded-lg position-relative" style="height: 420px; overflow: hidden;">
+          <!-- Canvas del mapa -->
+          <div id="miniMapCanvas" style="height: 100%;"></div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ========================= COLECCIONES ========================= -->
-<section id="colecciones" class="py-5">
-  <div class="container">
-    <h2 class="section-title mb-3">Colecciones</h2>
-    <div class="d-flex flex-wrap gap-2">
-      <span class="chip"><i class="bi bi-people"></i> Para ir en grupo</span>
-      <span class="chip"><i class="bi bi-briefcase"></i> After office</span>
-      <span class="chip"><i class="bi bi-music-note-beamed"></i> Con música en vivo</span>
-      <span class="chip"><i class="bi bi-cloud-sun"></i> Rooftops</span>
-    </div>
-  </div>
-</section>
+{# Exporta los venues para el mini-mapa (solo una vez) #}
+{{ mini_map_venues|json_script:"mini-map-data" }}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const dataNode = document.getElementById("mini-map-data");
+  const mapEl = document.getElementById("miniMapCanvas");
+  const overlay = document.getElementById("mapOverlayMini");
 
-<!-- ========================= BLOQUE PARA LOCALES ========================= -->
+  if (!dataNode || !mapEl) return;
+
+  const venues = JSON.parse(dataNode.textContent || "[]");
+
+  // === Inicializar Leaflet ===
+  const map = L.map(mapEl, { scrollWheelZoom: false });
+
+  // Capa base (OpenStreetMap)
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "&copy; OpenStreetMap",
+  }).addTo(map);
+
+  // === Crear marcadores dinámicos ===
+  const group = L.featureGroup().addTo(map);
+
+  venues.forEach((v) => {
+    if (typeof v.lat === "number" && typeof v.lng === "number") {
+      const marker = L.marker([v.lat, v.lng], { title: v.name });
+      marker.bindPopup(`
+        <div style="min-width:200px">
+          <div class="fw-semibold mb-1">${v.name}</div>
+          <div class="small text-soft mb-2">
+            ${(v.commune || "")}${v.address ? " • " + v.address : ""}
+          </div>
+          <a href="${v.href}" class="btn btn-sm btn-brand">Ver local</a>
+        </div>
+      `);
+      marker.addTo(group);
+    }
+  });
+
+  // === Ajustar la vista ===
+  if (group.getLayers().length > 0) {
+    map.fitBounds(group.getBounds().pad(0.2));
+  } else {
+    // Fallback: Santiago
+    map.setView([-33.4489, -70.6693], 12);
+  }
+
+  if (overlay) overlay.style.display = "none";
+});
+</script>
+
+
+
+
+<!-- ===================== Bloque Locales / Organizadores ===================== -->
 <section id="para-locales" class="py-5 bg-surface-1">
   <div class="container">
     <div class="bg-surface-2 rounded-lg p-4 p-md-5 shadow-1">
@@ -469,7 +520,7 @@
   </div>
 </section>
 
-<!-- ========================= SEO + CONFIANZA ========================= -->
+<!-- ===================== SEO + Confianza ===================== -->
 <section id="seo-confianza" class="py-5">
   <div class="container">
     <h2 class="section-title mb-2">Salir en <span id="city-seo">La Serena</span></h2>
@@ -496,7 +547,7 @@
   </div>
 </section>
 
-<!-- ========================= FAQ ========================= -->
+<!-- ===================== FAQ corto ===================== -->
 <section id="faq" class="py-5 bg-surface-1">
   <div class="container">
     <h2 class="section-title mb-3">Preguntas frecuentes</h2>
@@ -513,7 +564,6 @@
           </div>
         </div>
       </div>
-
       <div class="accordion-item bg-surface-2 mt-2">
         <h2 class="accordion-header">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq2">
@@ -526,7 +576,6 @@
           </div>
         </div>
       </div>
-
       <div class="accordion-item bg-surface-2 mt-2">
         <h2 class="accordion-header">
           <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#fq3">
@@ -542,7 +591,6 @@
     </div>
   </div>
 </section>
-
 
 {% endblock %}
 
@@ -721,4 +769,15 @@
   ]
 }
 </script>
+<!-- Leaflet CSS -->
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+/>
+<!-- Leaflet JS -->
+<script
+  defer
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
 {% endblock %}

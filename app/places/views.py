@@ -25,161 +25,318 @@ from django.views.generic import TemplateView
 from django.db.models import Q
 from django.utils import timezone
 from datetime import datetime, timedelta, time
+from django.views.generic import ListView
+from django.db.models import Q
+from functools import reduce
+from operator import and_
+import re
+from .models import Venue
+
+from .models import Commune, Venue, Event
+from django.utils import timezone
+from django.views.generic import TemplateView
+from django.db.models import Q
+from django.urls import reverse
+from urllib.parse import urlparse
+from datetime import timedelta
+import json
 
 from .models import Commune, Venue, Event
 
 class HomeView(TemplateView):
     template_name = "index.html"
 
-    # --- Helpers de fecha ---
-    def _today_range(self, tz):
-        today = timezone.localdate()
-        start = timezone.make_aware(datetime.combine(today, time.min), tz)
-        end   = start + timedelta(days=1)
-        return start, end
+    # =============================
+    # --- Métodos auxiliares ---
+    # =============================
 
-    def _tomorrow_range(self, tz):
-        today = timezone.localdate() + timedelta(days=1)
-        start = timezone.make_aware(datetime.combine(today, time.min), tz)
-        end   = start + timedelta(days=1)
-        return start, end
+    def _commune_from_string(self, value: str):
+        if not value:
+            return None
+        value = value.strip()
+        return Commune.objects.filter(
+            Q(slug__iexact=value) | Q(name__iexact=value)
+        ).first()
 
-    def _weekend_range(self, tz):
-        # Viernes a domingo de ESTA semana (si ya pasó domingo, próximo finde)
-        today = timezone.localdate()
-        weekday = today.weekday()  # 0=Lunes ... 6=Domingo
-        # próximo viernes relativo
-        days_to_friday = (4 - weekday) % 7
-        friday = today + timedelta(days=days_to_friday)
-        start = timezone.make_aware(datetime.combine(friday, time.min), tz)
-        end   = start + timedelta(days=3)  # exclusivo (vie 00:00 → lun 00:00)
-        return start, end
-
-    # --- Resolución de ciudad (por ?city=slug|nombre). Si no, primera comuna ---
-    def _get_city(self, request):
-        city_raw = (request.GET.get("city") or "").strip()
-        if city_raw:
-            slugguess = city_raw  # si ya viene slug
-            commune = Commune.objects.filter(
-                Q(slug__iexact=slugguess) | Q(name__iexact=city_raw)
-            ).first()
-            if commune:
-                return commune
+    def _get_default_commune(self):
+        """Ciudad por defecto: Santiago."""
+        c = Commune.objects.filter(slug__iexact="santiago").first()
+        if c: return c
+        c = Commune.objects.filter(name__iexact="Santiago").first()
+        if c: return c
         return Commune.objects.order_by("name").first()
 
+    def _commune_from_user(self, request):
+        """Detecta comuna según el perfil del usuario."""
+        user = getattr(request, "user", None)
+        if not user or not user.is_authenticated:
+            return None
+
+        profile = getattr(user, "profile", None)
+        if not profile:
+            return None
+
+        # Invitado
+        if getattr(profile, "is_guest", False):
+            guest = getattr(profile, "guest", None)
+            city_str = getattr(guest, "city", "") if guest else ""
+            c = self._commune_from_string(city_str)
+            if c:
+                return c
+
+        # Owner
+        if getattr(profile, "is_owner", False):
+            owner_venues = Venue.objects.select_related("Commune").filter(owner_user=user)
+            if owner_venues.exists():
+                return owner_venues.first().Commune
+
+        return None
+
+    def _get_city(self, request):
+        """Orden de resolución:
+        1️⃣ ?city= (slug o nombre)
+        2️⃣ Usuario autenticado (guest u owner)
+        3️⃣ Fallback: Santiago (predeterminada para visitantes no registrados)
+        """
+        city_raw = (request.GET.get("city") or "").strip()
+        if city_raw:
+            c = self._commune_from_string(city_raw)
+            if c:
+                return c
+
+        # Usuario logueado (guest u owner)
+        c = self._commune_from_user(request)
+        if c:
+            return c
+
+        # Fallback global (visitantes anónimos)
+        return self._get_default_commune()
+
+    @staticmethod
+    def _is_http_url(u: str) -> bool:
+        try:
+            p = urlparse(u or "")
+            return p.scheme in ("http", "https") and bool(p.netloc)
+        except Exception:
+            return False
+
+    # =============================
+    # --- Contexto principal ---
+    # =============================
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        tz = timezone.get_current_timezone()
+        city = self._get_city(self.request)
 
-        city = self._get_city(self.request)  # puede ser None si DB vacía
+        # Ciudad activa (siempre hay una: por defecto Santiago)
         ctx["city"] = city
         ctx["active_city_label"] = city.name if city else "Chile"
         ctx["active_city"] = city.slug if city else ""
 
-        # ---------- Trending de hoy (mezcla simple: eventos de hoy + venues publicados) ----------
+        # ====================================================
+        # 1️⃣ TRENDING — Eventos próximos (48h)
+        # ====================================================
         trending_items = []
         if city:
-            # Eventos de HOY en la comuna
-            t_start, t_end = self._today_range(tz)
-            events_today = (
+            now = timezone.now()
+            window_end = now + timedelta(hours=48)
+
+            events_qs = (
                 Event.objects
-                .filter(is_published=True, Commune=city, start_at__gte=t_start, start_at__lt=t_end)
+                .filter(
+                    is_published=True,
+                    Commune=city,
+                    start_at__gte=now,
+                    start_at__lte=window_end
+                )
                 .select_related("venue")
-                .order_by("start_at")[:16]
+                .order_by("start_at")[:4]
             )
-            for e in events_today:
-                img = (e.flyer_image.url if e.flyer_image else (e.venue.cover_image.url if e.venue and e.venue.cover_image else ""))
+
+            for e in events_qs:
+                ext = getattr(e, "external_ticket_url", "") or ""
+                href = ext if self._is_http_url(ext) else ""
+                if not href and e.venue:
+                    href = reverse("venue-detail", kwargs={"slug": e.venue.slug})
+                if not href:
+                    continue
+
+                img = (
+                    e.flyer_image.url if getattr(e, "flyer_image", None) else
+                    (e.venue.cover_image.url if (e.venue and getattr(e.venue, "cover_image", None)) else "")
+                )
+
                 trending_items.append({
                     "type": "evento",
                     "title": e.title,
                     "time": timezone.localtime(e.start_at).strftime("%a %H:%M"),
-                    "venue": (e.venue.name if e.venue else city.name),
-                    "href": self.request.build_absolute_uri(
-                        # ajusta si tu urlpattern es distinto
-                        reverse("event_detail", kwargs={"slug": e.slug})
-                    ),
-                    "badge": e.badge_text or "Hoy",
+                    "venue": e.venue.name if e.venue else city.name,
+                    "href": href,
+                    "external": bool(self._is_http_url(ext)),
+                    "badge": e.badge_text or "Próximo",
                     "badgeVariant": "primary",
-                    "img": img or "",
+                    "img": img,
+                    "tags": getattr(e, "tags_list", []),
                 })
 
-            # Venues publicados (fallback visual)
-            venues = (
-                Venue.objects
-                .filter(is_published=True, Commune=city)
-                .order_by("name")[:16]
+        ctx["trending_items"] = trending_items[:4]
+        ctx["trending_chunks"] = [trending_items] if trending_items else []
+
+        # ====================================================
+        # 2️⃣ VENUES DESTACADOS
+        # ====================================================
+        featured_qs = Venue.objects.select_related("Commune").filter(
+            Commune=city,
+            is_published=True,
+        )
+
+        ordering = []
+        if hasattr(Venue, "is_advertised"):
+            ordering.append("-is_advertised")
+        if hasattr(Venue, "is_featured"):
+            ordering.append("-is_featured")
+        ordering.append("name")
+
+        ctx["featured_venues"] = featured_qs.order_by(*ordering)[:3]
+
+        # ====================================================
+        # 3️⃣ OFERTAS — Promos visibles
+        # ====================================================
+        offers_items = []
+        venues_with_promos = (
+            Venue.objects
+            .select_related("Commune")
+            .filter(Commune=city, is_published=True)
+            .only(
+                "slug", "name", "address", "Commune",
+                "cover_image", "gallery_venue",
+                "vgt_promos_1", "vgt_promos_2", "vgt_promos_3",
             )
-            for v in venues:
-                trending_items.append({
-                    "type": "lugar",
-                    "title": v.name,
-                    "time": v.hours_short or "",
-                    "venue": v.Commune.name,
-                    "href": self.request.build_absolute_uri(
-                        reverse("venue-detail", kwargs={"slug": v.slug})
-                    ),
-                    "badge": v.get_category_display(),
-                    "badgeVariant": "secondary",
-                    "img": (v.cover_image.url if v.cover_image else (v.gallery_venue.url if v.gallery_venue else "")),
-                })
+        )
 
-        # Chunks de 4 (para el carrusel)
-        chunks = []
-        per = 4
-        for i in range(0, len(trending_items), per):
-            chunks.append(trending_items[i:i+per])
-        ctx["trending_chunks"] = chunks
+        def build_offer_item(v, promo_text):
+            if not promo_text:
+                return None
+            img = (
+                v.cover_image.url if getattr(v, "cover_image", None) else
+                (v.gallery_venue.url if getattr(v, "gallery_venue", None) else "")
+            )
+            return {
+                "href": reverse("venue-detail", kwargs={"slug": v.slug}),
+                "title": v.name,
+                "subtitle": v.Commune.name,
+                "badge": promo_text,
+                "img": img,
+                "address": v.address or "",
+            }
 
-        # ---------- “Próximos eventos destacados” (SEO): is_featured + próximos ----------
-        featured_events = Event.objects.none()
+        for v in venues_with_promos:
+            for promo_field in ["vgt_promos_1", "vgt_promos_2", "vgt_promos_3"]:
+                promo_text = getattr(v, promo_field, None)
+                if promo_text:
+                    item = build_offer_item(v, promo_text)
+                    if item:
+                        offers_items.append(item)
+
+        ctx["offers_items"] = offers_items[:6]
+
+        # ====================================================
+        # 4️⃣ MINI MAPA — Solo comuna activa
+        # ====================================================
+        mini_qs = Venue.objects.select_related("Commune")
         if city:
-            now = timezone.now()
-            featured_events = (
-                Event.objects
-                .filter(is_published=True, Commune=city, start_at__gte=now, is_featured=True)
-                .select_related("venue")
-                .order_by("feature_order", "start_at")[:9]
-            )
-        ctx["featured_events"] = featured_events
+            mini_qs = mini_qs.filter(Commune=city)
 
-        # ---------- Tabs: Hoy / Mañana / Finde ----------
-        ctx["events_hoy"] = Event.objects.none()
-        ctx["events_manana"] = Event.objects.none()
-        ctx["events_finde"] = Event.objects.none()
-        if city:
-            h_s, h_e   = self._today_range(tz)
-            m_s, m_e   = self._tomorrow_range(tz)
-            f_s, f_e   = self._weekend_range(tz)
+        def _lat(v):
+            for f in ("lat", "latitude", "geo_lat"):
+                if hasattr(v, f) and getattr(v, f) not in (None, ""):
+                    return float(getattr(v, f))
+            return None
 
-            ctx["events_hoy"] = (
-                Event.objects
-                .filter(is_published=True, Commune=city, start_at__gte=h_s, start_at__lt=h_e)
-                .select_related("venue")
-                .order_by("start_at")[:12]
-            )
-            ctx["events_manana"] = (
-                Event.objects
-                .filter(is_published=True, Commune=city, start_at__gte=m_s, start_at__lt=m_e)
-                .select_related("venue")
-                .order_by("start_at")[:12]
-            )
-            ctx["events_finde"] = (
-                Event.objects
-                .filter(is_published=True, Commune=city, start_at__gte=f_s, start_at__lt=f_e)
-                .select_related("venue")
-                .order_by("start_at")[:12]
-            )
+        def _lng(v):
+            for f in ("lon", "lng", "longitude", "geo_lng"):
+                if hasattr(v, f) and getattr(v, f) not in (None, ""):
+                    return float(getattr(v, f))
+            return None
 
-        # ---------- Top lugares en {Ciudad} ----------
-        ctx["top_venues"] = Venue.objects.none()
-        if city:
-            ctx["top_venues"] = (
-                Venue.objects
-                .filter(is_published=True, Commune=city)
-                .order_by("name")[:8]
-            )
+        mini_map_venues = []
+        for v in mini_qs.only("id", "slug", "name", "address", "Commune"):
+            mini_map_venues.append({
+                "id": v.id,
+                "name": v.name,
+                "slug": v.slug,
+                "address": v.address or "",
+                "commune": v.Commune.name if getattr(v, "Commune", None) else "",
+                "lat": _lat(v),
+                "lng": _lng(v),
+                "href": self.request.build_absolute_uri(
+                    reverse("venue-detail", kwargs={"slug": v.slug})
+                ),
+            })
+
+        ctx["mini_map_venues"] = mini_map_venues
+
+        # ====================================================
+        # Debug
+        # ====================================================
+        user = self.request.user
+        print(f"[DEBUG] Usuario: {'anon' if not user.is_authenticated else user.username}")
+        print(f"[DEBUG] Ciudad activa: {city}")
+        print(f"[DEBUG] Eventos 48h: {len(trending_items)}")
+        print(f"[DEBUG] Venues destacados: {featured_qs.count()}")
+        print(f"[DEBUG] Ofertas: {len(offers_items)}")
+        print(f"[DEBUG] Venues para mini-mapa: {len(mini_map_venues)}")
 
         return ctx
+
+
+class VenueSearchView(ListView):
+    template_name = "search_results.html"
+    context_object_name = "venues"
+    model = Venue
+    paginate_by = 24
+
+    # Campos en los que buscar
+    SEARCH_FIELDS = [
+        "name__icontains",
+        "description__icontains",
+        "address__icontains",
+        "Commune__name__icontains",
+    ]
+
+    def _build_term_q(self, term: str) -> Q:
+        """Crea una Q (OR) entre los campos para un término individual."""
+        q = Q()
+        for f in self.SEARCH_FIELDS:
+            q |= Q(**{f: term})
+        return q
+
+    def get_queryset(self):
+        """Filtra los venues según el término de búsqueda."""
+        raw_q = (self.request.GET.get("q") or "").strip()
+        qs = Venue.objects.select_related("Commune").all()  # 👈 quitamos el filtro is_published=True
+
+        if not raw_q:
+            return qs.order_by("name")
+
+        # Divide la búsqueda en palabras separadas por espacios
+        terms = [t for t in re.split(r"\s+", raw_q) if t]
+
+        # Aplica un AND entre términos (cada palabra debe calzar en al menos un campo)
+        term_qs = [self._build_term_q(t) for t in terms]
+        if term_qs:
+            qs = qs.filter(reduce(and_, term_qs))
+
+        return qs.order_by("name")
+
+    def get_context_data(self, **kwargs):
+        """Agrega el término buscado y el total de resultados al contexto."""
+        ctx = super().get_context_data(**kwargs)
+        q = (self.request.GET.get("q") or "").strip()
+        ctx["q"] = q
+        ctx["total"] = self.get_queryset().count()
+        return ctx
+
+ 
 
 
 class MyVenuesListView(ListView, LoginRequiredMixin):
@@ -599,7 +756,7 @@ class CityVenueListView(ListView):
                 Event.objects
                     .filter(Commune=city, is_published=True, venue__isnull=False, venue__is_published=True)
                     .select_related("venue")
-                    .order_by("start_at")[:4]
+                    .order_by("start_at")[:]
             )
         else:
             ctx["featured_venues"] = Venue.objects.none()
@@ -715,3 +872,161 @@ class FeaturedCitiesView(View):
 
         return JsonResponse({"html": block_html})
 
+
+
+class EventListView(ListView):
+    template_name = "events_index.html"     # crea este template
+    model = Event
+    context_object_name = "events"
+    paginate_by = 24
+
+    # -------- helpers --------
+    def _resolve_city(self, raw: str | None):
+        """Busca comuna por nombre o slug; si no viene, fallback Santiago."""
+        raw = (raw or "").strip()
+        if raw:
+            c = Commune.objects.filter(
+                Q(name__iexact=raw) | Q(slug__iexact=slugify(raw))
+            ).first()
+            if c:
+                return c
+        # fallback
+        return Commune.objects.filter(
+            Q(slug__iexact="santiago") | Q(name__iexact="Santiago")
+        ).first()
+
+    def _when_bounds(self, when: str):
+        """Devuelve (start, end) aware para distintos filtros de fecha."""
+        tz = timezone.get_current_timezone()
+        now = timezone.now().astimezone(tz)
+
+        def day_bounds(d):
+            start = timezone.make_aware(datetime.combine(d, time.min), tz)
+            end   = timezone.make_aware(datetime.combine(d + timedelta(days=1), time.min), tz)
+            return start, end
+
+        if when == "hoy":
+            return day_bounds(now.date())
+        if when == "manana":
+            return day_bounds(now.date() + timedelta(days=1))
+        if when == "esta_semana":
+            # lunes a domingo de ESTA semana del calendario local
+            monday = now - timedelta(days=now.weekday())
+            start = timezone.make_aware(datetime.combine(monday.date(), time.min), tz)
+            end   = start + timedelta(days=7)
+            return start, end
+        if when == "finde":
+            # viernes 00:00 a lunes 00:00 de la semana actual
+            friday = (now - timedelta(days=now.weekday())) + timedelta(days=4)  # viernes
+            start = timezone.make_aware(datetime.combine(friday.date(), time.min), tz)
+            end   = start + timedelta(days=3)
+            return start, end
+
+        # por defecto: próximos 60 días
+        start = now
+        end   = now + timedelta(days=60)
+        return start, end
+
+    # -------- queryset --------
+    def get_queryset(self):
+        req = self.request.GET
+        q      = (req.get("q") or "").strip()
+        cat    = (req.get("cat") or "").strip()
+        when   = (req.get("when") or "proximos").strip()
+        city   = self._resolve_city(req.get("city"))
+
+        qs = (
+            Event.objects.select_related("venue", "Commune")
+            .filter(is_published=True)
+            .order_by("start_at")
+        )
+
+        # ciudad
+        if city:
+            qs = qs.filter(Commune=city)
+
+        # rango temporal (por defecto: solo futuros)
+        start, end = self._when_bounds(when)
+        qs = qs.filter(start_at__gte=start, start_at__lt=end)
+
+        # categoría
+        if cat:
+            qs = qs.filter(category=cat)
+
+        # búsqueda
+        if q:
+            qs = qs.filter(
+                Q(title__icontains=q) |
+                Q(venue__name__icontains=q) |
+                Q(Commune__name__icontains=q)
+            )
+
+        # guarda para el contexto
+        self._city = city
+        self._filters = {"q": q, "cat": cat, "when": when}
+        return qs
+
+    # -------- contexto --------
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        city = getattr(self, "_city", None)
+        q    = self._filters.get("q", "")
+        cat  = self._filters.get("cat", "")
+        when = self._filters.get("when", "")
+
+        # CTA por evento (sin romper la paginación)
+        # Añadimos atributos efímeros a los objetos de la página actual
+        for e in ctx["page_obj"].object_list:
+            ext = (e.external_ticket_url or "").strip()
+            if ext:
+                e.cta_url = ext
+                e.cta_is_external = True
+                e.cta_label = "Comprar entradas"
+            else:
+                # fallback: detalle del venue si existe
+                if e.venue:
+                    e.cta_url = reverse("venue-detail", kwargs={"slug": e.venue.slug})
+                    e.cta_is_external = False
+                    e.cta_label = "Ver venue"
+                else:
+                    # último recurso: podrías tener 'event-detail'
+                    e.cta_url = reverse("home")  # cambia si tienes event-detail
+                    e.cta_is_external = False
+                    e.cta_label = "Ver más"
+
+        # filtros activos
+        ctx["q"] = q
+        ctx["active_cat"] = cat
+        ctx["active_when"] = when
+
+        # ciudad activa
+        ctx["city"] = city
+        ctx["active_city_label"] = city.name if city else ""
+        ctx["active_city"] = city.slug if city else ""
+
+        # conteo total (de la consulta, no solo de la página)
+        ctx["total"] = self.get_queryset().count()
+
+        # urls de categorías manteniendo los filtros
+        def build_url_for_cat(val: str | None):
+            params = self.request.GET.copy()
+            if city:
+                params["city"] = city.slug
+            if val:
+                params["cat"] = val
+            else:
+                params.pop("cat", None)
+            params.pop("page", None)
+            return "?" + params.urlencode()
+
+        ctx["cat_urls"] = {
+            "all":        build_url_for_cat(None),
+            "party":      build_url_for_cat("party"),
+            "concert":    build_url_for_cat("concert"),
+            "standup":    build_url_for_cat("standup"),
+            "electronic": build_url_for_cat("electronic"),
+            "other":      build_url_for_cat("other"),
+        }
+
+        return ctx

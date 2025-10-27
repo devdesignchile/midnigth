@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Resultados{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="d-flex align-items-baseline justify-content-between flex-wrap gap-2 mb-3">
+    <div>
+      {% if commune_hit %}
+        <h1 class="h3 mb-1">Lugares en <strong>{{ commune_hit.name }}</strong></h1>
+        <p class="text-secondary mb-0">{{ total }} resultados</p>
+      {% elif q %}
+        <h1 class="h3 mb-1">Resultados para “{{ q }}”</h1>
+        <p class="text-secondary mb-0">{{ total }} resultados</p>
+      {% else %}
+        <h1 class="h3 mb-1">Todos los lugares</h1>
+        <p class="text-secondary mb-0">{{ total }} resultados</p>
+      {% endif %}
+    </div>
+
+    <!-- Buscador persistente arriba -->
+    <form action="{% url 'venue_search' %}" method="get" class="d-flex gap-2">
+      <input type="search" name="q" value="{{ q }}" class="form-control" placeholder="Buscar...">
+      <button class="btn btn-brand" type="submit"><i class="bi bi-search"></i></button>
+    </form>
+  </div>
+
+  {% if venues %}
+    <div class="row g-3">
+      {% for v in venues %}
+        <div class="col-6 col-md-4 col-lg-3">
+          <a class="card h-100 text-decoration-none" href="{% url 'venue-detail' slug=v.slug %}">
+            {% if v.cover_image %}
+              <img class="card-img-top" src="{{ v.cover_image.url }}" alt="{{ v.name }}">
+            {% elif v.gallery_venue %}
+              <img class="card-img-top" src="{{ v.gallery_venue.url }}" alt="{{ v.name }}">
+            {% else %}
+              <img class="card-img-top" src="{% static 'img/placeholders/venue.jpg' %}" alt="{{ v.name }}">
+            {% endif %}
+            <div class="card-body">
+              <h2 class="h6 mb-1 text-truncate">{{ v.name }}</h2>
+              <div class="small text-secondary text-truncate">
+                {{ v.Commune.name }} · {{ v.get_category_display }}
+              </div>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
+
+    <!-- Paginación -->
+    {% if is_paginated %}
+      <nav class="mt-4" aria-label="Resultados">
+        <ul class="pagination justify-content-center">
+          {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link" href="?q={{ q }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+          {% endif %}
+
+          <li class="page-item disabled">
+            <span class="page-link">Página {{ page_obj.number }} de {{ paginator.num_pages }}</span>
+          </li>
+
+          {% if page_obj.has_next %}
+            <li class="page-item">
+              <a class="page-link" href="?q={{ q }}&page={{ page_obj.next_page_number }}">Siguiente</a>
+            </li>
+          {% else %}
+            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  {% else %}
+    <div class="text-center py-5">
+      <p class="lead mb-2">No hay resultados.</p>
+      <p class="text-secondary">Prueba con otro término (p. ej., “ovo”, “rooftop”, “Santiago”…)</p>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

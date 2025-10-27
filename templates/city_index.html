@@ -9,7 +9,7 @@
 <section class="py-5 text-center">
   <h1 class="display-4 fw-bold mb-2">A donde ir</h1>
   <p class="text-soft mb-4" id="city-counter">
-    {% if city %}{{ city.name }} · {{ venues_count }} lugares{% else %}Ciudad – Número de lugares{% endif %}
+    {% if city %}{{ city.name }} · {{ venues_count }} lugares{% else %} . {% endif %}
   </p>
 
   <form id="city-filter-form" class="container" method="get" autocomplete="off">
@@ -241,7 +241,7 @@
 </div>  {# /dynamic-sections #}
 
 
-    <!-- ===== Mapa (estático de momento) ===== -->
+    <!-- ===== Mapa (estático de momento) 
     <section id="mapa" class="mt-4">
       <header class="d-flex align-items-end justify-content-between mb-2">
         <div>
@@ -250,13 +250,12 @@
         </div>
       </header>
     </section>
-    <!-- bajo tu sección del mapa -->
-    <div id="map" class="map-shell rounded-lg" style="height:420px;"></div>
+    <div id="map" class="map-shell rounded-lg" style="height:420px;"></div> ===== -->
     <script id="map-center-json"  type="application/json">{{ map_center_json|safe }}</script>
     <script id="venues-map-json"  type="application/json">{{ venues_map_json|safe }}</script>
 
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> 
 
 
   </div>
@@ -378,9 +377,9 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+
 <script>
 (function(){
-  // Crear mapa
   const center = JSON.parse(document.getElementById('map-center-json').textContent || '{"lat":-33.4489,"lon":-70.6693}');
   const map = L.map('map').setView([center.lat, center.lon], 13);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -388,18 +387,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }).addTo(map);
   const markers = L.layerGroup().addTo(map);
 
-  // utilidades
   const cacheGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
   const cacheSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch{} };
   const wait = ms => new Promise(r => setTimeout(r, ms));
 
+  // ⬇️ Cambia SOLO esta función
   async function geocode(q){
     const url = new URL('https://nominatim.openstreetmap.org/search');
     url.searchParams.set('q', q);
     url.searchParams.set('format', 'json');
     url.searchParams.set('limit', '1');
     url.searchParams.set('countrycodes', 'cl');
-    const res = await fetch(url, { headers: {'Accept-Language':'es'} });
+    // Nominatim pide un User-Agent identificable
+    const res = await fetch(url, {
+      headers: {
+        'Accept-Language': 'es',
+        'User-Agent': 'midnight-web/1.0 (tu-email@dominio.com)'
+      }
+    });
     if (!res.ok) return null;
     const data = await res.json();
     return (Array.isArray(data) && data[0]) ? { lat: +data[0].lat, lon: +data[0].lon } : null;
@@ -408,7 +413,6 @@ document.addEventListener("DOMContentLoaded", () => {
   async function paint(venues, recenter){
     markers.clearLayers();
     let first = null;
-
     for (let i=0;i<venues.length;i++){
       const v = venues[i];
       const key = `geo:${v.slug}`;
@@ -417,7 +421,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!coord || coord.lat == null){
         coord = await geocode(v.q);
         cacheSet(key, coord || {lat:null, lon:null});
-        await wait(1050); // cortesía Nominatim (~1 req/seg)
+        await wait(1100); // ~1 req/seg: cortesía Nominatim
       }
       if (!coord || coord.lat == null) continue;
       if (!first) first = coord;
@@ -435,18 +439,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (recenter && first) map.setView([first.lat, first.lon], 13);
   }
 
-  // primera carga
   const initialVenues = JSON.parse(document.getElementById('venues-map-json').textContent || '[]');
   paint(initialVenues, false);
-
-  // Hook al AJAX existente de tu nav: cuando llegue JSON, repinta
-  document.addEventListener("city-json-updated", (e) => {
-    const { map_center, map_venues } = e.detail || {};
-    if (map_center) map.setView([map_center.lat, map_center.lon], 13);
-    if (Array.isArray(map_venues)) paint(map_venues, false);
-  });
 })();
 </script>
+
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
   const wrap = document.getElementById("featured-cities-container");

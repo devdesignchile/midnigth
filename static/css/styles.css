@@ -60,6 +60,8 @@ html,body{background:var(--surface-0); color:var(--text-1);}
   --bs-btn-hover-bg:rgba(255,255,255,.06);
 }
 
+
+
 /* ======== Navbar ======== */
 .navbar-brand b{color:var(--brand-400)}
 /* ÚNICA definición consolidada */
@@ -110,14 +112,10 @@ html,body{background:var(--surface-0); color:var(--text-1);}
 }
 
 /* ======== Section headers ======== */
-.section-title{font-weight:800}
+.section-title{font-weight:600}
 .section-sub{color:var(--text-2)}
 
-/* ======== Animaciones ======== */
-.reveal{opacity:0; transform:translateY(12px); transition:opacity .5s ease, transform .5s ease}
-.reveal.in{opacity:1; transform:none}
-.floaty{transition:transform .2s ease}
-.floaty:hover{transform:translateY(-2px)}
+
 
 /* ======== Forms ======== */
 .form-control, .form-select{
@@ -555,3 +553,232 @@ option:focus {
 .object-fit-cover { object-fit: cover; }
 .object-fit-contain { object-fit: contain; }
 .bg-dark-subtle { background-color: rgba(10,12,28,0.4); }
+
+
+.user-btn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: .5rem;
+  color: var(--text-1);
+  padding: .35rem .7rem;
+  font-size: .9rem;
+  transition: background .2s ease, border-color .2s ease;
+}
+.user-btn:hover {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.2);
+}
+.user-name {
+  color: var(--text-1);
+  white-space: nowrap;
+}
+.user-icon {
+  font-size: 1.1rem;
+  color: var(--brand-400);
+}
+
+/* === Dropdown coherente con la paleta === */
+.user-menu {
+  background: var(--surface-1);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: .6rem;
+  min-width: 12rem;
+  padding: .4rem 0;
+}
+.user-menu .dropdown-item {
+  color: var(--text-1);
+  font-size: .9rem;
+  padding: .55rem 1rem;
+}
+.user-menu .dropdown-item:hover {
+  background: var(--surface-2);
+  color: var(--brand-400);
+}
+.user-menu .dropdown-divider {
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+
+/* Igualar altura/estética de botones de auth en navbar */
+.navbar .btn-auth{
+  padding: .5rem 1rem;         /* mismo alto para ambos */
+  border-radius: .6rem;        /* esquinas iguales */
+  font-weight: 600;            /* consistente con brand */
+  line-height: 1.25;           /* centra verticalmente */
+}
+.navbar .btn-auth i{ line-height: 0; } /* icono alineado */
+
+
+/* ============================
+   UPGRADE PACK: .card-trend
+   (reemplaza tu bloque actual)
+   ============================ */
+
+.card-trend{
+  position: relative;
+  background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease;
+  box-shadow: 0 6px 18px rgba(0,0,0,.22);
+}
+.card-trend:hover{
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-2);
+  border-color: rgba(99,102,241,.35);
+}
+
+/* Cover más “premium” con overlay y zoom suave */
+.card-trend .cover{
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  background:
+    radial-gradient(800px 400px at 90% 10%, rgba(34,211,238,.10), transparent 60%),
+    radial-gradient(800px 400px at 10% 10%, rgba(99,102,241,.12), transparent 60%),
+    linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,.01));
+}
+.card-trend .cover img{
+  width: 100%; height: 100%; object-fit: cover; display: block;
+  transform: scale(1);
+  transition: transform .6s ease, filter .6s ease;
+  filter: saturate(1.05) contrast(1.04);
+}
+.card-trend:hover .cover img{ transform: scale(1.05); }
+
+/* Overlay sutil para legibilidad */
+.card-trend .cover::after{
+  content:"";
+  position:absolute; inset:0;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 55%, rgba(0,0,0,.38) 100%);
+  pointer-events:none;
+}
+
+/* Badge sobrio sobre la imagen (reusa .badge-soft) */
+.card-trend .badge-soft{
+  position:absolute; top:.6rem; left:.6rem;
+  background: rgba(17,17,26,.55);
+  border: 1px solid rgba(255,255,255,.18);
+  color: #fff; font-weight: 600; letter-spacing:.02em;
+  padding: .28rem .55rem; border-radius: .5rem;
+  backdrop-filter: blur(6px) saturate(140%);
+}
+
+/* Cuerpo limpio y tipografía fuerte */
+.card-trend .body{
+  padding: .95rem 1rem 1.05rem;
+}
+.card-trend .title{
+  font-size: 1.02rem; font-weight: 800;
+  margin: 0 0 .28rem; color: var(--text-1);
+  letter-spacing:.2px;
+}
+.card-trend .meta{
+  display:flex; flex-wrap:wrap; gap:.45rem;
+  align-items:center;
+  font-size:.92rem; color: var(--text-2);
+  opacity:.95;
+}
+
+/* Estado de foco accesible (teclado) */
+.card-trend a:focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 .25rem rgba(99,102,241,.35);
+  border-radius: var(--radius-lg);
+}
+
+/* Preferencias de movimiento */
+@media (prefers-reduced-motion: reduce){
+  .card-trend,
+  .card-trend .cover img{
+    transition: none;
+  }
+}
+
+/* Grid del carrusel (lo mantengo, pero con gap un pelín mayor) */
+.carousel-item .grid{
+  display:grid; gap: 1.1rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 768px){
+  .carousel-item .grid{ grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 992px){
+  .carousel-item .grid{ grid-template-columns: repeat(4, 1fr); }
+}
+
+/* Indicadores sutiles y consistentes */
+#trendIndicators button{
+  width:.56rem; height:.56rem; border-radius:50%;
+  background: rgba(255,255,255,.28); border:0;
+}
+#trendIndicators .active{ background: var(--brand-500); }
+
+
+/* La card completa es “lienzo” con proporción agradable de flyer */
+.event-card__wrap{
+  position: relative;
+  aspect-ratio: 4 / 5;       /* Ajusta si prefieres otra relación */
+  border-radius: 0.75rem;
+  transition: transform .25s ease, box-shadow .25s ease;
+}
+.event-card:hover .event-card__wrap{
+  transform: translateY(-4px);
+}
+
+/* Imagen ocupa toda la card */
+.event-card__media{
+  position: absolute;
+  inset: 0;
+}
+.event-card__media img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .4s ease;
+}
+.event-card:hover .event-card__media img{
+  transform: scale(1.05);
+}
+
+/* Degradado inferior para legibilidad del texto */
+.event-card__gradient{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,.65) 0%, rgba(0,0,0,0) 55%);
+  pointer-events: none;
+}
+
+/* Body pegado abajo sobre el degradado */
+.event-card__wrap .card-body{
+  color: #fff;
+  z-index: 2;
+}
+
+/* Overlay naranja (slide up) */
+.event-overlay{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(255,136,0,.95), rgba(255,136,0,.85));
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: all .4s ease;
+  padding: 1rem;
+  z-index: 3;
+}
+.event-card:hover .event-overlay{
+  opacity: 1;
+  transform: translateY(0);
+}
+.overlay-content{
+  animation: slideUpText .45s ease forwards;
+}
+@keyframes slideUpText{
+  from{ transform: translateY(10px); opacity: 0; }
+  to{ transform: translateY(0); opacity: 1; }
+}

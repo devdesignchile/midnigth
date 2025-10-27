@@ -79,7 +79,7 @@ class Venue(models.Model):
     instagram = models.URLField(blank=True)
 
     # BOTÓN "Reservar / Entradas" del hero
-    reservation_url = models.URLField(blank=True)
+    reservation_url = models.URLField(blank=True) 
 
     # HORARIOS (lo que muestras tipo "Vie–Sáb 21:00–04:00")
     hours_short = models.CharField(max_length=80, blank=True)

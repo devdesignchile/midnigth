@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+
+<header class="hero py-5 vh-50 py-lg-6 section-with-bg"
+        style="--section-bg: url('{% static 'img/header-events.jpg' %}');">
+  <div class="container py-4">
+    <div class="row justify-content-center text-center g-4">
+      <div class="col-12 col-lg-8 mx-auto">
+        <h1 class="display-1 text-white mb-4"><strong>¿Que hay hoy?</strong></h1>
+
+        <!-- Panel de filtros centrado -->
+        <div class="p-3 p-md-4 rounded-lg shadow-1  mx-auto" style="max-width: 900px;">
+          <form action="{% url 'venue_search' %}" method="get" class="row g-2 justify-content-center">
+            <div class="col-12 col-md-6">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <input id="q" name="q" type="search" class="form-control ring-focus"
+                       placeholder="Buscar bar, club, evento…">
+              </div>
+            </div>
+            <div class="col-12 col-md-2 d-grid">
+              <button type="submit" class="btn btn-brand">
+                <i class="bi bi-search"></i> Buscar
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {# opcional: ciudad actual para otros scripts #}
+        <span id="city-current" class="visually-hidden">{{ active_city_label }}</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+{# Exporta trending_items UNA sola vez, fuera del header #}
+{{ trending_items|json_script:"trending-data" }}
+
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const dataNode = document.getElementById("trending-data");
+  if (!dataNode) return;
+
+  // Máximo 4 (por si acaso)
+  const allItems = (JSON.parse(dataNode.textContent || "[]") || []).slice(0, 4);
+
+  const cityEl = document.getElementById("trend-city");
+  if (cityEl) cityEl.textContent = "{{ active_city_label }}";
+
+  let activeTag = "all";
+  const chips = document.querySelectorAll("#trendChips [data-tag]");
+  chips.forEach(btn => {
+    btn.addEventListener("click", () => {
+      chips.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      activeTag = btn.dataset.tag;
+      render();
+    });
+  });
+
+  const inner = document.getElementById("trendCarouselInner");
+  const indicators = document.getElementById("trendIndicators");
+
+  function render(){
+    const items = activeTag === "all"
+      ? allItems
+      : allItems.filter(x => (x.tags || []).includes(activeTag));
+
+    inner.innerHTML = "";
+    indicators.innerHTML = "";
+
+    // Una sola slide con hasta 4 cards
+    const slides = [items];
+
+    slides.forEach((chunk, idx) => {
+      const slide = document.createElement("div");
+      slide.className = `carousel-item${idx === 0 ? " active" : ""}`;
+
+      const grid = document.createElement("div");
+      grid.className = "grid p-1";
+      slide.appendChild(grid);
+
+      chunk.forEach(card => {
+        const el = document.createElement("div");
+        el.className = "card-trend";
+
+        const externalAttrs = card.external ? ' target="_blank" rel="noopener"' : '';
+
+        el.innerHTML = `
+          <a class="text-decoration-none" href="${card.href}"${externalAttrs}>
+            <div class="cover position-relative">
+              ${card.img ? `<img src="${card.img}" alt="${card.title}">` : ""}
+              <span class="badge badge-soft position-absolute m-2">${card.badge ?? ""}</span>
+            </div>
+            <div class="body">
+              <div class="title">${card.title}</div>
+              <div class="meta">${card.venue}${card.time ? " · " + card.time : ""}</div>
+            </div>
+          </a>`;
+        grid.appendChild(el);
+      });
+
+      inner.appendChild(slide);
+
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.setAttribute("data-bs-target", "#trendCarousel4");
+      dot.setAttribute("data-bs-slide-to", String(idx));
+      if (idx === 0) dot.classList.add("active");
+      indicators.appendChild(dot);
+    });
+  }
+
+  render();
+});
+</script>
+
+
+
+<section class="container py-4">
+  <header class="d-flex justify-content-between align-items-end mb-3">
+    <div>
+      <h1 class="h3 mb-1">Eventos en {{ active_city_label|default:"Chile" }}</h1>
+      <small class="text-soft">{{ total }} resultados</small>
+    </div>
+  </header>
+
+  <div class="row g-3">
+    {% for e in events %}
+<div class="col-12 col-sm-6 col-lg-4">
+  <a href="{{ e.cta_url }}"
+     class="event-card text-decoration-none d-block h-100"
+     {% if e.cta_is_external %}target="_blank" rel="noopener"{% endif %}>
+    <div class="card event-card__wrap bg-surface-1 border-0 overflow-hidden position-relative">
+      
+      {# Imagen ocupa TODA la card #}
+      <div class="event-card__media">
+        {% if e.flyer_image %}
+          <img src="{{ e.flyer_image.url }}" alt="{{ e.title }}">
+        {% else %}
+          <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ e.title }}">
+        {% endif %}
+      </div>
+
+      {# Degradado para lectura del texto #}
+      <div class="event-card__gradient"></div>
+
+      <div class="card-body position-absolute bottom-0 start-0 end-0">
+        {% if e.badge_text %}
+          <span class="badge text-bg-primary mb-2">{{ e.badge_text }}</span>
+        {% endif %}
+        <h3 class="h6 mb-1 text-white">{{ e.title }}</h3>
+        <div class="small text-soft mb-0">
+          {{ e.start_at|date:"D d M · H:i" }}{% if e.venue %} · {{ e.venue.name }}{% endif %}
+        </div>
+      </div>
+
+      {# Overlay naranja con transición (slide-up) #}
+      <div class="event-overlay">
+        <div class="overlay-content text-center">
+          <h4 class="h6 fw-semibold mb-1 text-white">{{ e.title }}</h4>
+          <p class="small mb-2">
+            {{ e.start_at|date:"D d M · H:i" }}
+            {% if e.Commune %} · {{ e.Commune.name }}{% endif %}
+          </p>
+          <span class="badge text-bg-dark">{{ e.get_category_display }}</span>
+        </div>
+      </div>
+    </div>
+  </a>
+</div>
+
+    {% empty %}
+      <div class="col-12">
+        <div class="alert alert-secondary">No hay eventos próximos.</div>
+      </div>
+    {% endfor %}
+  </div>
+
+  {# paginación #}
+  {% if is_paginated %}
+    <nav class="mt-4">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode|cut:'page='|cut:'&page=' }}">Anterior</a>
+          </li>
+        {% endif %}
+        <li class="page-item disabled">
+          <span class="page-link">Página {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+        </li>
+        {% if page_obj.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode|cut:'page='|cut:'&page=' }}">Siguiente</a>
+          </li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+</section>
+{% endblock %}

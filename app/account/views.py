@@ -77,3 +77,67 @@ def login_view(request):
             messages.error(request, "Correo o contraseña inválidos.")
 
     return render(request, "accounts/login.html", {"form": form})
+
+
+# app/accounts/views.py (añade esto)
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import UpdateView
+from django.contrib import messages
+from django.urls import reverse_lazy
+from .models import Profile, OwnerProfile, GuestProfile
+from .forms import OwnerProfileUpdateForm, GuestProfileUpdateForm
+
+class ProfileEditView(LoginRequiredMixin, UpdateView):
+    template_name = "accounts/profile_edit.html"  # ver más abajo
+    success_url = reverse_lazy("profile_edit")    # vuelve a la misma página
+
+    def dispatch(self, request, *args, **kwargs):
+        # Asegura que el usuario tenga Profile y su subperfil
+        if not hasattr(request.user, "profile"):
+            messages.error(request, "Tu perfil aún no está creado.")
+            return redirect("home")
+        return super().dispatch(request, *args, **kwargs)
+
+    # Elegimos el objeto según rol
+    def get_object(self, queryset=None):
+        profile: Profile = self.request.user.profile
+        if profile.is_owner:
+            # si aún no existe (raro), lo creamos
+            obj, _ = OwnerProfile.objects.get_or_create(profile=profile)
+            return obj
+        # guest
+        obj, _ = GuestProfile.objects.get_or_create(
+            profile=profile,
+            defaults={"first_name": self.request.user.first_name or "",
+                      "last_name": self.request.user.last_name or "",
+                      "city": ""}
+        )
+        return obj
+
+    # Elegimos el form según rol
+    def get_form_class(self):
+        profile: Profile = self.request.user.profile
+        return OwnerProfileUpdateForm if profile.is_owner else GuestProfileUpdateForm
+
+    # Context extra para pintar UI distinta por rol y sugerencias de ciudades
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        prof: Profile = self.request.user.profile
+        ctx["is_owner"] = prof.is_owner
+        ctx["is_guest"] = prof.is_guest
+
+        # Sugerencias de ciudades en <datalist> (si tienes Commune)
+        try:
+            from app.places.models import Commune
+            ctx["cities"] = list(Commune.objects.order_by("name").values_list("name", flat=True)[:300])
+        except Exception:
+            ctx["cities"] = []
+        return ctx
+
+    def form_valid(self, form):
+        messages.success(self.request, "Perfil actualizado ✨")
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Revisa los campos en rojo.")
+        return super().form_invalid(form)
