@@ -515,58 +515,6 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-
-
-    <!-- RELACIONADOS -->
-    <section class="mt-5 py-4" aria-labelledby="relacionados-title">
-      <div class="d-flex align-items-end justify-content-between mb-4">
-        <div>
-          <h2 id="relacionados-title" class="h6 section-title mb-2">También podría gustarte</h2>
-          <p class="section-sub mb-0">
-            {% if venue.Commune %}{{ venue.Commune.name }}{% else %}Tu zona{% endif %} · locales con vibe similar
-          </p>
-        </div>
-        <div class="d-none d-md-flex gap-2">
-          <button class="btn btn-sm btn-ghost btn-pill" data-bs-target="#relacionadosCarousel" data-bs-slide="prev" aria-label="Anterior">‹</button>
-          <button class="btn btn-sm btn-ghost btn-pill" data-bs-target="#relacionadosCarousel" data-bs-slide="next" aria-label="Siguiente">›</button>
-        </div>
-      </div>
-
-      <div id="relacionadosCarousel" class="carousel slide" data-bs-ride="false" aria-label="Carrusel de lugares relacionados">
-        <div class="carousel-inner">
-          <div class="carousel-item active">
-            <div class="ml-grid">
-              {% for v in related_venues %}
-                <a class="ml-card" href="{{ v.get_absolute_url }}">
-                  <div class="ml-thumb">
-                    {% if v.cover_image %}
-                      <img src="{{ v.cover_image.url }}" alt="{{ v.name }}">
-                    {% else %}
-                      <img src="{% static 'img/placeholders/venue-card.jpg' %}" alt="{{ v.name }}">
-                    {% endif %}
-                  </div>
-                  <div class="ml-body">
-                    <div class="ml-title">{{ v.name }}</div>
-                    <div class="ml-meta">{{ v.get_category_display }}
-                      {% if v.Commune %} · {{ v.Commune.name }}{% endif %}
-                      {% if v.vibe_tags.all %} ·
-                        {% for t in v.vibe_tags.all|slice:":1" %}{{ t.name }}{% endfor %}
-                      {% endif %}
-                    </div>
-                  </div>
-                </a>
-              {% empty %}
-                <div class="text-soft small ps-2">Luego te mostraremos lugares similares.</div>
-              {% endfor %}
-            </div>
-          </div>
-        </div>
-
-        <div class="d-flex d-md-none justify-content-center mt-2 gap-1">
-          <button type="button" data-bs-target="#relacionadosCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="1"></button>
-        </div>
-      </div>
-    </section>
   </div>
 </main>
 

@@ -35,6 +35,42 @@
     linear-gradient(180deg, #0b0b12 0%, #0b0b12 100%);
 }
 
+/* === Logo texto con degradado === */
+:root{
+  --logo-grad: linear-gradient(180deg, #6C2BD9 0%, #8B5CF6 25%, #F59E0B 70%, #FDE047 100%);
+}
+
+.logo-text{
+  font-size: clamp(1.5rem, 2.2vw + 1rem, 2.25rem); /* responsivo */
+  line-height: 1;
+  letter-spacing: 0.5px;
+  background: var(--logo-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent; /* Safari/iOS */
+  color: transparent;                   /* fallback */
+  font-weight: 900;
+}
+
+.hero-text{
+  font-size: clamp(2.5rem, 6vw + 1rem, 6rem); /* ahora tamaño hero */
+  line-height: 1;
+  letter-spacing: 1px;
+  background: var(--logo-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+/* Opcional: versión “compacta” un poquito más grande en móvil */
+@media (max-width: 575.98px){
+  .navbar-brand .logo-text{ font-size: 1.9rem; }
+}
+
+
 /* ======== Base / Reset ======== */
 html,body{background:var(--surface-0); color:var(--text-1);}
 .text-soft{color:var(--text-2)!important;}
@@ -58,6 +94,25 @@ html,body{background:var(--surface-0); color:var(--text-1);}
   --bs-btn-bg:transparent;
   --bs-btn-border-color:transparent;
   --bs-btn-hover-bg:rgba(255,255,255,.06);
+}
+
+.logo-img {
+  height: 45px;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,.3));
+  transition: transform .2s ease;
+}
+
+.navbar-brand:hover .logo-img {
+  transform: scale(1.05);
+}
+
+.fuente-primaria {
+  background: linear-gradient(90deg, #8B2FFF, #A855F7, #7B2FF7, #C084FC);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 800;
+  letter-spacing: 0.5px;
 }
 
 
@@ -715,6 +770,9 @@ option:focus {
 }
 #trendIndicators .active{ background: var(--brand-500); }
 
+.active{
+  color: var(--brand-50);
+}
 
 /* La card completa es “lienzo” con proporción agradable de flyer */
 .event-card__wrap{

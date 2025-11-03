@@ -1,47 +1,39 @@
+from datetime import datetime, timedelta, time
+import json
+import re
+from functools import reduce
+from operator import and_
+
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.db import transaction
-from django.db.models import Case, When, Value, IntegerField
+from django.db.models import (
+    Q, Count, Case, When, Value, IntegerField
+)
+from django.http import JsonResponse, QueryDict
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
+from django.utils.text import slugify
 from django.views import View
-from django.views.generic import TemplateView, DetailView, UpdateView, ListView, DeleteView, CreateView
+from django.views.generic import (
+    TemplateView, DetailView, UpdateView, ListView,
+    DeleteView, CreateView
+)
 from django.views.generic.edit import FormMixin
+
 from .forms import VenueForm, VenueUpdateForm, EventForm, VenueGalleryUploadForm
-from .models import Venue, Event, Photo, Tag
-from datetime import datetime, timedelta, time
-import json
-from django.utils.text import slugify
-from django.http import QueryDict
-from django.db.models import Q
+from .models import Commune, Venue, Event, Photo, Tag
+from django.views.decorators.http import require_POST
+from django.http import JsonResponse, Http404
+from django.db.models import F
 from django.utils import timezone
-from django.utils.text import slugify
-from django.views.generic import ListView
-from .models import Venue, Event, Commune
-# views.py
-from django.views.generic import TemplateView
-from django.db.models import Q
-from django.utils import timezone
-from datetime import datetime, timedelta, time
-from django.views.generic import ListView
-from django.db.models import Q
-from functools import reduce
-from operator import and_
-import re
-from .models import Venue
+from django.core.cache import cache
+from django.shortcuts import get_object_or_404
+from .models import Venue, Event
 
-from .models import Commune, Venue, Event
-from django.utils import timezone
-from django.views.generic import TemplateView
-from django.db.models import Q
-from django.urls import reverse
-from urllib.parse import urlparse
-from datetime import timedelta
-import json
-
-from .models import Commune, Venue, Event
 
 class HomeView(TemplateView):
     template_name = "index.html"
@@ -336,9 +328,6 @@ class VenueSearchView(ListView):
         ctx["total"] = self.get_queryset().count()
         return ctx
 
- 
-
-
 class MyVenuesListView(ListView, LoginRequiredMixin):
     template_name = "owner_venues.html"
     context_object_name = "venues"
@@ -357,7 +346,7 @@ class VenueDetailView(FormMixin, DetailView):
     model = Venue
     slug_field = "slug"
     slug_url_kwarg = "slug"
-    template_name = "detail.html"
+    template_name = "venue_detail.html"
     context_object_name = "venue"
     form_class = VenueUpdateForm                      # 👈 este es el form que editas en el modal
 
@@ -600,11 +589,8 @@ class VenueGalleryUploadView(LoginRequiredMixin, UserPassesTestMixin, View):
         messages.success(request, f"Se subieron {created} foto(s) a la galería.")
         return redirect(reverse("venue-detail", kwargs={"slug": venue.slug}))
 
-
-
-
 class CityVenueListView(ListView):
-    template_name = "city_index.html"
+    template_name = "venue_index.html"
     context_object_name = "venues"
     paginate_by = 24
     model = Venue
@@ -795,13 +781,77 @@ class CityVenueListView(ListView):
 
         return ctx
 
+class CityListView(ListView):
+    template_name = "city_index.html"
+    context_object_name = "featured_cities"
+    paginate_by = 24
+    model = Commune
+
+    def get_queryset(self):
+        """
+        Devuelve las comunas que tienen al menos un venue publicado,
+        junto con el conteo de lugares.
+        """
+        return (
+            Commune.objects
+            .annotate(
+                venues_count=Count(
+                    "venues",
+                    filter=Q(venues__is_published=True),
+                    distinct=True,
+                )
+            )
+            .filter(venues_count__gt=0)
+            .order_by("name")
+        )
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+
+        # ===============================
+        # 🔍 Autocomplete (lista de nombres)
+        # ===============================
+        all_cities = Commune.objects.order_by("name").values_list("name", flat=True)
+        ctx["city_names_json"] = json.dumps(list(all_cities), ensure_ascii=False)
+
+        # ===============================
+        # 🌆 Adaptar datos al template
+        # ===============================
+        # El template espera c.url, c.hero_url, c.name, c.venues_count
+        try:
+            venues_index_url = reverse("venue_index")  # vista que muestra los venues
+        except Exception:
+            venues_index_url = "/"  # fallback temporal si no existe
+
+        featured = []
+        for c in ctx["featured_cities"]:
+            featured.append({
+                "name": c.name,
+                "slug": c.slug,
+                "venues_count": getattr(c, "venues_count", 0),
+                "hero_url": c.image.url if c.image else "",
+                # 👉 Link directo al listado de venues filtrado por ciudad
+                "url": f"{venues_index_url}?city={c.slug}",
+            })
+        ctx["featured_cities"] = featured
+
+        # ===============================
+        # 🎯 Variables para el buscador
+        # ===============================
+        ctx["active_city_label"] = ""  # no hay ciudad activa aún
+        ctx["active_when"] = (self.request.GET.get("when") or "cualquier_dia").strip()
+        ctx["active_cat"] = (self.request.GET.get("cat") or "").strip()
+        ctx["q"] = (self.request.GET.get("q") or "").strip()
+
+        # ===============================
+        # 📊 Control de interfaz
+        # ===============================
+        ctx["venues_count"] = 0     # aquí mostramos ciudades, no venues
+        ctx["needs_city"] = True    # evita cargar secciones dependientes de city
+
+        return ctx
     
         
-# views.py
-from django.http import JsonResponse
-from django.template.loader import render_to_string
-import re
-
 class CityVenueListJsonView(CityVenueListView):
     """Devuelve sólo fragmentos renderizados del mismo city_index.html."""
 
@@ -826,13 +876,6 @@ class CityVenueListJsonView(CityVenueListView):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
-
-
-# views.py
-from django.views.generic import View
-from django.http import JsonResponse
-from django.db.models import Count, Q
-from django.urls import reverse
 
 class FeaturedCitiesView(View):
     """Devuelve HTML del bloque 'Ciudades destacadas' (4 con más venues publicados)."""
@@ -875,14 +918,20 @@ class FeaturedCitiesView(View):
 
 
 class EventListView(ListView):
-    template_name = "events_index.html"     # crea este template
+    template_name = "events_index.html"       # tu template
     model = Event
     context_object_name = "events"
-    paginate_by = 24
+    paginate_by = 64  # para poder llenar 4 secciones de 16 c/u (ajústalo si quieres)
+
+    # --- Inicializa siempre atributos usados en el contexto ---
+    def setup(self, request, *args, **kwargs):
+        super().setup(request, *args, **kwargs)
+        self._filters = {"q": "", "cat": "", "when": "proximos"}
+        self._city = None
 
     # -------- helpers --------
     def _resolve_city(self, raw: str | None):
-        """Busca comuna por nombre o slug; si no viene, fallback Santiago."""
+        """Acepta nombre o slug; si no viene, fallback a Santiago."""
         raw = (raw or "").strip()
         if raw:
             c = Commune.objects.filter(
@@ -890,13 +939,12 @@ class EventListView(ListView):
             ).first()
             if c:
                 return c
-        # fallback
         return Commune.objects.filter(
             Q(slug__iexact="santiago") | Q(name__iexact="Santiago")
         ).first()
 
     def _when_bounds(self, when: str):
-        """Devuelve (start, end) aware para distintos filtros de fecha."""
+        """Devuelve (start, end) aware para los filtros temporales."""
         tz = timezone.get_current_timezone()
         now = timezone.now().astimezone(tz)
 
@@ -910,16 +958,14 @@ class EventListView(ListView):
         if when == "manana":
             return day_bounds(now.date() + timedelta(days=1))
         if when == "esta_semana":
-            # lunes a domingo de ESTA semana del calendario local
-            monday = now - timedelta(days=now.weekday())
+            monday = now - timedelta(days=now.weekday())  # lunes de esta semana
             start = timezone.make_aware(datetime.combine(monday.date(), time.min), tz)
             end   = start + timedelta(days=7)
             return start, end
         if when == "finde":
-            # viernes 00:00 a lunes 00:00 de la semana actual
             friday = (now - timedelta(days=now.weekday())) + timedelta(days=4)  # viernes
             start = timezone.make_aware(datetime.combine(friday.date(), time.min), tz)
-            end   = start + timedelta(days=3)
+            end   = start + timedelta(days=3)  # hasta lunes 00:00
             return start, end
 
         # por defecto: próximos 60 días
@@ -929,11 +975,11 @@ class EventListView(ListView):
 
     # -------- queryset --------
     def get_queryset(self):
-        req = self.request.GET
-        q      = (req.get("q") or "").strip()
-        cat    = (req.get("cat") or "").strip()
-        when   = (req.get("when") or "proximos").strip()
-        city   = self._resolve_city(req.get("city"))
+        req   = self.request.GET
+        q     = (req.get("q") or "").strip()
+        cat   = (req.get("cat") or "").strip()
+        when  = (req.get("when") or "proximos").strip()
+        city  = self._resolve_city(req.get("city"))
 
         qs = (
             Event.objects.select_related("venue", "Commune")
@@ -945,7 +991,7 @@ class EventListView(ListView):
         if city:
             qs = qs.filter(Commune=city)
 
-        # rango temporal (por defecto: solo futuros)
+        # rango temporal
         start, end = self._when_bounds(when)
         qs = qs.filter(start_at__gte=start, start_at__lt=end)
 
@@ -961,7 +1007,7 @@ class EventListView(ListView):
                 Q(Commune__name__icontains=q)
             )
 
-        # guarda para el contexto
+        # Guarda para el contexto
         self._city = city
         self._filters = {"q": q, "cat": cat, "when": when}
         return qs
@@ -970,45 +1016,58 @@ class EventListView(ListView):
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
 
+        # Respaldos seguros
+        filters = getattr(self, "_filters", {"q": "", "cat": "", "when": "proximos"})
         city = getattr(self, "_city", None)
-        q    = self._filters.get("q", "")
-        cat  = self._filters.get("cat", "")
-        when = self._filters.get("when", "")
 
-        # CTA por evento (sin romper la paginación)
-        # Añadimos atributos efímeros a los objetos de la página actual
+        q    = filters.get("q", "")
+        cat  = filters.get("cat", "")
+        when = filters.get("when", "proximos")
+
+        # CTA + flag promoted (efímeros) para los objetos de la página actual
         for e in ctx["page_obj"].object_list:
-            ext = (e.external_ticket_url or "").strip()
+            # CTA
+            ext = (getattr(e, "external_ticket_url", "") or "").strip()
             if ext:
                 e.cta_url = ext
                 e.cta_is_external = True
                 e.cta_label = "Comprar entradas"
             else:
-                # fallback: detalle del venue si existe
                 if e.venue:
                     e.cta_url = reverse("venue-detail", kwargs={"slug": e.venue.slug})
                     e.cta_is_external = False
                     e.cta_label = "Ver venue"
                 else:
-                    # último recurso: podrías tener 'event-detail'
-                    e.cta_url = reverse("home")  # cambia si tienes event-detail
+                    e.cta_url = reverse("home")
                     e.cta_is_external = False
                     e.cta_label = "Ver más"
 
-        # filtros activos
+            # Flag usado por tu JS para “Publicitados”
+            # (tu modelo tiene is_featured; lo exponemos como is_promoted temporalmente)
+            e.is_promoted = bool(getattr(e, "is_featured", False))
+
+        # Filtros activos
         ctx["q"] = q
         ctx["active_cat"] = cat
         ctx["active_when"] = when
 
-        # ciudad activa
+        # Ciudad activa
         ctx["city"] = city
         ctx["active_city_label"] = city.name if city else ""
         ctx["active_city"] = city.slug if city else ""
 
-        # conteo total (de la consulta, no solo de la página)
-        ctx["total"] = self.get_queryset().count()
+        # Conteo total (de la consulta, no solo de la página)
+        ctx["total"] = ctx.get("paginator").count if ctx.get("paginator") else 0
 
-        # urls de categorías manteniendo los filtros
+        # JSON de comunas para autocompletar (name + slug)
+        # Usa un subconjunto si tienes muchas comunas para no inflar el HTML.
+        communes_qs = Commune.objects.only("name", "slug").order_by("name")
+        ctx["communes_json"] = json.dumps(
+            [{"name": c.name, "slug": c.slug} for c in communes_qs],
+            ensure_ascii=False
+        )
+
+        # URLs de categorías (por si las mantienes)
         def build_url_for_cat(val: str | None):
             params = self.request.GET.copy()
             if city:
@@ -1030,3 +1089,36 @@ class EventListView(ListView):
         }
 
         return ctx
+    
+    
+
+def track_click(request):
+    model = request.POST.get("model")   # "venue" | "event"
+    pk    = request.POST.get("id")      # id numérico
+    if model not in {"venue", "event"} or not pk:
+        raise Http404("Parámetros inválidos")
+
+    # Asegura session_key para anónimos
+    if not request.session.session_key:
+        request.session.save()
+
+    # Dedupe por usuario/sesión + IP
+    user_scope = (
+        f"user:{request.user.pk}" if request.user.is_authenticated
+        else f"session:{request.session.session_key}"
+    )
+    ip = request.META.get("REMOTE_ADDR", "ip:unknown")
+    dedupe_id = f"{user_scope}:{ip}"
+
+    key = f"clickdedupe:{model}:{pk}:{dedupe_id}"
+    if cache.get(key):
+        return JsonResponse({"ok": True, "deduped": True})
+
+    obj = get_object_or_404(Venue if model == "venue" else Event, pk=pk)
+    type(obj).objects.filter(pk=obj.pk).update(
+        clicks_count=F("clicks_count") + 1,
+        last_clicked_at=timezone.now()
+    )
+
+    cache.set(key, 1, timeout=30*60)
+    return JsonResponse({"ok": True})

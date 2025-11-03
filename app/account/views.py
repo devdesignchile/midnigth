@@ -1,15 +1,22 @@
-# app/accounts/views.py
-from django.urls import reverse_lazy
-from django.views.generic import FormView
-from .forms import OwnerSignupForm, GuestSignupForm
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.models import User
-from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.db.models import Q
-from .forms import LoginForm
-from app.places.models import Commune
+from django.contrib.auth import authenticate, login
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import User
 from django.db import transaction, IntegrityError
+from django.db.models import Q
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
+from django.views.generic import FormView, UpdateView
+from app.places.models import Commune
+from .forms import (
+    OwnerSignupForm,
+    GuestSignupForm,
+    LoginForm,
+    OwnerProfileUpdateForm,
+    GuestProfileUpdateForm,
+)
+from .models import Profile, OwnerProfile, GuestProfile
+
 
 class OwnerSignupView(FormView):
     template_name = "accounts/signup_owner.html"
@@ -77,15 +84,6 @@ def login_view(request):
             messages.error(request, "Correo o contraseña inválidos.")
 
     return render(request, "accounts/login.html", {"form": form})
-
-
-# app/accounts/views.py (añade esto)
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import UpdateView
-from django.contrib import messages
-from django.urls import reverse_lazy
-from .models import Profile, OwnerProfile, GuestProfile
-from .forms import OwnerProfileUpdateForm, GuestProfileUpdateForm
 
 class ProfileEditView(LoginRequiredMixin, UpdateView):
     template_name = "accounts/profile_edit.html"  # ver más abajo

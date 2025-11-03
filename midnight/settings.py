@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "jazzmin",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'app.places',
-    'app.account'
+    'app.account',
+    
 ]
 
 MIDDLEWARE = [
@@ -106,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
 TIME_ZONE = 'UTC'
 
@@ -134,3 +136,12 @@ LOGOUT_REDIRECT_URL = "home"
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"  # para reset en consola
 
 
+JAZZMIN_SETTINGS = {
+    "site_title": "MidNight Admin",
+    "site_header": "MidNight",
+    "site_brand": "MidNight",
+    "welcome_sign": "Bienvenido a MidNight",
+    "show_ui_builder": True,
+    "theme": "darkly",
+    "custom_css": None,  # o ruta a tu CSS si quieres colores propios
+}

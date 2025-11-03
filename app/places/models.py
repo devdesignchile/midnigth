@@ -36,16 +36,17 @@ class Venue(models.Model):
         ("pub", "Pub"),
         ("restaurant", "Restaurante"),
         ("rooftop", "Rooftop"),
-        ("other", "Otro"),
+        ("other", "Otro"),                                                                                                                                                                                                                                                                                                                          
     ]
 
     PAYMENT_CHOICES = [
         ("Tarjeta", "Tarjeta"),
-        ("Efectivo", "Efectivo"),
+        ("Efectivo", "Efectivo"),   
         ("Transferencia", "Transferencia"),
         ("Tarjeta y Efectivo", "Tarjeta y Efectivo"),
         ("Tarjeta y Transferencia", "Tarjeta y Transferencia"),
         ("Efectivo y Transferencia", "Efectivo y Transferencia"),
+        ("Todo medio de pago", "Todo medio de pago"),
     ]
 
     Commune = models.ForeignKey(Commune, on_delete=models.PROTECT, related_name="venues")
@@ -98,6 +99,8 @@ class Venue(models.Model):
     gallery_venue = models.ImageField(upload_to="gallery/%Y/%m/", blank=True, null=True)
     # Publicación mínima (para ocultar si no está lista)
     is_published = models.BooleanField(default=True)
+    clicks_count = models.PositiveIntegerField(default=0)
+    last_clicked_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
@@ -139,6 +142,8 @@ class Event(models.Model):
     feature_order = models.PositiveSmallIntegerField(default=0)
 
     is_published = models.BooleanField(default=True)
+    clicks_count = models.PositiveIntegerField(default=0)
+    last_clicked_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.title

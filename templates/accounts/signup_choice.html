@@ -12,14 +12,14 @@
     <div class="choice-grid mx-auto" style="max-width:960px;">
       <!-- NEGOCIO (Dueño de local) -->
       <div class="choice-card">
-        <img src="https://images.unsplash.com/photo-1521017432531-fbd92d1cf31a?q=80&w=1600&auto=format&fit=crop" alt="Negocio">
+        <img src="{% static 'img/empresa.jpg' %}" alt="Negocio">
         <div class="choice-label">NEGOCIO</div>
         <a class="choice-link" href="{% url 'signup-company' %}" aria-label="Crear cuenta de negocio"></a>
       </div>
 
       <!-- PERSONA (Asistente) -->
       <div class="choice-card">
-        <img src="https://images.unsplash.com/photo-1483412033650-1015ddeb83d1?q=80&w=1600&auto=format&fit=crop" alt="Persona">
+        <img src="{% static 'img/personas.jpg' %}" alt="Persona">
         <div class="choice-label">PERSONA</div>
         {% if signup_guest_url %}
           <a class="choice-link" href="{{ signup_guest_url }}" aria-label="Crear cuenta de persona"></a>

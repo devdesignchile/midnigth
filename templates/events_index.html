@@ -2,178 +2,266 @@
 {% load static %}
 
 {% block content %}
-
-
-<header class="hero py-5 vh-50 py-lg-6 section-with-bg"
+<!-- =========================
+     HERO con búsqueda + autocompletado comunas
+     ========================= --><header class="hero py-5 py-lg-6 section-with-bg"
         style="--section-bg: url('{% static 'img/header-events.jpg' %}');">
   <div class="container py-4">
     <div class="row justify-content-center text-center g-4">
-      <div class="col-12 col-lg-8 mx-auto">
-        <h1 class="display-1 text-white mb-4"><strong>¿Que hay hoy?</strong></h1>
+      <div class="col-12 col-lg-9 mx-auto">
+        <p class="tagline mb-1 text-uppercase small opacity-75">Explora tu ciudad</p>
+        <h1 class="display-5 text-white mb-4 hero-title"><strong>¿Qué hay hoy?</strong></h1>
 
-        <!-- Panel de filtros centrado -->
-        <div class="p-3 p-md-4 rounded-lg shadow-1  mx-auto" style="max-width: 900px;">
-          <form action="{% url 'venue_search' %}" method="get" class="row g-2 justify-content-center">
-            <div class="col-12 col-md-6">
-              <div class="input-group">
+        <!-- Panel de búsqueda minimal -->
+        <div class="search-shell mx-auto">
+          <form action="." method="get" class="row g-2 align-items-stretch">
+            <!-- Texto libre -->
+            <div class="col-12 col-lg-7">
+              <label for="q" class="visually-hidden">Buscar</label>
+              <div class="input-group h-100">
                 <span class="input-group-text"><i class="bi bi-search"></i></span>
                 <input id="q" name="q" type="search" class="form-control ring-focus"
-                       placeholder="Buscar bar, club, evento…">
+                       placeholder="Busca un evento o venue…" value="{{ q }}" autocomplete="off">
               </div>
             </div>
-            <div class="col-12 col-md-2 d-grid">
-              <button type="submit" class="btn btn-brand">
-                <i class="bi bi-search"></i> Buscar
+
+            <!-- Comuna con datalist -->
+            <div class="col-12 col-lg-3">
+              <label for="cityInput" class="visually-hidden">Comuna</label>
+              <input id="cityInput" name="city" list="communesList"
+                     class="form-control h-100 ring-focus"
+                     placeholder="Comuna"
+                     value="{{ active_city_label }}" autocomplete="off">
+              <datalist id="communesList"><!-- se llena por JS si hay communes_json --></datalist>
+            </div>
+
+            <!-- Botón -->
+            <div class="col-12 col-lg-2 d-grid">
+              <button type="submit" class="btn btn-brand h-100">
+                Buscar
               </button>
             </div>
           </form>
+
+          <!-- Tips mini (opcionales) -->
+          <div class="mini-hints">
+            <span><i class="bi bi-magic"></i> Ej: “reggaetón”, “jazz”, “stand up”</span>
+            <span>•</span>
+            <span><i class="bi bi-geo-alt"></i> Filtra por comuna desde el campo “Comuna”</span>
+          </div>
         </div>
 
-        {# opcional: ciudad actual para otros scripts #}
         <span id="city-current" class="visually-hidden">{{ active_city_label }}</span>
       </div>
     </div>
   </div>
 </header>
 
-{# Exporta trending_items UNA sola vez, fuera del header #}
-{{ trending_items|json_script:"trending-data" }}
+{% if communes_json %}
+<script id="communes-data" type="application/json">{{ communes_json|safe }}</script>
+{% endif %}
 
+<style>
+/* ====== Minimal / Glass look del buscador ====== */
+.search-shell{
+  max-width: 960px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background: rgba(15, 16, 28, 0.35);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  border-radius: 20px;
+  padding: 16px;
+}
+.search-shell .input-group-text{
+  background: transparent;
+  border-right: 0;
+}
+.search-shell .form-control{
+  border-left: 0;
+}
+.search-shell .form-control,
+.search-shell .input-group-text{
+  border-color: rgba(255,255,255,0.12);
+  color: #fff;
+  background: rgba(255,255,255,0.04);
+}
+.search-shell .form-control::placeholder{ color: rgba(255,255,255,0.6); }
+.search-shell .btn-brand{
+  border-radius: 14px;
+}
+.ring-focus:focus{
+  outline: none;
+  box-shadow: 0 0 0 0.2rem rgba(99,102,241,.35); /* acorde a --brand-500 */
+  border-color: transparent;
+}
+.mini-hints{
+  display:flex; gap:.5rem; justify-content:center; align-items:center;
+  color: rgba(255,255,255,.75); font-size:.875rem; margin-top:.75rem;
+}
+.hero .tagline{ letter-spacing:.08em; }
+</style>
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const dataNode = document.getElementById("trending-data");
-  if (!dataNode) return;
-
-  // Máximo 4 (por si acaso)
-  const allItems = (JSON.parse(dataNode.textContent || "[]") || []).slice(0, 4);
-
-  const cityEl = document.getElementById("trend-city");
-  if (cityEl) cityEl.textContent = "{{ active_city_label }}";
-
-  let activeTag = "all";
-  const chips = document.querySelectorAll("#trendChips [data-tag]");
-  chips.forEach(btn => {
-    btn.addEventListener("click", () => {
-      chips.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      activeTag = btn.dataset.tag;
-      render();
-    });
-  });
-
-  const inner = document.getElementById("trendCarouselInner");
-  const indicators = document.getElementById("trendIndicators");
-
-  function render(){
-    const items = activeTag === "all"
-      ? allItems
-      : allItems.filter(x => (x.tags || []).includes(activeTag));
-
-    inner.innerHTML = "";
-    indicators.innerHTML = "";
-
-    // Una sola slide con hasta 4 cards
-    const slides = [items];
-
-    slides.forEach((chunk, idx) => {
-      const slide = document.createElement("div");
-      slide.className = `carousel-item${idx === 0 ? " active" : ""}`;
-
-      const grid = document.createElement("div");
-      grid.className = "grid p-1";
-      slide.appendChild(grid);
-
-      chunk.forEach(card => {
-        const el = document.createElement("div");
-        el.className = "card-trend";
-
-        const externalAttrs = card.external ? ' target="_blank" rel="noopener"' : '';
-
-        el.innerHTML = `
-          <a class="text-decoration-none" href="${card.href}"${externalAttrs}>
-            <div class="cover position-relative">
-              ${card.img ? `<img src="${card.img}" alt="${card.title}">` : ""}
-              <span class="badge badge-soft position-absolute m-2">${card.badge ?? ""}</span>
-            </div>
-            <div class="body">
-              <div class="title">${card.title}</div>
-              <div class="meta">${card.venue}${card.time ? " · " + card.time : ""}</div>
-            </div>
-          </a>`;
-        grid.appendChild(el);
+  // Autocompletado comunas desde communes_json (opcional)
+  try {
+    const raw = document.getElementById("communes-data")?.textContent || "[]";
+    const communes = JSON.parse(raw);
+    const dl = document.getElementById("communesList");
+    if (Array.isArray(communes) && dl) {
+      communes.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.name || c.slug || "";
+        if (c.slug) opt.label = c.slug;  // guardamos slug en label
+        dl.appendChild(opt);
       });
+    }
+  } catch(e){/* no-op */}
 
-      inner.appendChild(slide);
-
-      const dot = document.createElement("button");
-      dot.type = "button";
-      dot.setAttribute("data-bs-target", "#trendCarousel4");
-      dot.setAttribute("data-bs-slide-to", String(idx));
-      if (idx === 0) dot.classList.add("active");
-      indicators.appendChild(dot);
-    });
-  }
-
-  render();
+  // Si el usuario elige una comuna del datalist, mandar el slug si existe
+  const cityInput = document.getElementById("cityInput");
+  cityInput?.addEventListener("change", () => {
+    const dl = document.getElementById("communesList");
+    if (!dl) return;
+    const match = [...dl.options].find(o => o.value.toLowerCase() === cityInput.value.toLowerCase());
+    if (match?.label) {
+      let hidden = document.getElementById("citySlugHidden");
+      if (!hidden) {
+        hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "city";
+        hidden.id = "citySlugHidden";
+        cityInput.form.appendChild(hidden);
+      }
+      hidden.value = match.label; // envía el slug
+    }
+  });
 });
 </script>
 
 
+<!-- Inyecta comunas en JSON si viene desde la vista (opcional) -->
+{% if communes_json %}
+<script id="communes-data" type="application/json">{{ communes_json|safe }}</script>
+{% endif %}
 
+<!-- =========================
+     RESUMEN
+     ========================= -->
 <section class="container py-4">
   <header class="d-flex justify-content-between align-items-end mb-3">
     <div>
-      <h1 class="h3 mb-1">Eventos en {{ active_city_label|default:"Chile" }}</h1>
-      <small class="text-soft">{{ total }} resultados</small>
+      <h2 class="h4 mb-1">Eventos en {{ active_city_label|default:"Chile" }}</h2>
+      <small class="text-soft">{{ total }} resultados (filtrados por {% if active_cat %}categoría{% else %}búsqueda{% endif %})</small>
     </div>
+    <!-- botón filtros móvil opcional -->
+    <button class="btn btn-ghost d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#filtersCanvas">
+      <i class="bi bi-sliders"></i> Filtros
+    </button>
   </header>
+</section>
 
-  <div class="row g-3">
-    {% for e in events %}
-<div class="col-12 col-sm-6 col-lg-4">
-  <a href="{{ e.cta_url }}"
-     class="event-card text-decoration-none d-block h-100"
-     {% if e.cta_is_external %}target="_blank" rel="noopener"{% endif %}>
-    <div class="card event-card__wrap bg-surface-1 border-0 overflow-hidden position-relative">
-      
-      {# Imagen ocupa TODA la card #}
-      <div class="event-card__media">
-        {% if e.flyer_image %}
-          <img src="{{ e.flyer_image.url }}" alt="{{ e.title }}">
-        {% else %}
-          <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ e.title }}">
-        {% endif %}
-      </div>
+<!-- =========================
+     SECCIONES (máx. 16 c/u) pobladas por JS
+     ========================= -->
+<section class="container pb-2">
+  <!-- Publicitados -->
+  <div class="mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <h3 class="h5 mb-0">Eventos Destacados</h3>
 
-      {# Degradado para lectura del texto #}
-      <div class="event-card__gradient"></div>
-
-      <div class="card-body position-absolute bottom-0 start-0 end-0">
-        {% if e.badge_text %}
-          <span class="badge text-bg-primary mb-2">{{ e.badge_text }}</span>
-        {% endif %}
-        <h3 class="h6 mb-1 text-white">{{ e.title }}</h3>
-        <div class="small text-soft mb-0">
-          {{ e.start_at|date:"D d M · H:i" }}{% if e.venue %} · {{ e.venue.name }}{% endif %}
-        </div>
-      </div>
-
-      {# Overlay naranja con transición (slide-up) #}
-      <div class="event-overlay">
-        <div class="overlay-content text-center">
-          <h4 class="h6 fw-semibold mb-1 text-white">{{ e.title }}</h4>
-          <p class="small mb-2">
-            {{ e.start_at|date:"D d M · H:i" }}
-            {% if e.Commune %} · {{ e.Commune.name }}{% endif %}
-          </p>
-          <span class="badge text-bg-dark">{{ e.get_category_display }}</span>
-        </div>
-      </div>
     </div>
-  </a>
-</div>
+    <div class="row g-3" id="sec-promoted"></div>
+  </div>
 
+  <!-- Hoy -->
+  <div class="mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <h3 class="h5 mb-0">Eventos de Hoy</h3>
+
+    </div>
+    <div class="row g-3" id="sec-today"></div>
+  </div>
+
+  <!-- Próximos 7 días -->
+  <div class="mb-4">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <h3 class="h5 mb-0">Eventos Próximos 7 días</h3>
+
+    </div>
+    <div class="row g-3" id="sec-next7"></div>
+  </div>
+
+  <!-- Este mes -->
+  <div class="mb-1">
+    <div class="d-flex align-items-center justify-content-between mb-2">
+      <h3 class="h5 mb-0">Eventos de este mes</h3>
+
+    </div>
+    <div class="row g-3" id="sec-month"></div>
+  </div>
+</section>
+
+<!-- =========================
+     FUENTE ÚNICA DE CARDS (servidor) -> JS las reparte
+     ========================= -->
+<section class="container pb-4">
+  <div class="alert alert-secondary small">
+    <i class="bi bi-info-circle"></i> Mostrando la página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} (la distribución en secciones usa solo los eventos de esta página).
+  </div>
+
+  <!-- Contenedor "fuente" (oculto) -->
+  <div class="row g-3 d-none" id="source-cards">
+    {% for e in events %}
+      <div class="col-12 col-sm-6 col-lg-3">
+        <a href="{{ e.cta_url }}"
+           class="event-card text-decoration-none d-block h-100"
+           {% if e.cta_is_external %}target="_blank" rel="noopener"{% endif %}
+           data-bs-toggle="tooltip" data-bs-title="Ver detalle"
+           data-start="{{ e.start_at|date:'c' }}"
+           data-month="{{ e.start_at|date:'Y-m' }}"
+           data-promoted="{{ e.is_promoted|yesno:'1,0' }}"
+           >
+          <div class="card event-card__wrap bg-surface-1 border-0 overflow-hidden position-relative shadow-1 rounded-3 h-100">
+            <!-- Imagen -->
+            <div class="event-card__media ratio ratio-16x9">
+              {% if e.flyer_image %}
+                <img src="{{ e.flyer_image.url }}" alt="{{ e.title }}" class="w-100 h-100 object-fit-cover">
+              {% else %}
+                <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ e.title }}" class="w-100 h-100 object-fit-cover">
+              {% endif %}
+            </div>
+
+            <!-- Degradado -->
+            <div class="event-card__gradient"></div>
+
+            <div class="card-body position-absolute bottom-0 start-0 end-0">
+              {% if e.badge_text %}
+                <span class="badge text-bg-primary mb-2">{{ e.badge_text }}</span>
+              {% endif %}
+              <h3 class="h6 mb-1 text-white">{{ e.title }}</h3>
+              <div class="small text-soft mb-0">
+                {{ e.start_at|date:"D d M · H:i" }}{% if e.venue %} · {{ e.venue.name }}{% endif %}
+              </div>
+            </div>
+
+            <!-- Overlay -->
+            <div class="event-overlay">
+              <div class="overlay-content text-center">
+                <h4 class="h6 fw-semibold mb-1 text-white">{{ e.title }}</h4>
+                <p class="small mb-2">
+                  {{ e.start_at|date:"D d M · H:i" }}
+                  {% if e.Commune %} · {{ e.Commune.name }}{% endif %}
+                </p>
+                {% if e.get_category_display %}
+                  <span class="badge text-bg-dark">{{ e.get_category_display }}</span>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </a>
+      </div>
     {% empty %}
       <div class="col-12">
         <div class="alert alert-secondary">No hay eventos próximos.</div>
@@ -181,25 +269,185 @@ document.addEventListener("DOMContentLoaded", () => {
     {% endfor %}
   </div>
 
-  {# paginación #}
+  <!-- paginación -->
   {% if is_paginated %}
-    <nav class="mt-4">
-      <ul class="pagination justify-content-center">
-        {% if page_obj.has_previous %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode|cut:'page='|cut:'&page=' }}">Anterior</a>
-          </li>
-        {% endif %}
-        <li class="page-item disabled">
-          <span class="page-link">Página {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.previous_page_number }}&{{ request.GET.urlencode|cut:'page='|cut:'&page=' }}">Anterior</a>
         </li>
-        {% if page_obj.has_next %}
-          <li class="page-item">
-            <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode|cut:'page='|cut:'&page=' }}">Siguiente</a>
-          </li>
-        {% endif %}
-      </ul>
-    </nav>
+      {% endif %}
+      <li class="page-item disabled">
+        <span class="page-link">Página {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}</span>
+      </li>
+      {% if page_obj.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ page_obj.next_page_number }}&{{ request.GET.urlencode|cut:'page='|cut:'&page=' }}">Siguiente</a>
+        </li>
+      {% endif %}
+    </ul>
+  </nav>
   {% endif %}
 </section>
+
+<!-- =========================
+     MODAL Quick View (opcional)
+     ========================= -->
+<div class="modal fade" id="quickView" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content bg-surface-1">
+      <div class="modal-header">
+        <h5 class="modal-title">Vista rápida del evento</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-3">
+          <div class="col-12 col-md-6">
+            <img class="w-100 rounded-md" src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="">
+          </div>
+          <div class="col-12 col-md-6">
+            <h6 class="mb-1">Nombre del evento</h6>
+            <p class="text-soft small mb-2">Vie 08 Nov · 23:00 · Club X</p>
+            <p class="mb-3">Descripción corta del evento para enriquecer la decisión del usuario.</p>
+            <div class="d-flex gap-2">
+              <a href="#" class="btn btn-brand"><i class="bi bi-ticket-perforated"></i> Comprar</a>
+              <button class="btn btn-ghost" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer small text-soft">
+        * La información puede cambiar sin previo aviso.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  // --- Autocompletado comunas ---
+  try {
+    const raw = document.getElementById("communes-data")?.textContent || "[]";
+    const communes = JSON.parse(raw);
+    const dl = document.getElementById("communesList");
+    if (Array.isArray(communes) && dl) {
+      communes.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c.name || c.slug || "";
+        if (c.slug) opt.label = c.slug;
+        dl.appendChild(opt);
+      });
+    }
+  } catch (e) { /* no-op */ }
+
+  // Si el usuario elige una comuna del datalist, enviamos slug si está disponible
+  const cityInput = document.getElementById("cityInput");
+  cityInput?.addEventListener("change", () => {
+    const dl = document.getElementById("communesList");
+    if (!dl) return;
+    const match = [...dl.options].find(o => o.value.toLowerCase() === cityInput.value.toLowerCase());
+    // Si el label guarda el slug, lo reemplazamos en el value para que la vista lo reciba como slug o nombre
+    if (match?.label) {
+      // Insertamos un input oculto "city" con el slug (y dejamos visible el value para UX)
+      let hidden = document.getElementById("citySlugHidden");
+      if (!hidden) {
+        hidden = document.createElement("input");
+        hidden.type = "hidden";
+        hidden.name = "city";
+        hidden.id = "citySlugHidden";
+        cityInput.form.appendChild(hidden);
+      }
+      hidden.value = match.label;
+    }
+  });
+
+  // --- Tooltips Bootstrap ---
+  [...document.querySelectorAll('[data-bs-toggle="tooltip"]')]
+    .forEach(el => new bootstrap.Tooltip(el));
+
+  // --- Distribución en secciones (máx. 16 por sección) ---
+  const source = document.getElementById("source-cards");
+  const promotedWrap = document.getElementById("sec-promoted");
+  const todayWrap    = document.getElementById("sec-today");
+  const next7Wrap    = document.getElementById("sec-next7");
+  const monthWrap    = document.getElementById("sec-month");
+
+  if (!source) return;
+
+  const cards = [...source.querySelectorAll(".col-12")]; // columnas fuente
+  const now = new Date();
+  const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const endToday   = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
+  const end7       = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 8); // incluye hoy + 7 completos
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+  const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+  let cProm=0, cToday=0, cNext7=0, cMonth=0;
+
+  function within(d, a, b){ return d >= a && d < b; }
+
+  cards.forEach(col => {
+    const a = col.querySelector("a.event-card");
+    if (!a) return;
+
+    const startISO = a.getAttribute("data-start");
+    const d = startISO ? new Date(startISO) : null;
+    const promoted = a.getAttribute("data-promoted") === "1";
+
+    // 1) Publicitados
+    if (promoted && cProm < 16) {
+      promotedWrap?.appendChild(col.cloneNode(true));
+      cProm++;
+      return; // no repetir en otras secciones
+    }
+
+    if (!d || isNaN(d.getTime())) return;
+
+    // 2) Hoy
+    if (cToday < 16 && within(d, startToday, endToday)) {
+      todayWrap?.appendChild(col.cloneNode(true));
+      cToday++;
+      return;
+    }
+
+    // 3) Próximos 7 días (excluye hoy)
+    if (cNext7 < 16 && d >= endToday && d < end7) {
+      next7Wrap?.appendChild(col.cloneNode(true));
+      cNext7++;
+      return;
+    }
+
+    // 4) Este mes (resto del mes excluyendo lo ya tomado)
+    if (cMonth < 16 && d >= end7 && d < monthEnd) {
+      monthWrap?.appendChild(col.cloneNode(true));
+      cMonth++;
+      return;
+    }
+  });
+
+  // Si alguna sección quedó vacía, mostramos un mensajito suave
+  function ensureNotEmpty(wrap) {
+    if (wrap && wrap.children.length === 0) {
+      const div = document.createElement("div");
+      div.className = "col-12";
+      div.innerHTML = '<div class="alert alert-secondary">No hay elementos para esta sección.</div>';
+      wrap.appendChild(div);
+    }
+  }
+  ensureNotEmpty(promotedWrap);
+  ensureNotEmpty(todayWrap);
+  ensureNotEmpty(next7Wrap);
+  ensureNotEmpty(monthWrap);
+});
+</script>
+
+<!-- Toast feedback -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div id="actionToast" class="toast bg-surface-1 text-white border-0 shadow-2" role="alert">
+    <div class="toast-body small">
+      <i class="bi bi-check2-circle me-2"></i>Filtros aplicados correctamente.
+    </div>
+  </div>
+</div>
 {% endblock %}

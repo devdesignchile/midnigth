@@ -7,75 +7,73 @@
 <!-- ========= HERO CIUDAD ========= -->
 <!-- HERO / Buscador -->
 <section class="py-5 text-center">
-  <h1 class="display-4  mb-2">Adonde ir</h1>
+  <h1 class="display-4 fw-bold mb-2">A donde ir</h1>
   <p class="text-soft mb-4" id="city-counter">
     {% if city %}{{ city.name }} · {{ venues_count }} lugares{% else %} . {% endif %}
   </p>
 
-  <form id="city-filter-form"
-      class="container"
-      method="get"
-      action="{% url 'venue_index' %}"
-      autocomplete="off">
-      
-  <!-- fila 1: input grande de ciudad -->
-  <div class="row justify-content-center mb-3">
-    <div class="col-12 col-lg-8">
-      <div class="position-relative">
-        <input
-          id="city-input"
-          class="form-control form-control-lg rounded-pill px-4 py-3"
-          type="text"
-          name="city"
-          value="{{ city_input_value }}"
-          placeholder="Escribe una ciudad"
-          aria-autocomplete="list"
-          aria-expanded="false"
-          aria-owns="city-suggestions"
-          role="combobox">
-          
-        <!-- panel de sugerencias -->
-        <div id="city-suggestions"
-             class="list-group shadow position-absolute w-100 mt-2 d-none"
-             style="max-height: 260px; overflow:auto; z-index:1050;">
+  <form id="city-filter-form" class="container" method="get" autocomplete="off">
+    <!-- fila 1: input grande de ciudad -->
+    <div class="row justify-content-center mb-3">
+      <div class="col-12 col-lg-8">
+        <div class="position-relative">
+          <input
+            id="city-input" ... value="{{ active_city_label }}"
+            class="form-control form-control-lg rounded-pill px-4 py-3"
+            type="text"
+            name="city"
+            value="{{ city_input_value }}"
+            placeholder="Escribe una ciudad"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-owns="city-suggestions"
+            role="combobox"
+          >
+          <!-- panel de sugerencias -->
+          <div id="city-suggestions"
+               class="list-group shadow position-absolute w-100 mt-2 d-none"
+               style="max-height: 260px; overflow:auto; z-index: 1050;">
+          </div>
         </div>
       </div>
     </div>
-  </div>
+    
 
-  <!-- fila 2: fecha y categoría -->
-  <div class="row justify-content-center g-3">
-    <div class="col-12 col-md-3">
-      <label class="form-label small">Fecha</label>
-      <select class="form-select rounded-pill" name="when">
-        <option value="cualquier_dia" {% if active_when == "cualquier_dia" %}selected{% endif %}>Cualquier día</option>
-        <option value="hoy" {% if active_when == "hoy" %}selected{% endif %}>Hoy</option>
-        <option value="esta_semana" {% if active_when == "esta_semana" %}selected{% endif %}>Esta semana</option>
-      </select>
+    <!-- fila 2: fecha y categoria -->
+    <div class="row justify-content-center g-3">
+      <div class="col-12 col-md-3">
+          <label class="form-label small">Fecha</label>
+          <select class="form-select rounded-pill" name="when">
+            <option value="cualquier_dia"
+                    {% if active_when == "cualquier_dia" %}selected{% endif %}>
+              Cualquier día
+            </option>
+            <option value="hoy" {% if active_when == "hoy" %}selected{% endif %}>Hoy</option>
+            <option value="esta_semana" {% if active_when == "esta_semana" %}selected{% endif %}>Esta semana</option>
+          </select>
+      </div>
+
+      <div class="col-12 col-md-3">
+        <label class="form-label small">¿Qué buscas?</label>
+        <select class="form-select rounded-pill" name="cat">
+          <option value="">Todo</option>
+          <option value="discoteque" {% if active_cat == "discoteque" %}selected{% endif %}>Discoteques</option>
+          <option value="pub" {% if active_cat == "pub" %}selected{% endif %}>Pubs</option>
+          <option value="restaurant" {% if active_cat == "restaurant" %}selected{% endif %}>Restaurantes</option>
+          <option value="rooftop" {% if active_cat == "rooftop" %}selected{% endif %}>Rooftops</option>
+          <option value="other" {% if active_cat == "other" %}selected{% endif %}>Otros</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-2 d-grid">
+        <label class="form-label opacity-0">.</label>
+        <button class="btn btn-brand rounded-pill" type="submit">Buscar</button>
+      </div>
     </div>
 
-    <div class="col-12 col-md-3">
-      <label class="form-label small">¿Qué buscas?</label>
-      <select class="form-select rounded-pill" name="cat">
-        <option value="">Todo</option>
-        <option value="discoteque" {% if active_cat == "discoteque" %}selected{% endif %}>Discoteques</option>
-        <option value="pub" {% if active_cat == "pub" %}selected{% endif %}>Pubs</option>
-        <option value="restaurant" {% if active_cat == "restaurant" %}selected{% endif %}>Restaurantes</option>
-        <option value="rooftop" {% if active_cat == "rooftop" %}selected{% endif %}>Rooftops</option>
-        <option value="other" {% if active_cat == "other" %}selected{% endif %}>Otros</option>
-      </select>
-    </div>
-
-    <div class="col-12 col-md-2 d-grid">
-      <label class="form-label opacity-0">.</label>
-      <button class="btn btn-brand rounded-pill" type="submit">Buscar</button>
-    </div>
-  </div>
-
-  {% if q %}
-    <input type="hidden" name="q" value="{{ q }}">
-  {% endif %}
-</form>
+    <!-- conservar otros parámetros si los hubieras usado -->
+    {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+  </form>
 </section>
 
 
@@ -87,38 +85,147 @@
 <main class="py-4 my-5" id="lugares">
   <div class="container">
 <!-- NAV DE CATEGORÍAS (preserva city, q y when automáticamente) -->
-
-<section class="container my-5">
-  <h2 class="h5 mb-3">Ciudades destacadas</h2>
-  <div class="row g-3">
-    {% for c in featured_cities %}
-      <div class="col-6 col-md-3">
-        <a href="{{ c.url }}" class="text-decoration-none card-hero shadow-sm d-block rounded-4 overflow-hidden">
-          <div class="card-hero__img ratio-4x3">
-            {% if c.hero_url %}
-              <img src="{{ c.hero_url }}" alt="{{ c.name }}" class="w-100 h-100 object-fit-cover">
-            {% else %}
-              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ c.name }}" class="w-100 h-100 object-fit-cover">
-            {% endif %}
-            <div class="card-hero__overlay"></div>
-            <div class="card-hero__meta p-3">
-              <h3 class="h6 text-white mb-0">{{ c.name }}</h3>
-              <small class="text-white-50">{{ c.venues_count }} lugares</small>
-            </div>
-          </div>
+<div class="bg-surface-1 rounded-lg p-2 shadow-1 mb-3">
+  <ul class="nav nav-pills overflow-auto flex-nowrap gap-2" role="tablist" style="--bs-nav-link-padding-x: .25rem;">
+    {% with cat=active_cat %}
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if not cat %}active{% endif %}"
+           href="{{ cat_urls.all }}">
+          Todos
         </a>
-      </div>
-    {% endfor %}
-  </div>
-</section>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if cat == 'pub' %}active{% endif %}"
+           href="{{ cat_urls.pub }}">
+          Pubs/Bares
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if cat == 'restaurant' %}active{% endif %}"
+           href="{{ cat_urls.restaurant }}">
+          Restaurantes
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if cat == 'rooftop' %}active{% endif %}"
+           href="{{ cat_urls.rooftop }}">
+          Rooftops
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="btn btn-ghost btn-pill {% if cat == 'discoteque' %}active{% endif %}"
+           href="{{ cat_urls.discoteque }}">
+          Discoteques
+        </a>
+      </li>
+    {% endwith %}
+  </ul>
+</div>
 
 
 
 <!-- Wrapper opcional para AJAX (si usas fetch) -->
 <div id="dynamic-sections" data-json-endpoint="{% url 'city_index_json' %}">
 
+  {# ==== GRID DE LUGARES ==== #}<!-- [START featured_venues] -->
+{% if city and featured_venues %}
+<section class="container my-5">
+  <h2 class="h5 mb-3">Lugares destacados en {{ city.name }}</h2>
+  <div id="featured-venues" class="row g-3">
+    {% for v in featured_venues %}
+      {% with hero=v.cover_image %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <a href="{% url 'venue-detail' slug=v.slug %}" class="text-decoration-none card-hero shadow-sm">
+          <div class="card-hero__img">
+            {% if hero %}
+              <img src="{{ hero.url }}" alt="{{ v.name }}" class="object-fit-cover">
+            {% else %}
+              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}" class="object-fit-cover">
+            {% endif %}
+            <div class="card-hero__overlay"></div>
+            <div class="card-hero__meta">
+              <span class="badge bg-primary text-capitalize">{{ v.get_category_display }}</span>
+              <h3>{{ v.name }}</h3>
+              <div class="small">{{ v.Commune.name }}</div>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endwith %}
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+<!-- [END featured_venues] -->
 
 
+<!-- [START venues_grid] -->
+<section class="container">
+  <div id="venues-grid" class="row g-3">
+    {% for v in venues %}
+      <div class="col-12 col-md-6 col-lg-4">
+        <a class="card card-event text-decoration-none h-100" href="{% url 'venue-detail' slug=v.slug %}">
+          <div class="card-cover">
+            {% if v.cover_image %}
+              <img src="{{ v.cover_image.url }}" alt="{{ v.name }}">
+            {% else %}
+              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}">
+            {% endif %}
+          </div>
+          <div class="card-body">
+            <h4 class="h6 mb-1 text-white">{{ v.name }}</h4>
+            <div class="small text-soft">
+              {{ v.get_category_display }}{% if v.Commune %} · {{ v.Commune.name }}{% endif %}
+            </div>
+            {% if v.hours_short %}
+              <div class="small text-soft mt-1">{{ v.hours_short }}</div>
+            {% endif %}
+            {% if v.vibe_tags.all %}
+              <div class="mt-2 d-flex flex-wrap gap-1">
+                {% for t in v.vibe_tags.all|slice:":3" %}
+                  <span class="badge rounded-pill text-bg-dark">{{ t.name }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </a>
+      </div>
+    {% empty %}
+      <div class="col-12">
+        <div class="alert alert-secondary mb-0">
+          No hay lugares publicados en {{ active_city_label|default:"todas las ciudades" }} todavía.
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+<!-- [END venues_grid] -->
+
+
+</div>  {# /dynamic-sections #}
+
+
+    <!-- ===== Mapa (estático de momento) 
+    <section id="mapa" class="mt-4">
+      <header class="d-flex align-items-end justify-content-between mb-2">
+        <div>
+          <h2 class="h6 section-title mb-0">Explorar en el mapa</h2>
+          <p class="small text-soft mt-2 mb-0">Arrastra el mapa para ver más resultados.</p>
+        </div>
+      </header>
+    </section>
+    <div id="map" class="map-shell rounded-lg" style="height:420px;"></div> ===== -->
+    <script id="map-center-json"  type="application/json">{{ map_center_json|safe }}</script>
+    <script id="venues-map-json"  type="application/json">{{ venues_map_json|safe }}</script>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> 
+
+
+  </div>
+</main>
+<!-- Fuente JSON (desde la vista) — si no la tienes aún, no pasa nada: hay fallback -->
+<!-- Entrega la lista de nombres de ciudades para el autocomplete -->
 <script id="city-names-json" type="application/json">{{ city_names_json|safe }}</script>
 <script id="cities-fallback-json" type="application/json">[]</script>
 

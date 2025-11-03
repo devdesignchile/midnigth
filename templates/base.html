@@ -9,8 +9,8 @@
 
   <!-- Bootstrap / Icons (CDN) -->
    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
@@ -30,8 +30,11 @@
 <nav class="navbar navbar-expand-lg navbar-dark nav-glass sticky-top">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand fw-bold" href="{% url 'home' %}">
-      <b>midnight</b>
+    <a class="navbar-brand d-flex py-0 align-items-center fw-bold" href="{% url 'home' %}" aria-label="MidNight">
+      <!-- Desktop / tablet -->
+      <span class="logo-text d-none d-sm-inline">MIDNIGHT</span>
+      <!-- Celular -->
+      <span class="logo-text d-inline d-sm-none" aria-hidden="true">MN</span>
     </a>
 
     <!-- Toggler -->
@@ -47,10 +50,10 @@
           <a class="nav-link {% if url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if url_name == 'lugares' %}active{% endif %}" href="{% url 'city-detail' %}">Lugares</a>
+          <a class="nav-link {% if url_name == 'city_index' %}active{% endif %}" href="{% url 'city_index' %}">Lugares</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if url_name == 'eventos' %}active{% endif %}" href="{% url 'events-detail' %}">Eventos</a>
+          <a class="nav-link {% if url_name == 'events-detail' %}active{% endif %}" href="{% url 'events-detail' %}">Eventos</a>
         </li>
 
         {% if request.user.is_authenticated and request.user.venues.exists %}
@@ -63,7 +66,7 @@
       </ul>
 
       <!-- User -->
-      <div class="d-flex align-items-center ">
+      <div class="d-flex align-items-center">
         {% if request.user.is_authenticated %}
         <div class="dropdown">
           <button class="btn user-btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
@@ -88,11 +91,8 @@
           </ul>
         </div>
         {% else %}
-          <a class="btn btn-outline-light btn-auth" href="{% url 'login' %}">Acceder
-          </a>
-          <a class="btn btn-brand ms-2 btn-auth" href="{% url 'signup-choice' %}">
-            Registrarse
-          </a>
+          <a class="btn btn-outline-light btn-auth" href="{% url 'login' %}">Acceder</a>
+          <a class="btn btn-brand ms-2 btn-auth" href="{% url 'signup-choice' %}">Registrarse</a>
         {% endif %}
       </div>
     </div>
@@ -168,24 +168,6 @@
           <li class="mb-2"><a class="text-decoration-none text-soft" href="/contacto">Contacto ventas</a></li>
         </ul>
       </div>
-
-      <div class="col-12 col-lg-4">
-        <h6 class="text-white mb-3">Recibe tendencias</h6>
-        <p class="small text-soft">Un correo por semana con lo más visto y ofertas activas.</p>
-        <form class="d-flex gap-2">
-          <input type="email" class="form-control" placeholder="tu@email.com" aria-label="Correo">
-          <button class="btn btn-brand" type="button">Suscribirme</button>
-        </form>
-
-        <div class="d-flex gap-2 mt-4">
-          <a class="btn btn-ghost btn-sm disabled" aria-disabled="true">
-            <i class="bi bi-apple me-1"></i> App Store
-          </a>
-          <a class="btn btn-ghost btn-sm disabled" aria-disabled="true">
-            <i class="bi bi-google-play me-1"></i> Google Play
-          </a>
-        </div>
-      </div>
     </div>
 
     <!-- Divider -->
@@ -197,12 +179,12 @@
         <i class="bi bi-geo-alt text-soft"></i>
         <span class="small text-soft">Ciudad activa: <strong class="text-white">{{ active_city_label|default:"Chile" }}</strong></span>
         <span class="vr mx-2 d-none d-lg-inline opacity-25"></span>
-        <label for="lang" class="small text-soft me-1">Idioma</label>
+        <!---<label for="lang" class="small text-soft me-1">Idioma</label>
         <select id="lang" class="form-select form-select-sm w-auto bg-surface-2 border-0">
           <option selected>Español (CL)</option>
           <option>Español (LATAM)</option>
-          <option>English</option>
-        </select>
+          <option>English</option> 
+        </select>-->
       </div>
 
       <ul class="nav small">
@@ -215,7 +197,6 @@
 
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center pb-4">
       <small class="text-soft">© <span id="y"></span> Midnight. Todos los derechos reservados.</small>
-      <small class="text-soft">Hecho con <i class="bi bi-heart-fill text-danger"></i> en Chile</small>
     </div>
   </div>
 </footer>

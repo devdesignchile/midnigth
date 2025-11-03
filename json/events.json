@@ -1,0 +1,402 @@
+[
+  {
+    "model": "places.event",
+    "pk": 1,
+    "fields": {
+      "Commune": 1,
+      "venue": 5,
+      "title": "Electro Midnight: DJ Nova",
+      "slug": "electro-midnight-dj-nova-santiago-20251029",
+      "category": "electronic",
+      "start_at": "2025-10-29T23:30:00-03:00",
+      "end_at": "2025-10-30T05:00:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Mié · 23:30",
+      "badge_text": "Preventa",
+      "external_ticket_url": "https://midnight-santiago.cl/tickets/dj-nova",
+      "is_featured": true,
+      "feature_order": 1,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 2,
+    "fields": {
+      "Commune": 37,
+      "venue": 10,
+      "title": "OVO Beach: Latin Hits Night",
+      "slug": "ovo-beach-latin-hits-night-la-serena-20251030",
+      "category": "party",
+      "start_at": "2025-10-30T23:00:00-03:00",
+      "end_at": "2025-10-31T05:00:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Jue · 23:00",
+      "badge_text": "Ladies Night",
+      "external_ticket_url": "https://ovobeach.cl/tickets/latin-hits",
+      "is_featured": true,
+      "feature_order": 2,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 3,
+    "fields": {
+      "Commune": 1,
+      "venue": 7,
+      "title": "Sunset Rooftop: Deep House Session",
+      "slug": "sunset-rooftop-deep-house-session-santiago-20251031",
+      "category": "electronic",
+      "start_at": "2025-10-31T19:00:00-03:00",
+      "end_at": "2025-10-31T23:59:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Vie · 19:00",
+      "badge_text": "Welcome drink",
+      "external_ticket_url": "https://rooftopandes.cl/eventos/deephouse",
+      "is_featured": true,
+      "feature_order": 3,
+       "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 4,
+    "fields": {
+      "Commune": 37,
+      "venue": 6,
+      "title": "El Faro Live: Bandas Indie",
+      "slug": "el-faro-live-bandas-indie-la-serena-20251101",
+      "category": "concert",
+      "start_at": "2025-11-01T21:00:00-03:00",
+      "end_at": "2025-11-02T01:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Sáb · 21:00",
+      "badge_text": "2x1 cervezas",
+      "external_ticket_url": "https://elfaropub.cl/entradas/indie",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 5,
+    "fields": {
+      "Commune": 1,
+      "venue": 11,
+      "title": "SkyBar 360: Jazz & Cocktails",
+      "slug": "skybar-360-jazz-and-cocktails-santiago-20251101",
+      "category": "concert",
+      "start_at": "2025-11-01T20:30:00-03:00",
+      "end_at": "2025-11-02T00:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Sáb · 20:30",
+      "badge_text": "Cupos limitados",
+      "external_ticket_url": "https://skybar360.cl/tickets/jazz-cocktails",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 6,
+    "fields": {
+      "Commune": 37,
+      "venue": 8,
+      "title": "Noche Criolla en Don Elqui",
+      "slug": "noche-criolla-don-elqui-vicuna-20251102",
+      "category": "other",
+      "start_at": "2025-11-02T20:00:00-03:00",
+      "end_at": "2025-11-02T23:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Dom · 20:00",
+      "badge_text": "Menú especial",
+      "external_ticket_url": "",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 7,
+    "fields": {
+      "Commune": 1,
+      "venue": 9,
+      "title": "República Indie Karaoke",
+      "slug": "republica-indie-karaoke-santiago-20251103",
+      "category": "other",
+      "start_at": "2025-11-03T21:00:00-03:00",
+      "end_at": "2025-11-04T01:00:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Lun · 21:00",
+      "badge_text": "Entrada liberada",
+      "external_ticket_url": "",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 8,
+    "fields": {
+      "Commune": 35,
+      "venue": 15,
+      "title": "Bar del Puerto: Rock Costero",
+      "slug": "bar-del-puerto-rock-costero-vina-20251101",
+      "category": "concert",
+      "start_at": "2025-11-01T22:00:00-03:00",
+      "end_at": "2025-11-02T03:00:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Sáb · 22:00",
+      "badge_text": "2x1 pisco sour",
+      "external_ticket_url": "https://bardelpuerto.cl/tickets/rock",
+      "is_featured": true,
+      "feature_order": 4,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 9,
+    "fields": {
+      "Commune": 35,
+      "venue": 16,
+      "title": "Oceanic Rooftop: DJ Sunset",
+      "slug": "oceanic-rooftop-dj-sunset-vina-20251102",
+      "category": "electronic",
+      "start_at": "2025-11-02T18:30:00-03:00",
+      "end_at": "2025-11-02T23:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Dom · 18:30",
+      "badge_text": "Entrada gratis hasta 21:00",
+      "external_ticket_url": "https://rooftopoceanic.cl/eventos/sunset",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 10,
+    "fields": {
+      "Commune": 40,
+      "venue": 17,
+      "title": "Antofa Club: Reggaetón Old School",
+      "slug": "antofa-club-reggaeton-old-school-20251101",
+      "category": "party",
+      "start_at": "2025-11-01T23:00:00-03:00",
+      "end_at": "2025-11-02T05:00:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Sáb · 23:00",
+      "badge_text": "Cover rebajado",
+      "external_ticket_url": "https://antofaclub.cl/entradas/oldschool",
+      "is_featured": true,
+      "feature_order": 5,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 11,
+    "fields": {
+      "Commune": 40,
+      "venue": 18,
+      "title": "Bahía Norte: Cena Marina & Jazz",
+      "slug": "bahia-norte-cena-marina-jazz-antofagasta-20251103",
+      "category": "other",
+      "start_at": "2025-11-03T20:00:00-03:00",
+      "end_at": "2025-11-03T23:00:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Lun · 20:00",
+      "badge_text": "Menú especial",
+      "external_ticket_url": "",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 12,
+    "fields": {
+      "Commune": 50,
+      "venue": 19,
+      "title": "La Fábrica: Bandas Universitarias",
+      "slug": "la-fabrica-bandas-universitarias-concepcion-20251101",
+      "category": "concert",
+      "start_at": "2025-11-01T21:30:00-03:00",
+      "end_at": "2025-11-02T02:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Sáb · 21:30",
+      "badge_text": "2x1 cervezas",
+      "external_ticket_url": "",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 13,
+    "fields": {
+      "Commune": 50,
+      "venue": 20,
+      "title": "Andalién Rooftop: Electro Lounge",
+      "slug": "andalien-rooftop-electro-lounge-concepcion-20251102",
+      "category": "electronic",
+      "start_at": "2025-11-02T19:00:00-03:00",
+      "end_at": "2025-11-03T00:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Dom · 19:00",
+      "badge_text": "Entrada gratis hasta 22h",
+      "external_ticket_url": "https://rooftopandalien.cl/eventos/lounge",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 14,
+    "fields": {
+      "Commune": 37,
+      "venue": 21,
+      "title": "Sunset Bar: Lounge Frente al Mar",
+      "slug": "sunset-bar-lounge-frente-al-mar-la-serena-20251103",
+      "category": "other",
+      "start_at": "2025-11-03T18:00:00-03:00",
+      "end_at": "2025-11-03T23:00:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Lun · 18:00",
+      "badge_text": "2x1 viernes (teaser)",
+      "external_ticket_url": "",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 15,
+    "fields": {
+      "Commune": 35,
+      "venue": 22,
+      "title": "Mirador Viña: Noche Bailable",
+      "slug": "mirador-vina-noche-bailable-20251108",
+      "category": "party",
+      "start_at": "2025-11-08T23:00:00-03:00",
+      "end_at": "2025-11-09T05:00:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Sáb · 23:00",
+      "badge_text": "Happy hour 22–23h",
+      "external_ticket_url": "https://miradorvina.cl/tickets/bailable",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 16,
+    "fields": {
+      "Commune": 35,
+      "venue": 23,
+      "title": "Muelle 8: Cena Marina & Vinos",
+      "slug": "muelle-8-cena-marina-vina-20251110",
+      "category": "other",
+      "start_at": "2025-11-10T20:00:00-03:00",
+      "end_at": "2025-11-10T23:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Lun · 20:00",
+      "badge_text": "Maridaje",
+      "external_ticket_url": "",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 17,
+    "fields": {
+      "Commune": 35,
+      "venue": 24,
+      "title": "Botánico: Indie & Tapas",
+      "slug": "botanico-indie-y-tapas-vina-20251107",
+      "category": "concert",
+      "start_at": "2025-11-07T20:30:00-03:00",
+      "end_at": "2025-11-08T00:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Vie · 20:30",
+      "badge_text": "Tapas 2x1",
+      "external_ticket_url": "",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 18,
+    "fields": {
+      "Commune": 40,
+      "venue": 25,
+      "title": "Atacama Rooftop: Mezcal & Beats",
+      "slug": "atacama-rooftop-mezcal-beats-antofagasta-20251109",
+      "category": "electronic",
+      "start_at": "2025-11-09T19:00:00-03:00",
+      "end_at": "2025-11-09T23:59:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Dom · 19:00",
+      "badge_text": "2x1 19–20h",
+      "external_ticket_url": "https://rooftopatacama.cl/eventos/mezcal-beats",
+      "is_featured": true,
+      "feature_order": 6,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 19,
+    "fields": {
+      "Commune": 40,
+      "venue": 26,
+      "title": "Bar Caleta: Tributo a Soda",
+      "slug": "bar-caleta-tributo-a-soda-antofagasta-20251106",
+      "category": "concert",
+      "start_at": "2025-11-06T21:00:00-03:00",
+      "end_at": "2025-11-07T00:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Jue · 21:00",
+      "badge_text": "Cover rebajado",
+      "external_ticket_url": "",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  },
+  {
+    "model": "places.event",
+    "pk": 20,
+    "fields": {
+      "Commune": 50,
+      "venue": 28,
+      "title": "Laguna Disco: Dos Pistas Non-Stop",
+      "slug": "laguna-disco-dos-pistas-non-stop-concepcion-20251115",
+      "category": "party",
+      "start_at": "2025-11-15T23:00:00-03:00",
+      "end_at": "2025-11-16T04:30:00-03:00",
+      "flyer_image": "",
+      "eyebrow_text": "Sáb · 23:00",
+      "badge_text": "Lista con descuento",
+      "external_ticket_url": "https://lagunadisco.cl/entradas/non-stop",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true
+    }
+  }
+]
