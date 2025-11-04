@@ -30,18 +30,24 @@
     <div class="row g-3">
       {% for v in venues %}
         <div class="col-6 col-md-4 col-lg-3">
-          <a class="card h-100 text-decoration-none" href="{% url 'venue-detail' slug=v.slug %}">
-            {% if v.cover_image %}
-              <img class="card-img-top" src="{{ v.cover_image.url }}" alt="{{ v.name }}">
-            {% elif v.gallery_venue %}
-              <img class="card-img-top" src="{{ v.gallery_venue.url }}" alt="{{ v.name }}">
-            {% else %}
-              <img class="card-img-top" src="{% static 'img/placeholders/venue.jpg' %}" alt="{{ v.name }}">
-            {% endif %}
-            <div class="card-body">
-              <h2 class="h6 mb-1 text-truncate">{{ v.name }}</h2>
-              <div class="small text-secondary text-truncate">
-                {{ v.Commune.name }} · {{ v.get_category_display }}
+          <a href="{% url 'venue-detail' slug=v.slug %}"
+            class="text-decoration-none card-hero shadow-sm d-block rounded-4 overflow-hidden">
+            <div class="card-hero__img ratio-4x3">
+              {% if v.cover_image %}
+                <img src="{{ v.cover_image.url }}" alt="{{ v.name }}" class="w-100 h-100 object-fit-cover">
+              {% elif v.gallery_venue %}
+                <img src="{{ v.gallery_venue.url }}" alt="{{ v.name }}" class="w-100 h-100 object-fit-cover">
+              {% else %}
+                <img src="{% static 'img/placeholders/venue.jpg' %}" alt="{{ v.name }}" class="w-100 h-100 object-fit-cover">
+              {% endif %}
+
+              <div class="card-hero__overlay"></div>
+
+              <div class="card-hero__meta p-3">
+                <h3 class="h6 text-white mb-0 text-truncate">{{ v.name }}</h3>
+                <small class="text-white-50 text-truncate">
+                  {{ v.Commune.name }} · {{ v.get_category_display }}
+                </small>
               </div>
             </div>
           </a>

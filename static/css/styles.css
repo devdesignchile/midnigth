@@ -478,55 +478,54 @@ option {
   background-color: #111; /* fondo negro */
   color: white;           /* texto blanco */
 }
-
-/* Estilo cuando se pasa el mouse o se selecciona */
 option:checked,
 option:hover,
-option:focus {
-  background-color: #333; /* gris oscuro para resaltar */
-  color: white;
-}
+option:focus {}
 
-
+/* contenedor */
 .tag-picker {
   display: flex;
   flex-wrap: wrap;
   gap: .5rem .6rem;
 }
 
+/* el <label> que envuelve todo */
 .tag-chip {
-  position: relative;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
 }
 
+/* ocultar el input */
 .tag-chip input[type="checkbox"] {
   position: absolute;
-  inset: 0;
   opacity: 0;
   pointer-events: none;
 }
 
-.tag-chip label {
+/* el chip visual es el <span> */
+.tag-chip > span {
   display: inline-block;
   padding: .38rem .75rem;
   border: 1px solid rgba(255,255,255,.25);
   border-radius: 9999px;
   font-size: .875rem;
   line-height: 1;
-  cursor: pointer;
-  user-select: none;
-  transition: background .2s ease, color .2s ease, border-color .2s ease, box-shadow .2s ease;
+  transition: background .2s, color .2s, border-color .2s, box-shadow .2s;
   background: rgba(255,255,255,.06);
   color: #eaeaea;
 }
 
-.tag-chip label:hover {
+/* hover */
+.tag-chip:hover > span {
   border-color: rgba(255,255,255,.5);
   box-shadow: 0 0 0 3px rgba(13,110,253,.2);
 }
 
-.tag-chip input[type="checkbox"]:checked + label {
-  background: #0d6efd;         /* Bootstrap primary */
+/* ✅ estado seleccionado */
+.tag-chip input[type="checkbox"]:checked + span {
+  background: #0d6efd;
   border-color: #0d6efd;
   color: #fff;
   box-shadow: 0 0 0 3px rgba(13,110,253,.25);
@@ -550,58 +549,95 @@ option:focus {
    Reutilizable para venues, eventos o promociones
    ========================================================== */
 
+/* =======================================
+   CARD HERO — elegante y moderna
+   ======================================= */
 .card-hero {
-  display: block;
   position: relative;
-  border-radius: 1rem;              /* rounded-4 */
+  display: block;
   overflow: hidden;
-  background-color: #0b0d20;        /* fallback si no hay imagen */
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  border-radius: 1rem;
+  background-color: #0b0d20;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
 }
 
 .card-hero:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3);
+  transform: scale(1.04);
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.4);
 }
 
-/* Imagen principal (logo, cover o flyer) */
+/* Imagen principal */
 .card-hero__img {
   position: relative;
   aspect-ratio: 1 / 1;
   background: #111;
 }
+
 .card-hero__img img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.6s ease;
 }
 
-/* Capa oscura degradada */
+.card-hero:hover .card-hero__img img {
+  transform: scale(1.1);
+}
+
+/* Overlay degradado superior + animación naranja */
+.card-hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(255, 115, 0, 0.85), rgba(255, 115, 0, 0));
+  transform: translateY(100%);
+  transition: transform 0.5s ease;
+  z-index: 1;
+}
+
+.card-hero:hover::before {
+  transform: translateY(0);
+}
+
+/* Capa oscura original para contraste del texto */
 .card-hero__overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(0,0,0,0.0) 50%, rgba(0,0,0,0.8) 100%);
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.0) 40%, rgba(0, 0, 0, 0.8) 100%);
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* Texto inferior */
 .card-hero__meta {
   position: absolute;
   left: 0; right: 0; bottom: 0;
-  padding: 1rem;
-  z-index: 2;
+  padding: 1.25rem;
+  z-index: 3;
   text-align: center;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 
 .card-hero__meta h3 {
   margin-top: 0.5rem;
   margin-bottom: 0;
-  font-size: 1rem;
-  color: #fff;
+  font-size: 1.05rem;
   font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.4px;
 }
 
 .card-hero__meta .small {
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.9rem;
+}
+
+/* Iluminación del texto al hacer hover */
+.card-hero:hover .card-hero__meta {
+  color: #fff;
+  transform: translateY(-2px);
 }
 
 /* Utilidades */
@@ -813,6 +849,17 @@ option:focus {
   color: #fff;
   z-index: 2;
 }
+
+.bg-glass {
+  background: rgba(255, 255, 255, 0.01);  /* color base con opacidad */
+  backdrop-filter: blur(10px);             /* efecto blur principal */
+  -webkit-backdrop-filter: blur(10px);     /* compatibilidad Safari */
+  border: 1px solid rgba(255, 255, 255, 0.2); /* borde sutil */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);   /* ligera sombra */
+  border-radius: 1rem;                     /* bordes redondeados suaves */
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
 
 /* Overlay naranja (slide up) */
 .event-overlay{

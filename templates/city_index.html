@@ -7,10 +7,7 @@
 <!-- ========= HERO CIUDAD ========= -->
 <!-- HERO / Buscador -->
 <section class="py-5 text-center">
-  <h1 class="display-4  mb-2">Adonde ir</h1>
-  <p class="text-soft mb-4" id="city-counter">
-    {% if city %}{{ city.name }} · {{ venues_count }} lugares{% else %} . {% endif %}
-  </p>
+  <h1 class="display-1  mb-5">Adonde ir</h1>
 
   <form id="city-filter-form"
       class="container"
@@ -43,34 +40,6 @@
     </div>
   </div>
 
-  <!-- fila 2: fecha y categoría -->
-  <div class="row justify-content-center g-3">
-    <div class="col-12 col-md-3">
-      <label class="form-label small">Fecha</label>
-      <select class="form-select rounded-pill" name="when">
-        <option value="cualquier_dia" {% if active_when == "cualquier_dia" %}selected{% endif %}>Cualquier día</option>
-        <option value="hoy" {% if active_when == "hoy" %}selected{% endif %}>Hoy</option>
-        <option value="esta_semana" {% if active_when == "esta_semana" %}selected{% endif %}>Esta semana</option>
-      </select>
-    </div>
-
-    <div class="col-12 col-md-3">
-      <label class="form-label small">¿Qué buscas?</label>
-      <select class="form-select rounded-pill" name="cat">
-        <option value="">Todo</option>
-        <option value="discoteque" {% if active_cat == "discoteque" %}selected{% endif %}>Discoteques</option>
-        <option value="pub" {% if active_cat == "pub" %}selected{% endif %}>Pubs</option>
-        <option value="restaurant" {% if active_cat == "restaurant" %}selected{% endif %}>Restaurantes</option>
-        <option value="rooftop" {% if active_cat == "rooftop" %}selected{% endif %}>Rooftops</option>
-        <option value="other" {% if active_cat == "other" %}selected{% endif %}>Otros</option>
-      </select>
-    </div>
-
-    <div class="col-12 col-md-2 d-grid">
-      <label class="form-label opacity-0">.</label>
-      <button class="btn btn-brand rounded-pill" type="submit">Buscar</button>
-    </div>
-  </div>
 
   {% if q %}
     <input type="hidden" name="q" value="{{ q }}">

@@ -75,44 +75,37 @@ class VenueUpdateForm(LabelsMixin, ModelForm):
     class Meta:
         model = Venue
         fields = "__all__"
-        exclude = ("owner_user", "slug", "is_published")
+        exclude = ("owner_user", "slug", "is_published", "gallery_venue")  # 🔹 se agregó aquí
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
         # === Widgets específicos ===
-        # Textareas
         for name in ["description", "recommended_body", "experience_venue"]:
             if name in self.fields:
                 self.fields[name].widget = forms.Textarea(attrs={"rows": 3})
 
-        # Files
-        for name in ["cover_image", "menu_pdf", "gallery_venue"]:
+        for name in ["cover_image", "menu_pdf"]:
             if name in self.fields:
                 self.fields[name].widget = forms.ClearableFileInput()
 
-        # URLs
         for name in ["website", "reservation_url", "instagram", "menu_qr_url"]:
             if name in self.fields:
                 self.fields[name].widget = forms.URLInput()
 
-        # Números
         if "min_age" in self.fields:
             self.fields["min_age"].widget = forms.NumberInput(attrs={"min": 0, "step": 1})
 
-        # Selects (choices / FK / M2M)
         for name, field in self.fields.items():
             if isinstance(field.widget, (forms.Select, forms.SelectMultiple)):
                 css = field.widget.attrs.get("class", "")
                 field.widget.attrs["class"] = (css + " form-select rounded-3").strip()
 
-        # Estilo base para inputs & textareas
         for name, field in self.fields.items():
             if not isinstance(field.widget, (forms.Select, forms.SelectMultiple, forms.ClearableFileInput)):
                 css = field.widget.attrs.get("class", "")
                 field.widget.attrs["class"] = (css + " form-control rounded-3").strip()
 
-        # Placeholders
         placeholders = {
             "name": "Nombre del local",
             "min_age": "18+",
@@ -135,23 +128,19 @@ class VenueUpdateForm(LabelsMixin, ModelForm):
             if n in self.fields:
                 self.fields[n].widget.attrs["placeholder"] = ph
 
-        # Limitar largo visible del copy corto
         if "experience_venue" in self.fields:
             self.fields["experience_venue"].widget.attrs.setdefault("maxlength", 120)
 
-        # 🔑 Importante: controlar el ManyToMany de vibes con chips
         if "vibe_tags" in self.fields:
-            # No requerido (permitir vacío)
             self.fields["vibe_tags"].required = False
-            # Oculto y DESHABILITADO para que NO se envíe el select nativo
             css = self.fields["vibe_tags"].widget.attrs.get("class", "")
             self.fields["vibe_tags"].widget.attrs["class"] = (css + " d-none").strip()
             self.fields["vibe_tags"].widget.attrs["disabled"] = "disabled"
 
-    # Limpieza suave
     def clean_experience_venue(self):
         txt = self.cleaned_data.get("experience_venue", "")
         return txt.strip()
+
 
 
 

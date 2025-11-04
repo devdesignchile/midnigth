@@ -103,7 +103,7 @@
       <div class="col-lg-8">
 
         <!-- INFO -->
-        <section id="info" class="bg-surface-1 rounded-lg p-3 p-md-4 shadow-1">
+        <section id="info" class="rounded-4 p-3 p-md-4 shadow-sm bg-glass">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <h2 class="h5 mb-0">Sobre el lugar</h2>
             {% if venue.website %}
@@ -113,47 +113,49 @@
             {% endif %}
           </div>
 
-          <p class="text-soft mb-3">{{ venue.description|default:"" }}</p>
+          {% if venue.description %}
+            <p class="text-secondary mb-3">{{ venue.description }}</p>
+          {% endif %}
 
           <div class="row g-3">
             <div class="col-6 col-md-4">
-              <div class="small text-soft">Edad mínima</div>
-              <div class="fw-semibold">{{ venue.min_age|default:"" }}</div>
+              <div class="small text-secondary">Edad mínima</div>
+              <div class="fw-semibold">{{ venue.min_age|default:"—" }}</div>
             </div>
             <div class="col-6 col-md-4">
-              <div class="small text-soft">Dress code</div>
-              <div class="fw-semibold">{{ venue.dress_code|default:"" }}</div>
+              <div class="small text-secondary">Dress code</div>
+              <div class="fw-semibold">{{ venue.dress_code|default:"—" }}</div>
             </div>
-            <div class="col-6 col-md-4">
-              <div class="small text-soft">Métodos de pago</div>
-              <div class="fw-semibold">
-                {% if venue.payment_methods %}
-                  {{ venue.payment_methods }}
-                {% endif %}
-              </div>
+            <div class="col-12 col-md-4">
+              <div class="small text-secondary">Métodos de pago</div>
+              <div class="fw-semibold">{{ venue.payment_methods|default:"—" }}</div>
             </div>
           </div>
         </section>
 
+        {# Separador visual #}
+        <hr class="my-4 my-md-5">
+
         <!-- HEADLINERS / LINE-UP -->
-        <section id="headliners" class="mt-3">
+          <section id="headliners">
           <div class="d-flex align-items-end justify-content-between mb-2">
             <div>
-              <h2 class="h6 section-title mb-0">Line-up destacado</h2>
-              <p class="section-sub mb-0">Artistas invitados y noches temáticas</p>
+              <h2 class="h6 mb-0">Line-up destacado</h2>
+              <p class="text-secondary small mb-0">Artistas invitados y noches temáticas</p>
             </div>
             <div class="d-none d-md-flex gap-2">
               <button class="btn btn-sm btn-ghost btn-pill" data-bs-target="#headCarousel" data-bs-slide="prev">‹</button>
               <button class="btn btn-sm btn-ghost btn-pill" data-bs-target="#headCarousel" data-bs-slide="next">›</button>
             </div>
           </div>
-          <div id="headCarousel" class="carousel slide" data-bs-ride="false">
 
+          <div id="headCarousel" class="carousel slide" data-bs-ride="false">
             <div class="carousel-inner">
               {% for e in carousel_events %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                                    <a class="featured-slide d-block rounded-lg overflow-hidden shadow-2 text-decoration-none position-relative"
-                    href="{{ e.external_ticket_url|default:'#' }}">
+                  <a class="featured-slide d-block rounded-4 overflow-hidden shadow-sm text-decoration-none position-relative"
+                     href="{{ e.external_ticket_url|default:'#' }}"
+                     {% if e.external_ticket_url %}target="_blank" rel="noopener"{% endif %}>
                     <div class="featured-media">
                       {% if e.flyer_image %}
                         <img src="{{ e.flyer_image.url }}" alt="{{ e.title }}">
@@ -166,14 +168,14 @@
                       <div>
                         {% if e.eyebrow_text %}<div class="featured-eyebrow">{{ e.eyebrow_text }}</div>{% endif %}
                         <h3 class="featured-title mb-1">{{ e.title }}</h3>
-                        {% if e.venue %}<p class="featured-meta text-soft mb-3">{{ e.venue.name }}</p>{% endif %}
+                        {% if e.venue %}<p class="featured-meta text-white-50 mb-3">{{ e.venue.name }}</p>{% endif %}
                         <span class="btn btn-brand btn-pill">Ver evento</span>
                       </div>
                     </div>
                   </a>
                 </div>
               {% empty %}
-                <div class="text-soft small">Aún no hay eventos próximos.</div>
+                <div class="text-secondary small">Aún no hay eventos próximos.</div>
               {% endfor %}
             </div>
 
@@ -184,38 +186,35 @@
               {% endfor %}
             </div>
           </div>
-
         </section>
 
+        <hr class="my-4 my-md-5">
+
         <!-- PRÓXIMOS EVENTOS -->
-        <section id="eventos" class="mt-3">
+        <section id="eventos">
           <div class="d-flex align-items-end justify-content-between mb-2">
             <div>
-              <h2 class="h6 section-title mb-0">Próximos eventos</h2>
-              <p class="section-sub mb-0">Toca el flyer para comprar entradas</p>
+              <h2 class="h6 mb-0">Próximos eventos</h2>
+              <p class="text-secondary small mb-0">Toca el flyer para comprar entradas</p>
             </div>
-            
+
             <div class="d-flex gap-2">
               {% if is_owner %}
-                <a class="btn btn-sm btn-ghost btn-pill"
-                  href="{% url 'event_create' venue.slug %}">
+                <a class="btn btn-sm btn-brand btn-pill" href="{% url 'event_create' venue.slug %}">
                   Agregar evento
                 </a>
               {% endif %}
-              <a class="btn btn-sm btn-ghost btn-pill" href="#eventos">
-                Ver todos
-              </a>
+              <a class="btn btn-sm btn-brand btn-pill" href="#eventos">Ver todos</a>
             </div>
           </div>
 
-          <div class="row g-3">
-            
+          <div class="row g-3 g-md-4">
             {% for e in upcoming_events %}
               <div class="col-6 col-md-4 col-lg-3">
                 <div class="flyer-card position-relative">
                   <a class="flyer d-block text-decoration-none"
-                    href="{{ e.external_ticket_url|default:'#' }}"
-                    {% if e.external_ticket_url %}target="_blank" rel="noopener"{% endif %}>
+                     href="{{ e.external_ticket_url|default:'#' }}"
+                     {% if e.external_ticket_url %}target="_blank" rel="noopener"{% endif %}>
                     {% if e.flyer_image %}
                       <img src="{{ e.flyer_image.url }}" alt="{{ e.title }}">
                     {% else %}
@@ -225,105 +224,102 @@
                     <div class="flyer__overlay">
                       <div class="flyer__meta">
                         <span class="badge badge-vibe me-2">{{ e.start_at|date:"D H:i" }}</span>
-                        {% if e.badge_text %}
-                          <span class="badge badge-offer">{{ e.badge_text }}</span>
-                        {% endif %}
+                        {% if e.badge_text %}<span class="badge badge-offer">{{ e.badge_text }}</span>{% endif %}
                       </div>
                       <span class="btn btn-brand btn-pill btn-sm">Comprar</span>
                     </div>
                   </a>
 
                   {% if is_owner %}
-                    <!-- Botón separado para evitar <a> anidado -->
-                    <a class="btn btn-sm btn-ghost btn-pill mt-2"
-                      href="{% url 'event_edit' slug=venue.slug pk=e.pk %}">
+                    <a class="btn btn-sm btn-ghost btn-pill mt-2" href="{% url 'event_edit' slug=venue.slug pk=e.pk %}">
                       Editar evento
                     </a>
                   {% endif %}
                 </div>
               </div>
             {% empty %}
-              <div class="text-soft small ps-2">Sin eventos próximos por ahora.</div>
+              <div class="text-secondary small ps-2">Sin eventos próximos por ahora.</div>
             {% endfor %}
-
           </div>
         </section>
+
+        <hr class="my-4 my-md-5">
         
         <!-- BARRA & COCTELERÍA -->
-        <section id="barra" class="bg-surface-1 rounded-lg p-3 p-md-4 shadow-1 mt-3">
-  <div class="d-flex align-items-center justify-content-between mb-2">
-    <h2 class="h5 mb-0">Barra &amp; coctelería</h2>
-    {% if venue.vgt_promos_1 or venue.vgt_promos_2 or venue.vgt_promos_3 %}
-      <span class="badge badge-offer">Promo activa</span>
-    {% endif %}
-  </div>
+         <section id="barra" class="rounded-4 p-3 p-md-4 shadow-sm bg-glass">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <h2 class="h5 mb-0">Barra &amp; coctelería</h2>
+            {% if venue.vgt_promos_1 or venue.vgt_promos_2 or venue.vgt_promos_3 %}
+              <span class="badge badge-offer">Promo activa</span>
+            {% endif %}
+          </div>
 
-  <div class="row g-3">
-    <div class="col-md-7">
-      {# === Chips de destacados (highlights_1..3) === #}
-      <div class="d-flex flex-wrap gap-2">
-        {% if venue.highlights_1 %}<span class="chip">{{ venue.highlights_1 }}</span>{% endif %}
-        {% if venue.highlights_2 %}<span class="chip">{{ venue.highlights_2 }}</span>{% endif %}
-        {% if venue.highlights_3 %}<span class="chip">{{ venue.highlights_3 }}</span>{% endif %}
-      </div>
+          <div class="row g-3">
+            <div class="col-md-7">
+              <div class="d-flex flex-wrap gap-2">
+                {% if venue.highlights_1 %}<span class="chip">{{ venue.highlights_1 }}</span>{% endif %}
+                {% if venue.highlights_2 %}<span class="chip">{{ venue.highlights_2 }}</span>{% endif %}
+                {% if venue.highlights_3 %}<span class="chip">{{ venue.highlights_3 }}</span>{% endif %}
+              </div>
 
-      <hr class="border-secondary-subtle my-3">
+              <hr class="my-3">
 
-      <div class="row g-2">
-        <div class="col-6">
-          <div class="small text-soft mb-1">{{ venue.recommended_title|default:"Recomendado del bartender" }}</div>
-          <p class="text-soft mb-2">{{ venue.recommended_body|default:"" }}</p>
-        </div>
-        <div class="col-6">
-          <div class="small text-soft mb-1">Promos vigentes</div>
-          <ul class="small text-soft mb-0 ps-3">
-            {% if venue.vgt_promos_1 %}<li>{{ venue.vgt_promos_1 }}</li>{% endif %}
-            {% if venue.vgt_promos_2 %}<li>{{ venue.vgt_promos_2 }}</li>{% endif %}
-            {% if venue.vgt_promos_3 %}<li>{{ venue.vgt_promos_3 }}</li>{% endif %}
-          </ul>
-        </div>
-      </div>
+              <div class="row g-2">
+                <div class="col-12 col-sm-6">
+                  <div class="small text-light mb-1">{{ venue.recommended_title|default:"Recomendado del bartender" }}</div>
+                  <p class="text-secondary mb-2">{{ venue.recommended_body|default:"" }}</p>
+                </div>
+                <div class="col-12 col-sm-6">
+                  <div class="small text-light mb-1">Promos vigentes</div>
+                  <ul class="small text-light mb-0 ps-3">
+                    {% if venue.vgt_promos_1 %}<li>{{ venue.vgt_promos_1 }}</li>{% endif %}
+                    {% if venue.vgt_promos_2 %}<li>{{ venue.vgt_promos_2 }}</li>{% endif %}
+                    {% if venue.vgt_promos_3 %}<li>{{ venue.vgt_promos_3 }}</li>{% endif %}
+                  </ul>
+                </div>
+              </div>
 
-      <div class="mt-3 d-flex flex-wrap gap-2">
-        {% if venue.menu_pdf %}
-          <a class="btn btn-ghost btn-pill btn-sm" href="{{ venue.menu_pdf.url }}" target="_blank" rel="noopener">Ver carta en PDF</a>
-        {% endif %}
-        {% if venue.menu_qr_url %}
-          <a class="btn btn-ghost btn-pill btn-sm" href="{{ venue.menu_qr_url }}" target="_blank" rel="noopener">Escanear QR en barra</a>
-        {% endif %}
-        {% if venue.reservation_url %}
-          <a class="btn btn-ghost btn-pill btn-sm" href="{{ venue.reservation_url }}" target="_blank" rel="noopener">Reservar mesa</a>
-        {% endif %}
-      </div>
+              <div class="mt-3 d-flex flex-wrap gap-2">
+                {% if venue.menu_pdf %}
+                  <a class="btn btn-ghost btn-pill btn-sm" href="{{ venue.menu_pdf.url }}" target="_blank" rel="noopener">Ver carta en PDF</a>
+                {% endif %}
+                {% if venue.menu_qr_url %}
+                  <a class="btn btn-ghost btn-pill btn-sm" href="{{ venue.menu_qr_url }}" target="_blank" rel="noopener">Escanear QR en barra</a>
+                {% endif %}
+                {% if venue.reservation_url %}
+                  <a class="btn btn-ghost btn-pill btn-sm" href="{{ venue.reservation_url }}" target="_blank" rel="noopener">Reservar mesa</a>
+                {% endif %}
+              </div>
 
-      <div class="note mt-2">
-        <i class="bi bi-info-circle me-1"></i>
-        Carta y promos pueden variar por noche o artista invitado.
-      </div>
-    </div>
+              <div class="note mt-2">
+                <i class="bi bi-info-circle me-1"></i>
+                Carta y promos pueden variar por noche o artista invitado.
+              </div>
+            </div>
 
-    <div class="col-md-5">
-      <div class="bg-surface-2 rounded-lg p-3 h-100 d-flex flex-column justify-content-between">
-        <div>
-            <div class="small text-soft mb-1">Experiencia de barra</div>
-            <h3 class="h6 mb-2">Clásicos bien hechos &amp; signature drinks</h3>
-            
-            <p class="text-soft mb-0">
-              {{ venue.experience_venue|default:"Spirits premium, hielo cristal y técnica de autor. Pregunta por el drink de la noche." }}
-            </p>
-        </div>
-        <div class="pt-2 d-flex align-items-center flex-wrap gap-2">
-          {% if venue.vgt_promos_1 or venue.vgt_promos_2 or venue.vgt_promos_3 %}
-            <span class="badge badge-offer">Promo activa</span>
-          {% endif %}
-          {% if venue.reservation_url %}
-            <span class="badge badge-vibe">Reservas de mesa disponibles</span>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+            <div class="col-md-5">
+              <div class="bg-light rounded-4 p-3 h-100 d-flex flex-column justify-content-between">
+                <div>
+                  <div class="small text-secondary mb-1">Experiencia de barra</div>
+                  <h3 class="h6 mb-2">Clásicos bien hechos &amp; signature drinks</h3>
+                  <p class="text-secondary mb-0">
+                    {{ venue.experience_venue|default:"Spirits premium, hielo cristal y técnica de autor. Pregunta por el drink de la noche." }}
+                  </p>
+                </div>
+                <div class="pt-2 d-flex align-items-center flex-wrap gap-2">
+                  {% if venue.vgt_promos_1 or venue.vgt_promos_2 or venue.vgt_promos_3 %}
+                    <span class="badge text-light badge-offer">Promo activa</span>
+                  {% endif %}
+                  {% if venue.reservation_url %}
+                    <span class="badge text-dark badge-vibe">Reservas de mesa disponibles</span>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <hr class="my-4 my-md-5">
 
 
       </div>
@@ -347,18 +343,46 @@
 
         <section id="mapa" class="bg-surface-1 rounded-lg p-3 p-md-4 shadow-1 mt-3">
           <h2 class="h6 mb-2">Cómo llegar</h2>
-          <div class="map-shell rounded-lg"></div>
-          {% if venue.lat and venue.lon %}
-            <div class="small text-soft mt-2">Coordenadas: {{ venue.lat }}, {{ venue.lon }}</div>
+
+          {% if venue.address %}
+            {# Mapa embebido por dirección textual #}
+            <div class="ratio ratio-16x9 rounded-lg overflow-hidden">
+              <iframe
+                src="https://www.google.com/maps?q={{ venue.address|urlencode }}&output=embed"
+                style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-2">
+              <a class="btn btn-sm btn-ghost btn-pill"
+                href="https://www.google.com/maps/dir/?api=1&destination={{ venue.address|urlencode }}"
+                target="_blank" rel="noopener">
+                <i class="bi bi-geo"></i> Abrir en Google Maps
+              </a>
+              <a class="btn btn-sm btn-ghost btn-pill"
+                href="https://waze.com/ul?q={{ venue.address|urlencode }}"
+                target="_blank" rel="noopener">
+                <i class="bi bi-pin-map"></i> Abrir en Waze
+              </a>
+            </div>
+
+            <div class="small text-soft mt-2">
+              Dirección: {{ venue.address }}
+            </div>
           {% else %}
-            <div class="small text-soft mt-2">Estacionamientos cercanos · Rutas en apps de mapas</div>
+            <div class="map-shell rounded-lg d-flex align-items-center justify-content-center" style="min-height: 220px;">
+              <span class="text-soft small">Agrega una dirección para mostrar el mapa.</span>
+            </div>
           {% endif %}
         </section>
+
       </aside>
     </div>
 
     <!-- GALERÍA -->
- <section id="galeria" class="mt-4">
+   <section id="galeria" class="mt-4">
+  {% with total=gallery|length %}
   <div class="d-flex align-items-end justify-content-between mb-2">
     <div>
       <h2 class="h6 section-title mb-0">Galería</h2>
@@ -366,8 +390,10 @@
     </div>
 
     <div class="d-flex gap-2">
-      {% if gallery %}
-        <a class="btn btn-sm btn-ghost btn-pill" href="#">Ver todas</a>
+      {% if total > 9 %}
+        <button class="btn btn-sm btn-ghost btn-pill" data-bs-toggle="modal" data-bs-target="#galeriaModal">
+          Ver todas ({{ total }})
+        </button>
       {% endif %}
       {% if is_owner %}
         <button class="btn btn-sm btn-primary btn-pill" data-bs-toggle="modal" data-bs-target="#subirGaleriaModal">
@@ -377,65 +403,64 @@
     </div>
   </div>
 
-  <!-- GRID: renderiza fotos guardadas -->
- {% if gallery %}
-    <!-- MOBILE: Carousel -->
-    <div id="galeriaCarousel" class="carousel slide d-md-none" data-bs-ride="carousel">
-      <div class="carousel-inner">
-        {% for photo in gallery %}
-          <div class="carousel-item {% if forloop.first %}active{% endif %}">
-            <a data-bs-toggle="modal" data-bs-target="#galeriaModal" data-img="{{ photo.image.url }}" class="d-block">
-              <div class="ratio ratio-1x1">
-                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" class="w-100 h-100" style="object-fit:cover;">
-              </div>
-            </a>
-          </div>
-        {% endfor %}
-      </div>
-      <button class="carousel-control-prev" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span><span class="visually-hidden">Anterior</span>
-      </button>
-      <button class="carousel-control-next" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span><span class="visually-hidden">Siguiente</span>
-      </button>
-      <div class="carousel-indicators mb-0">
-        {% for photo in gallery %}
-          <button type="button" data-bs-target="#galeriaCarousel" data-bs-slide-to="{{ forloop.counter0 }}" class="{% if forloop.first %}active{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
-        {% endfor %}
-      </div>
+  {% if gallery %}
+    {# === GRID: solo 9 imágenes (desktop y mobile) === #}
+    <div class="row g-2">
+      {% for photo in gallery|slice:":9" %}
+        <div class="col-4 col-md-4">
+          <a data-bs-toggle="modal" data-bs-target="#galeriaModal" data-img="{{ photo.image.url }}" class="d-block">
+            <div class="ratio ratio-1x1">
+              <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" class="w-100 h-100" style="object-fit:cover;">
+            </div>
+          </a>
+        </div>
+      {% endfor %}
     </div>
 
-    <!-- DESKTOP: Grid 3 por fila, todas iguales -->
-    <div class="d-none d-md-block">
-      <div class="row g-2">
-        {% for photo in gallery %}
-          <div class="col-4">
-            <a data-bs-toggle="modal" data-bs-target="#galeriaModal" data-img="{{ photo.image.url }}" class="d-block">
-              <div class="ratio ratio-1x1">
-                <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" class="w-100 h-100" style="object-fit:cover;">
+    {# === MODAL con CARRUSEL: TODAS las imágenes si hay más de 0 (se abre con "Ver todas" o al tocar una miniatura) === #}
+    <div class="modal fade" id="galeriaModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-black border-0 rounded-0">
+          <button type="button" class="btn-close btn-close-white ms-auto me-2 mt-2"
+                  data-bs-dismiss="modal" aria-label="Cerrar"></button>
+
+          <div class="modal-body p-0">
+            <div id="galeriaCarousel" class="carousel slide" data-bs-ride="false">
+              <div class="carousel-inner">
+                {% for photo in gallery %}
+                  <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="{{ photo.image.url }}" alt="{{ photo.caption }}" class="d-block w-100"
+                         style="max-height:85vh; object-fit:contain;">
+                  </div>
+                {% endfor %}
               </div>
-            </a>
+
+              <button class="carousel-control-prev" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Anterior</span>
+              </button>
+              <button class="carousel-control-next" type="button" data-bs-target="#galeriaCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Siguiente</span>
+              </button>
+
+              {% if total > 1 %}
+              <div class="carousel-indicators mb-2">
+                {% for photo in gallery %}
+                  <button type="button" data-bs-target="#galeriaCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+                          class="{% if forloop.first %}active{% endif %}" aria-label="Slide {{ forloop.counter }}"></button>
+                {% endfor %}
+              </div>
+              {% endif %}
+            </div>
           </div>
-        {% endfor %}
+        </div>
       </div>
     </div>
 
   {% else %}
     <p class="text-muted">Aún no hay fotos en la galería.</p>
   {% endif %}
-
-  <!-- Modal para ver imagen grande -->
-  <div class="modal fade" id="galeriaModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-xl">
-      <div class="modal-content bg-black border-0 rounded-0">
-        <button type="button" class="btn-close btn-close-white ms-auto me-2 mt-2"
-                data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        <div class="modal-body p-0">
-          <img id="galeriaModalImg" class="w-100" style="max-height:85vh; object-fit:contain" src="" alt="">
-        </div>
-      </div>
-    </div>
-  </div>
 
   {% if is_owner %}
   <!-- Modal: subir múltiples fotos -->
@@ -452,18 +477,15 @@
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label">Imágenes</label>
-              {{ gallery_form.images }}
-              {{ gallery_form.images.errors }}
+              {{ gallery_form.images }} {{ gallery_form.images.errors }}
               <div class="form-text">Selecciona una o varias imágenes.</div>
             </div>
 
             <div class="mb-3">
               <label class="form-label">Leyenda (opcional)</label>
-              {{ gallery_form.caption }}
-              {{ gallery_form.caption.errors }}
+              {{ gallery_form.caption }} {{ gallery_form.caption.errors }}
             </div>
 
-            <!-- Previsualización simple -->
             <div id="preview" class="row g-2"></div>
           </div>
 
@@ -476,8 +498,34 @@
     </div>
   </div>
   {% endif %}
-
+  {% endwith %}
 </section>
+
+<script>
+  // Al abrir modal desde un thumb, ir a ese slide en el carrusel
+  document.addEventListener('click', function (e) {
+    const a = e.target.closest('[data-bs-target="#galeriaModal"][data-img]');
+    if (!a) return;
+
+    const imgUrl = a.getAttribute('data-img');
+    const modalEl = document.getElementById('galeriaModal');
+    const carouselEl = modalEl.querySelector('#galeriaCarousel');
+    if (!carouselEl) return;
+
+    const items = [...carouselEl.querySelectorAll('.carousel-item img')];
+    const idx = items.findIndex(img => img.getAttribute('src') === imgUrl);
+    if (idx >= 0) {
+      // Espera a que el modal esté visible y mueve el carrusel a la posición
+      const showHandler = () => {
+        const carousel = bootstrap.Carousel.getOrCreateInstance(carouselEl);
+        carousel.to(idx);
+        modalEl.removeEventListener('shown.bs.modal', showHandler);
+      };
+      modalEl.addEventListener('shown.bs.modal', showHandler, { once: true });
+    }
+  });
+</script>
+
 
 <script>
 // Previsualizador de miniaturas en el modal de subida

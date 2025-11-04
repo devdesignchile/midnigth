@@ -2,8 +2,12 @@
 {% load static %}
 
 {% block content %}
-<div class="container py-4">
-  <h1 class="h3 mb-3">Editar: {{ venue.name }}</h1>
+<div class="container py-5">
+  <!-- Encabezado -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h4 mb-0">Editar: {{ venue.name }}</h1>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'venue-detail' slug=venue.slug %}">Volver</a>
+  </div>
 
   <form method="post" enctype="multipart/form-data" novalidate>
     {% csrf_token %}
@@ -12,56 +16,162 @@
       <div class="alert alert-danger">{{ form.non_field_errors }}</div>
     {% endif %}
 
-    <div class="row g-3">
-      {% for field in form %}
-        {% if field.name == "vibe_tags" %}
-          <!-- Chips de tags -->
-          <div class="col-12 mb-5">
-            <label class="form-label small text-uppercase fw-semibold">Ambiente / Vibes</label>
+    <!-- Contenedor -->
+    <div class="bg-glass border-0 shadow-sm rounded-4">
+      <div class="p-4">
 
-            <!-- Oculta el widget nativo por si acaso -->
-            <div class="d-none">
-              {{ field }}
-            </div>
+        <!-- Grupo: Información básica -->
+        <div class="mb-3">
+          <h2 class="section-title">Información básica</h2>
+        </div>
 
-            <div class="tag-picker ">
-              {% for t in all_tags %}
-                <div class="tag-chip">
-                  <input
-                    type="checkbox"
-                    id="tag_{{ t.id }}"
-                    name="vibe_tags"
-                    value="{{ t.id }}"
-                    {% if t.id in selected_tag_ids %}checked{% endif %}
-                  >
-                  <label for="tag_{{ t.id }}">{{ t.name }}</label>
-                </div>
-              {% endfor %}
-            </div>
+        <div class="row g-4">
+          {% for field in form %}
 
-            {% if field.errors %}
-              <div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>
+            {# ---------- Encabezados de secciones dentro del loop (sin usar filtros) ---------- #}
+            {% if field.name == "cover_image" %}
+              <div class="col-12"><hr class="section-divider"><h2 class="section-title">Medios</h2></div>
             {% endif %}
-            <div class="form-text">Selecciona uno o más (Bailable, Reggaetón, Terraza, etc.).</div>
-          </div>
-        {% else %}
-          <!-- Render normal para el resto de campos -->
-          <div class="col-12 {% if field.field.widget.input_type != 'textarea' %}col-md-6{% endif %}">
-            <label class="form-label small text-uppercase fw-semibold" for="{{ field.id_for_label }}">
-              {{ field.label }}
-            </label>
-            {{ field }}
-            {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
-            {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
-          </div>
-        {% endif %}
-      {% endfor %}
+            {% if field.name == "description" %}
+              <div class="col-12"><hr class="section-divider"><h2 class="section-title">Sobre el lugar</h2></div>
+            {% endif %}
+            {% if field.name == "address" %}
+              <div class="col-12"><hr class="section-divider"><h2 class="section-title">Contacto & Redes</h2></div>
+            {% endif %}
+            {% if field.name == "vibe_tags" %}
+              <div class="col-12"><hr class="section-divider"><h2 class="section-title">Ambiente & Pagos</h2></div>
+            {% endif %}
+
+            {# ---------- Chips de tags (vibe_tags) ---------- #}
+            {% if field.name == "vibe_tags" %}
+              <div class="col-12">
+                <label class="form-label small text-uppercase fw-semibold">Ambiente / Vibes</label>
+
+                <!-- Widget nativo oculto para no romper el submit -->
+                <div class="d-none">
+                  {{ field }}
+                </div>
+
+                <div class="tag-picker">
+                  {% for t in all_tags %}
+                    <label class="tag-chip">
+                      <input
+                        type="checkbox"
+                        id="tag_{{ t.id }}"
+                        name="vibe_tags"
+                        value="{{ t.id }}"
+                        {% if t.id in selected_tag_ids %}checked{% endif %}
+                      >
+                      <span>{{ t.name }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+
+                {% if field.errors %}<div class="invalid-feedback d-block mt-2">{{ field.errors|striptags }}</div>{% endif %}
+                <div class="form-text mt-1">Selecciona uno o más (Bailable, Reggaetón, Terraza, etc.).</div>
+              </div>
+
+            {# ---------- Portada y Logo (con previews existentes) ---------- #}
+            {% elif field.name == "cover_image" %}
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-semibold" for="{{ field.id_for_label }}">Portada</label>
+                {{ field }}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+                {% if venue.cover_image %}
+                  <div class="mt-2">
+                    <img src="{{ venue.cover_image.url }}" alt="Portada actual" class="img-preview">
+                  </div>
+                {% endif %}
+                <div class="form-text">Formato horizontal recomendado (p. ej., 4:3).</div>
+              </div>
+
+            {% elif field.name == "logo" %}
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-semibold" for="{{ field.id_for_label }}">Logo</label>
+                {{ field }}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+                {% if venue.logo %}
+                  <div class="mt-2">
+                    <img src="{{ venue.logo.url }}" alt="Logo actual" class="img-preview img-preview--square">
+                  </div>
+                {% endif %}
+                <div class="form-text">Ideal PNG con fondo transparente.</div>
+              </div>
+
+            {# ---------- Switch de publicación ---------- #}
+            {% elif field.name == "is_published" %}
+              <div class="col-12 col-md-6">
+                <label class="form-label small text-uppercase fw-semibold" for="{{ field.id_for_label }}">Estado</label>
+                <div class="form-check form-switch">
+                  {{ field }}
+                  <label class="form-check-label ms-2" for="{{ field.id_for_label }}">Publicado</label>
+                </div>
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+              </div>
+
+            {# ---------- Campos normales ---------- #}
+            {% else %}
+              <div class="col-12 {% if field.field.widget.input_type != 'textarea' %}col-md-6{% endif %}">
+                <label class="form-label small text-uppercase fw-semibold" for="{{ field.id_for_label }}">
+                  {{ field.label }}
+                </label>
+                {{ field }}
+                {% if field.help_text %}<div class="form-text">{{ field.help_text }}</div>{% endif %}
+                {% if field.errors %}<div class="invalid-feedback d-block">{{ field.errors|striptags }}</div>{% endif %}
+              </div>
+            {% endif %}
+
+          {% endfor %}
+        </div>
+
+      </div>
     </div>
 
+    <!-- Acciones -->
     <div class="d-flex gap-2 mt-4">
       <a class="btn btn-outline-secondary" href="{% url 'venue-detail' slug=venue.slug %}">Cancelar</a>
       <button class="btn btn-primary" type="submit">Guardar cambios</button>
     </div>
   </form>
 </div>
+
+<!-- Estilos (solo BS5-friendly, sin JS extra) -->
+<style>
+  .section-title{
+    font-size:.9rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--bs-secondary-color); margin:0 0 .25rem 0; font-weight:700;
+  }
+  .section-divider{
+    border:0; height:1px; background:linear-gradient(90deg, rgba(0,0,0,.06), rgba(0,0,0,0));
+    margin:1.25rem 0 .75rem;
+  }
+
+  .card .form-control,
+  .card .form-select,
+  .card input[type="file"],
+  .card textarea {
+    padding: .75rem 1rem;
+    border-radius: .8rem;
+  }
+  textarea { min-height: 140px; }
+
+  .img-preview {
+    display:block; max-width:100%; height:auto;
+    border-radius:.8rem; box-shadow:0 6px 16px rgba(0,0,0,.12);
+  }
+  .img-preview--square { width:120px; height:120px; object-fit:cover; }
+
+  .tag-picker { display:flex; flex-wrap:wrap; gap:.5rem; }
+  .tag-chip {
+    display:inline-flex; align-items:center; gap:.5rem;
+    border:1px solid var(--bs-border-color, #e5e7eb);
+    border-radius:999px; padding:.35rem .75rem;
+    background:var(--bs-body-bg); cursor:pointer;
+    transition:transform .2s ease, box-shadow .2s ease;
+  }
+  .tag-chip:hover { transform:translateY(-1px); box-shadow:0 6px 14px rgba(0,0,0,.06); }
+  .tag-chip input { display:none; }
+  .tag-chip span { font-size:.875rem; }
+  .tag-chip input:checked + span { font-weight:600; }
+</style>
 {% endblock %}

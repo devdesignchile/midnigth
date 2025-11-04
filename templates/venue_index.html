@@ -1,15 +1,20 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Carreteo — {{ active_city|default:"Todas las ciudades" }}{% endblock %}
+{% block title %}
+Carreteo — {{ active_city|default:"Todas las ciudades" }}
+{% endblock %}
 
 {% block content %}
 <!-- ========= HERO CIUDAD ========= -->
-<!-- HERO / Buscador -->
 <section class="py-5 text-center">
-  <h1 class="display-4 fw-bold mb-2">A donde ir</h1>
+  <h1 class="display-1  mb-5">Adonde ir</h1>
   <p class="text-soft mb-4" id="city-counter">
-    {% if city %}{{ city.name }} · {{ venues_count }} lugares{% else %} . {% endif %}
+    {% if city %}
+      {{ city.name }} · {{ venues_count }} lugares
+    {% else %}
+      .
+    {% endif %}
   </p>
 
   <form id="city-filter-form" class="container" method="get" autocomplete="off">
@@ -18,11 +23,11 @@
       <div class="col-12 col-lg-8">
         <div class="position-relative">
           <input
-            id="city-input" ... value="{{ active_city_label }}"
+            id="city-input"
             class="form-control form-control-lg rounded-pill px-4 py-3"
             type="text"
             name="city"
-            value="{{ city_input_value }}"
+            value="{{ active_city_label|default:city_input_value }}"
             placeholder="Escribe una ciudad"
             aria-autocomplete="list"
             aria-expanded="false"
@@ -30,27 +35,24 @@
             role="combobox"
           >
           <!-- panel de sugerencias -->
-          <div id="city-suggestions"
-               class="list-group shadow position-absolute w-100 mt-2 d-none"
-               style="max-height: 260px; overflow:auto; z-index: 1050;">
-          </div>
+          <div
+            id="city-suggestions"
+            class="list-group shadow position-absolute w-100 mt-2 d-none"
+            style="max-height: 260px; overflow:auto; z-index: 1050;"
+          ></div>
         </div>
       </div>
     </div>
-    
 
-    <!-- fila 2: fecha y categoria -->
+    <!-- fila 2: fecha y categoría -->
     <div class="row justify-content-center g-3">
       <div class="col-12 col-md-3">
-          <label class="form-label small">Fecha</label>
-          <select class="form-select rounded-pill" name="when">
-            <option value="cualquier_dia"
-                    {% if active_when == "cualquier_dia" %}selected{% endif %}>
-              Cualquier día
-            </option>
-            <option value="hoy" {% if active_when == "hoy" %}selected{% endif %}>Hoy</option>
-            <option value="esta_semana" {% if active_when == "esta_semana" %}selected{% endif %}>Esta semana</option>
-          </select>
+        <label class="form-label small">Fecha</label>
+        <select class="form-select rounded-pill" name="when">
+          <option value="cualquier_dia" {% if active_when == "cualquier_dia" %}selected{% endif %}>Cualquier día</option>
+          <option value="hoy" {% if active_when == "hoy" %}selected{% endif %}>Hoy</option>
+          <option value="esta_semana" {% if active_when == "esta_semana" %}selected{% endif %}>Esta semana</option>
+        </select>
       </div>
 
       <div class="col-12 col-md-3">
@@ -71,161 +73,118 @@
       </div>
     </div>
 
-    <!-- conservar otros parámetros si los hubieras usado -->
-    {% if q %}<input type="hidden" name="q" value="{{ q }}">{% endif %}
+    {% if q %}
+      <input type="hidden" name="q" value="{{ q }}">
+    {% endif %}
   </form>
 </section>
-
-
-
-
-
 
 <!-- ========= CONTENIDO ========= -->
 <main class="py-4 my-5" id="lugares">
   <div class="container">
-<!-- NAV DE CATEGORÍAS (preserva city, q y when automáticamente) -->
-<div class="bg-surface-1 rounded-lg p-2 shadow-1 mb-3">
-  <ul class="nav nav-pills overflow-auto flex-nowrap gap-2" role="tablist" style="--bs-nav-link-padding-x: .25rem;">
-    {% with cat=active_cat %}
-      <li class="nav-item">
-        <a class="btn btn-ghost btn-pill {% if not cat %}active{% endif %}"
-           href="{{ cat_urls.all }}">
-          Todos
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="btn btn-ghost btn-pill {% if cat == 'pub' %}active{% endif %}"
-           href="{{ cat_urls.pub }}">
-          Pubs/Bares
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="btn btn-ghost btn-pill {% if cat == 'restaurant' %}active{% endif %}"
-           href="{{ cat_urls.restaurant }}">
-          Restaurantes
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="btn btn-ghost btn-pill {% if cat == 'rooftop' %}active{% endif %}"
-           href="{{ cat_urls.rooftop }}">
-          Rooftops
-        </a>
-      </li>
-      <li class="nav-item">
-        <a class="btn btn-ghost btn-pill {% if cat == 'discoteque' %}active{% endif %}"
-           href="{{ cat_urls.discoteque }}">
-          Discoteques
-        </a>
-      </li>
-    {% endwith %}
-  </ul>
-</div>
 
+    <!-- NAV DE CATEGORÍAS
+    <div class="bg-surface-1 rounded-lg p-2 shadow-1 mb-3">
+      <ul class="nav nav-pills overflow-auto flex-nowrap gap-2" role="tablist" style="--bs-nav-link-padding-x: .25rem;">
+        {% with cat=active_cat %}
+          <li class="nav-item">
+            <a class="btn btn-ghost btn-pill {% if not cat %}active{% endif %}" href="{{ cat_urls.all }}">Todos</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-ghost btn-pill {% if cat == 'pub' %}active{% endif %}" href="{{ cat_urls.pub }}">Pubs/Bares</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-ghost btn-pill {% if cat == 'restaurant' %}active{% endif %}" href="{{ cat_urls.restaurant }}">Restaurantes</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-ghost btn-pill {% if cat == 'rooftop' %}active{% endif %}" href="{{ cat_urls.rooftop }}">Rooftops</a>
+          </li>
+          <li class="nav-item">
+            <a class="btn btn-ghost btn-pill {% if cat == 'discoteque' %}active{% endif %}" href="{{ cat_urls.discoteque }}">Discoteques</a>
+          </li>
+        {% endwith %}
+      </ul>
+    </div> -->
 
+    <!-- WRAPPER DINÁMICO -->
+    <div id="dynamic-sections" data-json-endpoint="{% url 'city_index_json' %}">
 
-<!-- Wrapper opcional para AJAX (si usas fetch) -->
-<div id="dynamic-sections" data-json-endpoint="{% url 'city_index_json' %}">
-
-  {# ==== GRID DE LUGARES ==== #}<!-- [START featured_venues] -->
-{% if city and featured_venues %}
-<section class="container my-5">
-  <h2 class="h5 mb-3">Lugares destacados en {{ city.name }}</h2>
-  <div id="featured-venues" class="row g-3">
-    {% for v in featured_venues %}
-      {% with hero=v.cover_image %}
-      <div class="col-6 col-md-4 col-lg-3">
-        <a href="{% url 'venue-detail' slug=v.slug %}" class="text-decoration-none card-hero shadow-sm">
-          <div class="card-hero__img">
-            {% if hero %}
-              <img src="{{ hero.url }}" alt="{{ v.name }}" class="object-fit-cover">
-            {% else %}
-              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}" class="object-fit-cover">
-            {% endif %}
-            <div class="card-hero__overlay"></div>
-            <div class="card-hero__meta">
-              <span class="badge bg-primary text-capitalize">{{ v.get_category_display }}</span>
-              <h3>{{ v.name }}</h3>
-              <div class="small">{{ v.Commune.name }}</div>
-            </div>
-          </div>
-        </a>
-      </div>
-      {% endwith %}
-    {% endfor %}
-  </div>
-</section>
-{% endif %}
-<!-- [END featured_venues] -->
-
-
-<!-- [START venues_grid] -->
-<section class="container">
-  <div id="venues-grid" class="row g-3">
-    {% for v in venues %}
-      <div class="col-12 col-md-6 col-lg-4">
-        <a class="card card-event text-decoration-none h-100" href="{% url 'venue-detail' slug=v.slug %}">
-          <div class="card-cover">
-            {% if v.cover_image %}
-              <img src="{{ v.cover_image.url }}" alt="{{ v.name }}">
-            {% else %}
-              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}">
-            {% endif %}
-          </div>
-          <div class="card-body">
-            <h4 class="h6 mb-1 text-white">{{ v.name }}</h4>
-            <div class="small text-soft">
-              {{ v.get_category_display }}{% if v.Commune %} · {{ v.Commune.name }}{% endif %}
-            </div>
-            {% if v.hours_short %}
-              <div class="small text-soft mt-1">{{ v.hours_short }}</div>
-            {% endif %}
-            {% if v.vibe_tags.all %}
-              <div class="mt-2 d-flex flex-wrap gap-1">
-                {% for t in v.vibe_tags.all|slice:":3" %}
-                  <span class="badge rounded-pill text-bg-dark">{{ t.name }}</span>
-                {% endfor %}
+      {% if city and featured_venues %}
+      <!-- LUGARES DESTACADOS -->
+      <section class="container my-5">
+        <h2 class="h3 display-6 mb-5">Lugares destacados en {{ city.name }}</h2>
+        <div id="featured-venues" class="row g-3">
+          {% for v in featured_venues %}
+            {% with hero=v.cover_image %}
+              <div class="col-6 col-md-4 col-lg-3">
+                <a href="{% url 'venue-detail' slug=v.slug %}" class="text-decoration-none card-hero shadow-sm">
+                  <div class="card-hero__img">
+                    {% if hero %}
+                      <img src="{{ hero.url }}" alt="{{ v.name }}" class="object-fit-cover">
+                    {% else %}
+                      <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}" class="object-fit-cover">
+                    {% endif %}
+                    <div class="card-hero__overlay"></div>
+                    <div class="card-hero__meta">
+                      <span class="badge bg-primary text-capitalize">{{ v.get_category_display }}</span>
+                      <h3>{{ v.name }}</h3>
+                      <div class="small">{{ v.Commune.name }}</div>
+                    </div>
+                  </div>
+                </a>
               </div>
-            {% endif %}
-          </div>
-        </a>
-      </div>
-    {% empty %}
-      <div class="col-12">
-        <div class="alert alert-secondary mb-0">
-          No hay lugares publicados en {{ active_city_label|default:"todas las ciudades" }} todavía.
+            {% endwith %}
+          {% endfor %}
         </div>
-      </div>
-    {% endfor %}
-  </div>
-</section>
-<!-- [END venues_grid] -->
+      </section>
+      {% endif %}
 
-
-</div>  {# /dynamic-sections #}
-
-
-    <!-- ===== Mapa (estático de momento) 
-    <section id="mapa" class="mt-4">
-      <header class="d-flex align-items-end justify-content-between mb-2">
-        <div>
-          <h2 class="h6 section-title mb-0">Explorar en el mapa</h2>
-          <p class="small text-soft mt-2 mb-0">Arrastra el mapa para ver más resultados.</p>
+      <!-- GRID DE LUGARES -->
+      <section class="container">
+        <div id="venues-grid" class="row g-3">
+          {% for v in venues %}
+            <div class="col-12 col-md-6 col-lg-4">
+              <a class="card card-event text-decoration-none h-100" href="{% url 'venue-detail' slug=v.slug %}">
+                <div class="card-cover">
+                  {% if v.cover_image %}
+                    <img src="{{ v.cover_image.url }}" alt="{{ v.name }}">
+                  {% else %}
+                    <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ v.name }}">
+                  {% endif %}
+                </div>
+                <div class="card-body">
+                  <h4 class="h6 mb-1 text-white">{{ v.name }}</h4>
+                  <div class="small text-soft">
+                    {{ v.get_category_display }}{% if v.Commune %} · {{ v.Commune.name }}{% endif %}
+                  </div>
+                  {% if v.hours_short %}
+                    <div class="small text-soft mt-1">{{ v.hours_short }}</div>
+                  {% endif %}
+                  {% if v.vibe_tags.all %}
+                    <div class="mt-2 d-flex flex-wrap gap-1">
+                      {% for t in v.vibe_tags.all|slice:":3" %}
+                        <span class="badge rounded-pill text-bg-dark">{{ t.name }}</span>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </div>
+              </a>
+            </div>
+          {% empty %}
+            <div class="col-12">
+              <div class="alert alert-secondary mb-0">
+                No hay lugares publicados en {{ active_city_label|default:"todas las ciudades" }} todavía.
+              </div>
+            </div>
+          {% endfor %}
         </div>
-      </header>
-    </section>
-    <div id="map" class="map-shell rounded-lg" style="height:420px;"></div> ===== -->
-    <script id="map-center-json"  type="application/json">{{ map_center_json|safe }}</script>
-    <script id="venues-map-json"  type="application/json">{{ venues_map_json|safe }}</script>
-
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script> 
-
-
+      </section>
+    </div>
   </div>
 </main>
-<!-- Fuente JSON (desde la vista) — si no la tienes aún, no pasa nada: hay fallback -->
-<!-- Entrega la lista de nombres de ciudades para el autocomplete -->
+
+<!-- ====== Autocomplete ciudades (sin mapa) ====== -->
+<!-- Fuente JSON (desde la vista) — si no la tienes aún, hay fallback -->
 <script id="city-names-json" type="application/json">{{ city_names_json|safe }}</script>
 <script id="cities-fallback-json" type="application/json">[]</script>
 
@@ -303,6 +262,7 @@
   document.addEventListener('click', (e)=>{ if (!panel.contains(e.target) && e.target !== input) hide(); });
 })();
 </script>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
   const nav = document.querySelector(".nav.nav-pills");
@@ -336,76 +296,10 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.grid) grid.innerHTML = data.grid;
     } catch (err) {
       console.error(err);
-      grid.innerHTML = "<div class='alert alert-danger'>Error al cargar los datos.</div>";
+      if (grid) grid.innerHTML = "<div class='alert alert-danger'>Error al cargar los datos.</div>";
     }
   });
 });
-</script>
-
-<script>
-(function(){
-  const center = JSON.parse(document.getElementById('map-center-json').textContent || '{"lat":-33.4489,"lon":-70.6693}');
-  const map = L.map('map').setView([center.lat, center.lon], 13);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19, attribution: '&copy; OpenStreetMap'
-  }).addTo(map);
-  const markers = L.layerGroup().addTo(map);
-
-  const cacheGet = k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } };
-  const cacheSet = (k,v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch{} };
-  const wait = ms => new Promise(r => setTimeout(r, ms));
-
-  // ⬇️ Cambia SOLO esta función
-  async function geocode(q){
-    const url = new URL('https://nominatim.openstreetmap.org/search');
-    url.searchParams.set('q', q);
-    url.searchParams.set('format', 'json');
-    url.searchParams.set('limit', '1');
-    url.searchParams.set('countrycodes', 'cl');
-    // Nominatim pide un User-Agent identificable
-    const res = await fetch(url, {
-      headers: {
-        'Accept-Language': 'es',
-        'User-Agent': 'midnight-web/1.0 (tu-email@dominio.com)'
-      }
-    });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return (Array.isArray(data) && data[0]) ? { lat: +data[0].lat, lon: +data[0].lon } : null;
-  }
-
-  async function paint(venues, recenter){
-    markers.clearLayers();
-    let first = null;
-    for (let i=0;i<venues.length;i++){
-      const v = venues[i];
-      const key = `geo:${v.slug}`;
-      let coord = cacheGet(key);
-
-      if (!coord || coord.lat == null){
-        coord = await geocode(v.q);
-        cacheSet(key, coord || {lat:null, lon:null});
-        await wait(1100); // ~1 req/seg: cortesía Nominatim
-      }
-      if (!coord || coord.lat == null) continue;
-      if (!first) first = coord;
-
-      const html = `
-        <div style="min-width:220px">
-          ${v.cover ? `<img src="${v.cover}" style="width:100%;height:110px;object-fit:cover;border-radius:8px;margin-bottom:6px">` : ``}
-          <div class="fw-semibold">${v.name}</div>
-          <div class="small text-muted">${v.category}</div>
-          <div class="small">${v.address}</div>
-          <a class="btn btn-sm btn-primary mt-2" href="${v.url}">Ver lugar</a>
-        </div>`;
-      L.marker([coord.lat, coord.lon]).addTo(markers).bindPopup(html);
-    }
-    if (recenter && first) map.setView([first.lat, first.lon], 13);
-  }
-
-  const initialVenues = JSON.parse(document.getElementById('venues-map-json').textContent || '[]');
-  paint(initialVenues, false);
-})();
 </script>
 
 <script>
@@ -429,7 +323,4 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 </script>
 
-
-
 {% endblock %}
-

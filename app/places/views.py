@@ -588,7 +588,6 @@ class VenueGalleryUploadView(LoginRequiredMixin, UserPassesTestMixin, View):
 
         messages.success(request, f"Se subieron {created} foto(s) a la galería.")
         return redirect(reverse("venue-detail", kwargs={"slug": venue.slug}))
-
 class CityVenueListView(ListView):
     template_name = "venue_index.html"
     context_object_name = "venues"
@@ -606,14 +605,14 @@ class CityVenueListView(ListView):
         return next_monday, week_end
 
     def get_queryset(self):
-        qs = Venue.objects.select_related("Commune")   #.filter(is_published=True)
+        qs = Venue.objects.select_related("Commune")  # .filter(is_published=True)
 
         q        = (self.request.GET.get("q") or "").strip()
         cat      = (self.request.GET.get("cat") or "").strip()
         when     = (self.request.GET.get("when") or "cualquier_dia").strip()
-        city_raw = (self.request.GET.get("city") or "").strip()   # ✅ FALTABA
+        city_raw = (self.request.GET.get("city") or "").strip()
 
-        # 1) Sin ciudad → no listar (template puede mostrar recomendados)
+        # 1) Sin ciudad → no listar
         if not city_raw:
             self.needs_city = True
             self.city_input_value = ""
@@ -681,44 +680,17 @@ class CityVenueListView(ListView):
         ctx = super().get_context_data(**kwargs)
         req = self.request.GET
 
-        # ✅ aseguramos que la clave city exista ANTES de usarla en el mapa
+        # City en contexto (ya no se usa para mapa, pero sí para secciones/labels)
         ctx["city"] = getattr(self, "filter_city", None)
-
-        # ==========================
-        # 🌍 Datos del mapa
-        # ==========================
-        center = {"lat": -33.4489, "lon": -70.6693}  # fallback Santiago
         city = ctx["city"]
-        if city and getattr(city, "lat", None) and getattr(city, "lon", None):
-            center = {"lat": float(city.lat), "lon": float(city.lon)}
 
-        venues_map = []
-        for v in ctx["object_list"]:
-            if v.address:
-                venues_map.append({
-                    "slug": v.slug,
-                    "name": v.name,
-                    "category": v.get_category_display(),
-                    "address": v.address,
-                    "city": v.Commune.name if v.Commune_id else "",
-                    "country": "Chile",
-                    "cover": (v.cover_image.url if v.cover_image else ""),
-                    "q": f"{v.address}, {v.Commune.name if v.Commune_id else ''}, Chile".strip(", "),
-                    "url": self.request.build_absolute_uri(reverse("venue-detail", kwargs={"slug": v.slug})),
-                })
-
-        ctx["map_center_json"] = json.dumps(center)
-        ctx["venues_map_json"] = json.dumps(venues_map, ensure_ascii=False)
-
-        # ==========================
         # 🔍 Filtros activos
-        # ==========================
         ctx["q"] = (req.get("q") or "").strip()
         ctx["active_cat"]  = (req.get("cat") or "").strip()
         ctx["active_when"] = (req.get("when") or "").strip()
         ctx["city_input_value"] = getattr(self, "city_input_value", "")
 
-        # ✅ mantener todas las comunas (para el buscador)
+        # Lista de comunas (para buscador)
         cities_qs = Commune.objects.order_by("name")
         ctx["city_names_json"] = json.dumps(
             list(cities_qs.values_list("name", flat=True)),
@@ -729,9 +701,7 @@ class CityVenueListView(ListView):
         ctx["error_city"]   = getattr(self, "error_city", "")
         ctx["venues_count"] = ctx["object_list"].count() if not ctx["needs_city"] else 0
 
-        # ==========================
         # ⭐ Secciones destacadas
-        # ==========================
         if city:
             ctx["featured_venues"] = (
                 Venue.objects
@@ -740,7 +710,12 @@ class CityVenueListView(ListView):
             )
             ctx["featured_events"] = (
                 Event.objects
-                    .filter(Commune=city, is_published=True, venue__isnull=False, venue__is_published=True)
+                    .filter(
+                        Commune=city,
+                        is_published=True,
+                        venue__isnull=False,
+                        venue__is_published=True
+                    )
                     .select_related("venue")
                     .order_by("start_at")[:]
             )
@@ -748,9 +723,7 @@ class CityVenueListView(ListView):
             ctx["featured_venues"] = Venue.objects.none()
             ctx["featured_events"] = Event.objects.none()
 
-        # ==========================
         # 🧭 Valores activos + URLs categorías
-        # ==========================
         ctx["active_city_label"] = city.name if city else ""
         ctx["active_city"] = city.slug if city else ""
 
@@ -780,6 +753,7 @@ class CityVenueListView(ListView):
         }
 
         return ctx
+
 
 class CityListView(ListView):
     template_name = "city_index.html"
