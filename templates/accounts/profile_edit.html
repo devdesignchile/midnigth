@@ -13,7 +13,7 @@
         <h1 class="h3 fw-bold mb-1">Editar perfil</h1>
         <p class="text-soft mb-0">Personaliza tu cuenta. Cambios guardados al instante ✨</p>
       </div>
-      <a href="#" class="btn btn-ghost btn-pill floaty d-none d-md-inline-flex">
+      <a href="javascript:history.back()" class="btn btn-ghost btn-pill floaty d-none d-md-inline-flex">
         <i class="bi bi-arrow-left me-2"></i> Volver
       </a>
     </div>
@@ -138,7 +138,7 @@
               <button class="btn btn-brand btn-pill px-4 floaty" type="submit">
                 <i class="bi bi-check2 me-2"></i> Guardar cambios
               </button>
-              <a href="#" class="btn btn-ghost btn-pill">Cancelar</a>
+              <a href="javascript:history.back()" class="btn btn-ghost btn-pill">Cancelar</a>
             </div>
 
           </div>
@@ -146,6 +146,54 @@
       </div>
     </form>
     <!-- ⬆️ Fin del form -->
+
+    <!-- Zona de peligro -->
+    <div class="card panel glass p-3 p-md-4 mt-4 border-danger" id="danger-zone">
+      <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <div>
+          <div class="eyebrow mb-1">Zona de peligro</div>
+          <h3 class="h6 fw-bold mb-1 text-danger">Eliminar cuenta y cancelar suscripción</h3>
+          <p class="text-soft small mb-0">
+            Esto <b>cancelará</b> tu suscripción en Mercado Pago y <b>eliminará tu cuenta</b> y datos asociados. Esta acción es irreversible.
+          </p>
+        </div>
+        <div>
+          <!-- Botón que abre un modal de confirmación -->
+          <button class="btn btn-outline-danger btn-pill" data-bs-toggle="modal" data-bs-target="#confirmDeleteModal">
+            <i class="bi bi-trash3 me-1"></i> Eliminar mi cuenta
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de confirmación -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4">
+          <div class="modal-header border-0">
+            <h5 class="modal-title">Confirmar eliminación</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body">
+            <p class="mb-2">¿Seguro que deseas eliminar tu cuenta?</p>
+            <ul class="small text-soft mb-0">
+              <li>Se cancelará la suscripción recurrente en Mercado Pago.</li>
+              <li>Se eliminarán tus datos y no podrás recuperarlos.</li>
+            </ul>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-ghost btn-pill" data-bs-dismiss="modal">Volver</button>
+            <form method="post" action="{% url 'account_delete' %}">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger btn-pill">
+                Sí, eliminar y cancelar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -165,6 +213,8 @@
 .floaty{ transition:transform .15s ease, box-shadow .15s ease; }
 .floaty:hover{ transform:translateY(-1px); box-shadow:0 10px 26px rgba(0,0,0,.28); }
 #id_foto_personal{ position:absolute; width:1px; height:1px; opacity:0; pointer-events:none; }
+.border-danger{ border-color: rgba(220,53,69,.4) !important; }
+.text-soft{ color: var(--text-2, rgba(255,255,255,.7)); }
 </style>
 
 <script>

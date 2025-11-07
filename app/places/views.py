@@ -3,7 +3,25 @@ import json
 import re
 from functools import reduce
 from operator import and_
+from django.utils import timezone
+from django.utils.text import slugify
+from django.db.models import Q
+from datetime import datetime, timedelta, time
+import json
 
+from app.places.models import Venue, Event, Commune, Tag  # lo que uses
+from app.account.models import Subscription               # <- app singular: account
+
+
+from datetime import datetime, timedelta, time
+from django.utils import timezone
+from django.db.models import Q
+from django.views.generic import ListView
+from django.utils.text import slugify
+import json
+
+from app.places.models import Venue, Event, Commune
+from app.account.models import Subscription, OwnerProfile
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
@@ -41,7 +59,9 @@ from django.views.generic import ListView
 from app.places.models import Venue, Commune, Event
 from app.account.models import OwnerProfile, Subscription
 import json
-
+from django.conf import settings
+from urllib.parse import urlparse
+import mercadopago
 
 class HomeView(TemplateView):
     template_name = "index.html"
@@ -597,25 +617,18 @@ class VenueGalleryUploadView(LoginRequiredMixin, UserPassesTestMixin, View):
         messages.success(request, f"Se subieron {created} foto(s) a la galería.")
         return redirect(reverse("venue-detail", kwargs={"slug": venue.slug}))
 # app/places/views.py  (imports relevantes arriba del archivo)
+
+
+# views.py
+import json
+from datetime import datetime, time, timedelta
+
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.text import slugify
-from django.db.models import Q
-from datetime import datetime, timedelta, time
-import json
-
-from app.places.models import Venue, Event, Commune, Tag  # lo que uses
-from app.account.models import Subscription               # <- app singular: account
-
-
-from datetime import datetime, timedelta, time
-from django.utils import timezone
-from django.db.models import Q
 from django.views.generic import ListView
-from django.utils.text import slugify
-import json
 
-from app.places.models import Venue, Event, Commune
-from app.account.models import Subscription, OwnerProfile
+from .models import Venue, Commune, Event # ajusta import según tu app
 
 
 class CityVenueListView(ListView):
@@ -624,21 +637,16 @@ class CityVenueListView(ListView):
     paginate_by = 24
     model = Venue
 
-    # ------------------------------------------------------------
-    # 🔹 UTILIDAD: rango de próxima semana (lunes a domingo)
-    # ------------------------------------------------------------
+    # Próxima semana (lunes a domingo)
     def _get_week_range_next_monday_to_sunday(self, tz):
         now = timezone.now().astimezone(tz)
         days_until_next_monday = (7 - now.weekday()) % 7 or 7
         next_monday = (now + timedelta(days=days_until_next_monday)).replace(
             hour=0, minute=0, second=0, microsecond=0
         )
-        week_end = next_monday + timedelta(days=7)
+        week_end = next_monday + timedelta(days=7)  # exclusivo
         return next_monday, week_end
 
-    # ------------------------------------------------------------
-    # 🔹 QUERY PRINCIPAL
-    # ------------------------------------------------------------
     def get_queryset(self):
         qs = Venue.objects.select_related("Commune", "owner_user")
 
@@ -647,14 +655,14 @@ class CityVenueListView(ListView):
         when     = (self.request.GET.get("when") or "cualquier_dia").strip()
         city_raw = (self.request.GET.get("city") or "").strip()
 
-        # 1️⃣ Sin ciudad → no listar
+        # 1) Sin ciudad → no listar
         if not city_raw:
             self.needs_city = True
             self.city_input_value = ""
             self.filter_city = None
             return Venue.objects.none()
 
-        # 2️⃣ Buscar ciudad por nombre o slug
+        # 2) Ciudad por nombre o slug
         slugguess = slugify(city_raw)
         commune = Commune.objects.filter(
             Q(name__iexact=city_raw) | Q(slug__iexact=slugguess)
@@ -671,40 +679,21 @@ class CityVenueListView(ListView):
         self.city_input_value = city_raw
         self.filter_city = commune
 
-        # 3️⃣ Filtrar venues por comuna (solo publicados)
-        qs = qs.filter(Commune=commune, is_published=True)
+        # 3) Base: venues por ciudad
+        qs = qs.filter(Commune=commune)
 
-        # 4️⃣ Filtrar dueños con suscripción activa (MP, override o manual)
+        # 4) SOLO dueños con suscripción efectivamente ACTIVA (MP o override)
+        #    Usamos la Q reutilizable del modelo para garantizar coherencia.
         now = timezone.now()
-        active_owner_user_ids = set()
-
-        # --- a) Suscripción activa en Mercado Pago ---
-        active_owner_user_ids.update(
-            Subscription.objects.filter(
-                status=Subscription.ACTIVE,
-                current_period_end__gt=now
-            ).values_list("user_id", flat=True)
+        active_owner_user_ids = list(
+            Subscription.objects
+            .filter(Subscription.active_Q(now))
+            .values_list("user_id", flat=True)
         )
-
-        # --- b) Override manual desde el admin ---
-        active_owner_user_ids.update(
-            Subscription.objects.filter(
-                override_status=Subscription.ACTIVE,
-            ).values_list("user_id", flat=True)
-        )
-
-        # --- c) Checkbox “is_subscribed_admin” en OwnerProfile ---
-        active_owner_user_ids.update(
-            OwnerProfile.objects.filter(
-                is_subscribed_admin=True
-            ).values_list("profile__user_id", flat=True)
-        )
-
-        # Aplicar filtro global
         qs = qs.filter(owner_user_id__in=active_owner_user_ids)
-        self.active_owner_user_ids = list(active_owner_user_ids)
+        self.active_owner_user_ids = active_owner_user_ids  # lo usamos en el contexto
 
-        # 5️⃣ Texto libre
+        # 5) Texto libre
         if q:
             qs = qs.filter(
                 Q(name__icontains=q) |
@@ -712,34 +701,29 @@ class CityVenueListView(ListView):
                 Q(address__icontains=q)
             )
 
-        # 6️⃣ Categoría
+        # 6) Categoría
         if cat:
             qs = qs.filter(category=cat)
 
-        # 7️⃣ Filtro por fecha (hoy / esta semana)
+        # 7) Fecha (hoy / esta semana) – filtra por eventos asociados
         tz = timezone.get_current_timezone()
         if when == "hoy":
             today = timezone.localdate()
             start = timezone.make_aware(datetime.combine(today, time.min), tz)
             end   = timezone.make_aware(datetime.combine(today + timedelta(days=1), time.min), tz)
             qs = qs.filter(
-                events__is_published=True,
                 events__start_at__gte=start,
                 events__start_at__lt=end
             ).distinct()
         elif when == "esta_semana":
             start, end = self._get_week_range_next_monday_to_sunday(tz)
             qs = qs.filter(
-                events__is_published=True,
                 events__start_at__gte=start,
                 events__start_at__lt=end
             ).distinct()
 
         return qs.order_by("name")
 
-    # ------------------------------------------------------------
-    # 🔹 CONTEXTO PARA TEMPLATE
-    # ------------------------------------------------------------
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         req = self.request.GET
@@ -753,7 +737,7 @@ class CityVenueListView(ListView):
         ctx["active_when"] = (req.get("when") or "").strip()
         ctx["city_input_value"] = getattr(self, "city_input_value", "")
 
-        # Lista de comunas (para buscador)
+        # Lista de comunas (para datalist/autocomplete)
         cities_qs = Commune.objects.order_by("name")
         ctx["city_names_json"] = json.dumps(
             list(cities_qs.values_list("name", flat=True)),
@@ -764,30 +748,32 @@ class CityVenueListView(ListView):
         ctx["error_city"]   = getattr(self, "error_city", "")
         ctx["venues_count"] = ctx["object_list"].count() if not ctx["needs_city"] else 0
 
-        # ⭐ Secciones destacadas (solo de dueños activos)
+        # Secciones destacadas (también respetan suscripción activa)
         active_ids = getattr(self, "active_owner_user_ids", [])
         if city:
             ctx["featured_venues"] = (
-                Venue.objects.filter(
+                Venue.objects
+                .filter(
                     Commune=city,
-                    is_published=True,
                     owner_user_id__in=active_ids
-                ).order_by("name")[:4]
+                )
+                .order_by("name")[:4]
             )
             ctx["featured_events"] = (
-                Event.objects.filter(
+                Event.objects
+                .filter(
                     Commune=city,
-                    is_published=True,
                     venue__isnull=False,
-                    venue__is_published=True,
                     venue__owner_user_id__in=active_ids
-                ).select_related("venue").order_by("start_at")[:8]
+                )
+                .select_related("venue")
+                .order_by("start_at")[:8]
             )
         else:
             ctx["featured_venues"] = Venue.objects.none()
             ctx["featured_events"] = Event.objects.none()
 
-        # 🧭 Parámetros activos + URLs para categorías
+        # Navegación de categorías
         ctx["active_city_label"] = city.name if city else ""
         ctx["active_city"] = city.slug if city else ""
 
@@ -810,6 +796,15 @@ class CityVenueListView(ListView):
             "discoteque": build_url_for_cat("discoteque"),
         }
         return ctx
+
+from django.views import View
+from django.http import JsonResponse, HttpResponseBadRequest
+from django.utils import timezone
+from datetime import timedelta
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import redirect
+from django.contrib import messages
+# y tu modelo
 
 
 
@@ -1152,3 +1147,123 @@ def track_click(request):
 
     cache.set(key, 1, timeout=30*60)
     return JsonResponse({"ok": True})
+
+
+PLAN_TITLE = "Midnight – Plan Mensual"
+PLAN_PRICE = 5990.0  # CLP
+
+
+class SubscribeView(LoginRequiredMixin, TemplateView):
+    template_name = "billing/subscribe.html"
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        sub = getattr(self.request.user, "subscription", None)
+        ctx["is_active"] = bool(sub and sub.is_active())
+        return ctx
+
+
+
+
+class SubscribeConfirmView(LoginRequiredMixin, View):
+    def post(self, request):
+        preapproval_id = (request.POST.get("preapproval_id") or "").strip()
+        status = (request.POST.get("status") or "approved").lower()
+
+        if not preapproval_id:
+            return HttpResponseBadRequest("missing preapproval_id")
+
+        sub, _ = Subscription.objects.get_or_create(user=request.user)
+
+        # Guarda el identificador de suscripción de MP para conciliaciones y futuras cancelaciones
+        if hasattr(sub, "mp_preapproval_id"):
+            sub.mp_preapproval_id = preapproval_id
+
+        # Activa tu lógica local
+        now = timezone.now()
+        end = now + timedelta(days=30)
+
+        if hasattr(sub, "override_status"):
+            sub.override_status = Subscription.ACTIVE
+            sub.override_until = end
+            sub.override_reason = f"MP preapproval: {preapproval_id}"
+
+        if hasattr(sub, "status"):
+            sub.status = Subscription.ACTIVE
+        if hasattr(sub, "current_period_end"):
+            sub.current_period_end = end
+
+        sub.save()
+        return JsonResponse({"ok": True})
+
+
+# app/places/views.py
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic import TemplateView
+from django.shortcuts import redirect
+from django.conf import settings
+from django.db import transaction
+from django.utils import timezone
+from datetime import timedelta
+from django.http import HttpResponseNotAllowed
+from django.contrib.auth import logout
+
+
+class AccountDeleteView(LoginRequiredMixin, View):
+    """
+    Cancela la suscripción recurrente en MP (si existe) y elimina la cuenta del usuario.
+    Redirige a 'account_deleted'.
+    """
+    def get(self, request):
+        return HttpResponseNotAllowed(["POST"])
+
+    @transaction.atomic
+    def post(self, request):
+        user = request.user
+        # 1) Intentar cancelar preaprobación en Mercado Pago
+        try:
+            sub = getattr(user, "subscription", None)
+            preapproval_id = getattr(sub, "mp_preapproval_id", None)
+            access_token = getattr(settings, "MP_ACCESS_TOKEN", "").strip()
+
+            if preapproval_id and access_token:
+                sdk = mercadopago.SDK(access_token)
+                # Estado válido para cancelar: "cancelled"
+                _ = sdk.preapproval().update(preapproval_id, {"status": "cancelled"})
+
+                # Marcar localmente como inactiva
+                if hasattr(sub, "override_status"):
+                    # Ajusta el valor INACTIVE/CANCELED según tu enum/modelo
+                    try:
+                        sub.override_status = getattr(Subscription, "INACTIVE", getattr(Subscription, "CANCELED", 0))
+                    except Exception:
+                        sub.override_status = 0
+                    sub.override_until = timezone.now()
+                    sub.override_reason = f"Cancelada por el usuario al eliminar cuenta. preapproval_id={preapproval_id}"
+
+                if hasattr(sub, "status"):
+                    try:
+                        sub.status = getattr(Subscription, "INACTIVE", getattr(Subscription, "CANCELED", 0))
+                    except Exception:
+                        sub.status = 0
+                if hasattr(sub, "current_period_end"):
+                    sub.current_period_end = timezone.now()
+
+                sub.save()
+        except Exception:
+            # Si falla la cancelación en MP, continuamos con la eliminación para no bloquear al usuario.
+            pass
+
+        # 2) Eliminar la cuenta
+        # Primero cerramos sesión para limpiar autenticación
+        logout(request)
+        # Luego borramos el usuario (esto puede borrar en cascada perfiles si están en on_delete=CASCADE)
+        user.delete()
+
+        # 3) Redirigir a una confirmación (no usamos messages porque la sesión se cerró)
+        return redirect("account_deleted")
+
+
+class AccountDeletedView(TemplateView):
+    template_name = "accounts/account_deleted.html"

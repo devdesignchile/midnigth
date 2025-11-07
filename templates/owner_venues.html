@@ -30,7 +30,7 @@
         <span class="fw-semibold">No estás suscrito.</span>
         <span>Suscríbete para mostrar al mundo tus locales y acceder a más funciones.</span>
       </div>
-      <a href="#" class="btn btn-sm btn-brand btn-pill">
+      <a href="{% url 'subscribe' %}" class="btn btn-sm btn-brand btn-pill">
         <i class="bi bi-lightning-charge me-1"></i> Suscribirme
       </a>
     </div>
@@ -60,11 +60,6 @@
                     {{ v.get_category_display }}{% if v.commune %} · {{ v.city.commune }}{% endif %}
                   </div>
                 </div>
-                {% if v.is_published %}
-                  <span class="badge text-bg-success-subtle">Publicado</span>
-                {% else %}
-                  <span class="badge text-bg-secondary">Borrador</span>
-                {% endif %}
               </div>
 
               <div class="mt-3 d-flex gap-2">

@@ -1,10 +1,14 @@
 # app/account/admin.py
-from django.contrib import admin
-from django.utils import timezone
-from .models import Profile, OwnerProfile, GuestProfile, Subscription
-from django.urls import reverse
-from django.utils.html import format_html
 from datetime import timedelta
+
+from django.contrib import admin
+from django.urls import reverse
+from django.utils import timezone
+from django.utils.html import format_html
+
+from .models import Profile, OwnerProfile, GuestProfile, Subscription
+
+
 # ---------------- Inlines ----------------
 class OwnerProfileInline(admin.StackedInline):
     model = OwnerProfile
@@ -86,67 +90,25 @@ class OwnerProfileAdmin(admin.ModelAdmin):
         "company_email",
         "company_domain",
         "owner_verified",
-        "is_subscribed_admin",  # ✅ ahora sí es campo real
+        "is_subscribed_admin",  # <-- campo real, checkbox editable
         "sub_until",
     )
-    list_editable = ("is_subscribed_admin",)  # ✅ ya no da error
+    list_editable = ("is_subscribed_admin",)
     search_fields = (
-        "venue_name",
-        "admin_name",
-        "rut_comercio",
-        "company_email",
-        "company_domain",
-        "profile__user__username",
-        "profile__user__email",
+        "venue_name", "admin_name", "rut_comercio", "company_email",
+        "company_domain", "profile__user__username", "profile__user__email",
     )
     list_filter = ("owner_verified", "company_domain", SubscriptionStatusFilter)
 
-    # --- columnas ---
     @admin.display(ordering="profile__user__username", description="Usuario")
     def user_username(self, obj):
         return getattr(obj.profile.user, "username", "")
-
-    @admin.display(description="Suscrito", boolean=True)
-    def is_subscribed_admin(self, obj):
-        """
-        Muestra si el usuario tiene una suscripción activa o forzada.
-        Este campo será editable en el admin como un checkbox.
-        """
-        sub = getattr(obj.profile.user, "subscription", None)
-        if not sub:
-            return False
-        return sub.is_active()
 
     @admin.display(description="Válida hasta")
     def sub_until(self, obj):
         sub = getattr(obj.profile.user, "subscription", None)
         dt = getattr(sub, "current_period_end", None)
         return timezone.localtime(dt).strftime("%Y-%m-%d %H:%M") if dt else "—"
-
-    # --- Guardado automático del checkbox ---
-    def save_model(self, request, obj, form, change):
-        """
-        Al marcar/desmarcar 'is_subscribed_admin' desde el admin, 
-        crea o actualiza la suscripción correspondiente.
-        """
-        super().save_model(request, obj, form, change)
-        user = getattr(obj.profile, "user", None)
-        if not user:
-            return
-
-        is_subscribed = form.cleaned_data.get("is_subscribed_admin", False)
-        sub, _ = Subscription.objects.get_or_create(user=user)
-
-        if is_subscribed:
-            sub.override_status = Subscription.ACTIVE
-            sub.override_until = timezone.now() + timezone.timedelta(days=30)
-            sub.override_reason = "Activado manualmente desde admin"
-        else:
-            sub.override_status = None
-            sub.override_until = None
-            sub.override_reason = "Desactivado manualmente desde admin"
-
-        sub.save()
 
 
 # ---------------- GuestProfile ----------------
@@ -183,6 +145,8 @@ class GuestProfileAdmin(admin.ModelAdmin):
     def age_band_display(self, obj):
         return obj.age_band
 
+
+# ---------------- Subscription ----------------
 @admin.register(Subscription)
 class SubscriptionAdmin(admin.ModelAdmin):
     # Trae user → profile → owner en una sola query
@@ -205,7 +169,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "override_reason",
     )
 
-    # Búsqueda también por campos del owner
     search_fields = (
         "user__username", "user__email", "mp_preapproval_id",
         "user__profile__owner__venue_name",
@@ -214,7 +177,6 @@ class SubscriptionAdmin(admin.ModelAdmin):
         "user__profile__owner__company_domain",
     )
 
-    # Filtros incluyendo owner_verified
     list_filter = (
         "status", "override_status",
         ("user__profile__owner__owner_verified", admin.BooleanFieldListFilter),
@@ -315,7 +277,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
                 obj.current_period_end = now
                 obj.save()
 
-    # ------- Acciones rápidas opcionales -------
+    # ------- Acciones rápidas -------
     actions = ["dar_cortesia_30d", "pausar_override", "quitar_override"]
 
     @admin.action(description="Dar cortesía 30 días (override ACTIVA)")

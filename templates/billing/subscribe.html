@@ -1,0 +1,288 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="bg-light text-dark">
+  <!-- HERO -->
+  <section class="container  py-6 py-lg-7">
+    <div class="row align-items-center g-5">
+      <div class="col-12 col-lg-7">
+        <span class="badge rounded-pill bg-primary-subtle text-light mb-3">Nuevo · 30 días de prueba</span>
+        <h1 class="display-5 fw-extrabold lh-tight mb-3">
+          Promociona tu <span class="text-primary">local</span> y <span class="text-primary">eventos</span> en <span class="text-gradient">midnight</span>
+        </h1>
+        <p class="lead text-dark mb-4">
+          Llega a más público, llena tu agenda y aumenta tus reservas. Este verano se viene con todo:
+          visibilidad en búsquedas, ficha premium de tu local, agenda de eventos y difusión en tendencias.
+        </p>
+
+        {% if is_active %}
+          <div class="alert alert-success rounded-pill d-inline-flex align-items-center gap-2 mt-3">
+            <i class="bi bi-check-circle-fill"></i>
+            <strong>Tu suscripción está activa</strong> — disfruta todos los beneficios
+          </div>
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <a href="{% url 'list_venues-owner' %}" class="btn btn-primary btn-lg rounded-pill">
+              Ir a mis negocios
+            </a>
+          </div>
+        {% else %}
+          <div class="d-flex flex-wrap gap-2 mt-4">
+            <a href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_plan_id=472c5cada86f4279bccaee413bd12061"
+               class="btn btn-primary btn-lg rounded-pill px-4">
+              Suscribirme — 30 días gratis
+            </a>
+            <a href="#beneficios" class="btn btn-outline-light btn-lg rounded-pill">
+              Ver beneficios
+            </a>
+          </div>
+          <div class="small text-dark mt-2">
+            Sin permanencia. Cancela cuando quieras.
+          </div>
+        {% endif %}
+
+        <!-- “Trust signals” -->
+        <div class="d-flex flex-wrap align-items-center gap-4 mt-5 text-primary">
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-shield-check"></i> Pago seguro con Mercado Pago
+          </div>
+          <div class="vr d-none d-lg-inline"></div>
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-lightning-charge"></i> Publicación rápida
+          </div>
+          <div class="vr d-none d-lg-inline"></div>
+          <div class="d-flex align-items-center gap-2">
+            <i class="bi bi-graph-up"></i> Enfocado en conversión
+          </div>
+        </div>
+      </div>
+
+      <div class="col-12 col-lg-5">
+        <!-- Mockup / hero card -->
+        <div class="card bg-surface-1 border-0 shadow-lg overflow-hidden rounded-4">
+          <div class="ratio ratio-16x9 bg-gradient" style="--bs-gradient: linear-gradient(135deg,#7b2ff7,#00c9ff,#00fff0)">
+            <div class="d-flex h-100 w-100 justify-content-center align-items-center">
+              <div class="text-center">
+                <i class="bi bi-stars display-3"></i>
+                <p class="mt-2 mb-0 fw-bold">Tu local en portada</p>
+                <p class="text-dark small">Fotos, horarios, mapa, reservas y eventos</p>
+              </div>
+            </div>
+          </div>
+          <div class="card-body p-4">
+            <ul class="list-unstyled small m-0">
+              <li class="mb-2"><i class="bi bi-check2-circle text-primary me-2"></i> Destacado en búsquedas y categorías</li>
+              <li class="mb-2"><i class="bi bi-check2-circle text-primary me-2"></i> Botón de reservas / WhatsApp / RRSS</li>
+              <li class="mb-2"><i class="bi bi-check2-circle text-primary me-2"></i> Eventos con fecha, precio y tickets</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- BENEFICIOS -->
+<section id="beneficios" class="container py-6">
+  <div class="text-center mb-5">
+    <span class="badge rounded-pill bg-primary-subtle text-primary">Beneficios clave</span>
+    <h2 class="mt-2 fw-bold">Todo lo que necesitas para llenar tu local este verano</h2>
+    <p class="text-soft">Más visibilidad, más reservas y una vitrina premium para tus eventos.</p>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="h-100 card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+          <div class="icon-badge mb-3"><i class="bi bi-bullseye"></i></div>
+          <h3 class="h6 fw-bold">Alcance real</h3>
+          <p class="text-soft small mb-0">Aparece donde buscan: por ciudad, categoría y fecha. Posicionamiento en listados y fichas destacadas.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="h-100 card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+          <div class="icon-badge mb-3"><i class="bi bi-calendar2-check"></i></div>
+          <h3 class="h6 fw-bold">Eventos que convierten</h3>
+          <p class="text-soft small mb-0">Publica eventos con CTA a tickets o reservas. Fecha, lineup, dress code y promos en un click.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="h-100 card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+          <div class="icon-badge mb-3"><i class="bi bi-geo-alt"></i></div>
+          <h3 class="h6 fw-bold">Ficha del local</h3>
+          <p class="text-soft small mb-0">Fotos grandes, mapa por dirección, horarios y enlaces directos a Instagram y WhatsApp.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-md-6 col-lg-3">
+      <div class="h-100 card border-0 shadow-sm rounded-4">
+        <div class="card-body p-4">
+          <div class="icon-badge mb-3"><i class="bi bi-bar-chart"></i></div>
+          <h3 class="h6 fw-bold">Métricas clave</h3>
+          <p class="text-soft small mb-0">Visualiza clics y vistas para optimizar tus títulos, fotos y promos en segundos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING / CTA -->
+<section class="container py-6">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-8">
+      <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+        <div class="card-body p-4 p-lg-5">
+          <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+            <div>
+              <h3 class="h5 fw-bold mb-1">Plan Mensual</h3>
+              <div class="text-soft small mb-3">Incluye publicación de locales y eventos, soporte prioritario y estadísticas básicas.</div>
+              <div class="d-flex align-items-baseline gap-2">
+                <span class="display-6 fw-bold">$5.990</span>
+                <span class="text-soft">/ mes</span>
+              </div>
+              <div class="text-success small mt-1">
+                30 días de prueba — no se realiza cobro hasta que finalice el periodo de prueba.
+              </div>
+            </div>
+            <div class="text-md-end">
+              {% if is_active %}
+                <a href="{% url 'list_venues-owner' %}" class="btn btn-primary btn-lg rounded-pill px-4">
+                  Administrar mis locales
+                </a>
+              {% else %}
+                <a href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_plan_id=472c5cada86f4279bccaee413bd12061"
+                   class="btn btn-primary btn-lg rounded-pill px-4">
+                  Probar gratis 30 días
+                </a>
+                <div class="small text-soft mt-2">Sin ataduras. Cancela cuando quieras.</div>
+              {% endif %}
+            </div>
+          </div>
+
+          <hr class="my-4">
+
+          <!-- Bullets bajo pricing -->
+          <div class="row row-cols-1 row-cols-md-3 g-3">
+            <div class="col">
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-check2-circle text-primary mt-1"></i>
+                <div class="small">Publicación ilimitada de eventos</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-check2-circle text-primary mt-1"></i>
+                <div class="small">Botones a reservas/entradas</div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="d-flex align-items-start gap-2">
+                <i class="bi bi-check2-circle text-primary mt-1"></i>
+                <div class="small">Soporte prioritario</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-3 bg-surface-2 p-3 mt-4 small text-soft">
+            Próximo verano: mayor demanda, más turistas y más búsquedas nocturnas.
+            Asegura presencia desde ya y llega antes que tu competencia.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<!-- FAQ -->
+<section class="container py-6">
+  <div class="text-center mb-4">
+    <span class="badge rounded-pill bg-primary-subtle text-primary">FAQ</span>
+    <h3 class="fw-bold mt-2">Preguntas frecuentes</h3>
+  </div>
+
+  <div class="accordion accordion-flush rounded-4 overflow-hidden shadow-sm" id="faq">
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="f1">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c1">
+          ¿Cómo funciona la prueba de 30 días?
+        </button>
+      </h2>
+      <div id="c1" class="accordion-collapse collapse" data-bs-parent="#faq">
+        <div class="accordion-body text-soft">
+          Comienza hoy mismo. No se realiza cobro durante el periodo de prueba. Puedes cancelar en cualquier momento.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="f2">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c2">
+          ¿Puedo publicar varios locales y eventos?
+        </button>
+      </h2>
+      <div id="c2" class="accordion-collapse collapse" data-bs-parent="#faq">
+        <div class="accordion-body text-soft">
+          Sí. Tu plan te permite tener la ficha de tu local y publicar eventos con sus detalles, promos y enlaces.
+        </div>
+      </div>
+    </div>
+
+    <div class="accordion-item">
+      <h2 class="accordion-header" id="f3">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#c3">
+          ¿Cómo se muestran mis datos de contacto?
+        </button>
+      </h2>
+      <div id="c3" class="accordion-collapse collapse" data-bs-parent="#faq">
+        <div class="accordion-body text-soft">
+          Puedes agregar Instagram, sitio web, WhatsApp, dirección y horarios para que te encuentren y reserven fácilmente.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if not is_active %}
+  <div class="text-center mt-5">
+    <a href="https://www.mercadopago.cl/subscriptions/checkout?preapproval_plan_id=472c5cada86f4279bccaee413bd12061"
+       class="btn btn-primary btn-lg rounded-pill px-4">
+      Empezar gratis por 30 días
+    </a>
+    <div class="small text-soft mt-2">Lanza tu perfil hoy y prepárate para el verano.</div>
+  </div>
+  {% endif %}
+</section>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  .py-6{padding-top:3.5rem!important;padding-bottom:3.5rem!important}
+  .py-7{padding-top:5rem!important;padding-bottom:5rem!important}
+  .text-soft{color:rgba(255,255,255,.75)}
+  .bg-surface-1{background:rgba(255,255,255,.06)}
+  .bg-surface-2{background:rgba(255,255,255,.04)}
+  .text-gradient{
+    background: linear-gradient(90deg,#7B2FF7, #00C9FF, #00FFF0, #7B2FF7);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    background-size: 300% 100%; animation: hue 8s ease-in-out infinite;
+  }
+  .icon-badge{
+    width:48px;height:48px;display:inline-grid;place-items:center;
+    border-radius:16px;background:rgba(52,131,250,.15);color:#3483FA;font-size:1.25rem
+  }
+  @keyframes hue{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+  }
+</style>
+{% endblock %}

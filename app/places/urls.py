@@ -1,6 +1,8 @@
 from django.urls import path
 from .views import HomeView, VenueDetailView, VenueUpdateView, MyVenuesListView, EventCreateView, EventUpdateView, VenueGalleryUploadView, CityVenueListView
 from .views import CityVenueListView, CityVenueListJsonView, FeaturedCitiesView, VenueSearchView, EventListView, CityListView, track_click
+from .views import SubscribeView, SubscribeConfirmView, AccountDeleteView, AccountDeletedView
+
 
 urlpatterns = [
     path("", HomeView.as_view(), name="home"),
@@ -17,5 +19,9 @@ urlpatterns = [
     path("city/json/", CityVenueListJsonView.as_view(), name="city_index_json"),
     path("city/featured/", FeaturedCitiesView.as_view(), name="city_featured"),
     path("eventos/", EventListView.as_view(), name="events-detail"),
-    path("track/click/", track_click, name="track_click"),
+    path("suscripcion/", SubscribeView.as_view(), name="subscribe"),
+    path("suscripcion/confirmar/", SubscribeConfirmView.as_view(), name="subscribe_confirm"),
+    path("track-click/", track_click, name="track_click"),
+    path("cuenta/eliminar/", AccountDeleteView.as_view(), name="account_delete"),
+    path("cuenta/eliminada/", AccountDeletedView.as_view(), name="account_deleted"),
 ]
