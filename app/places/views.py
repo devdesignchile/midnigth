@@ -33,6 +33,14 @@ from django.utils import timezone
 from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from .models import Venue, Event
+from datetime import datetime, timedelta, time
+from django.db.models import Q
+from django.utils import timezone
+from django.utils.text import slugify
+from django.views.generic import ListView
+from app.places.models import Venue, Commune, Event
+from app.account.models import OwnerProfile, Subscription
+import json
 
 
 class HomeView(TemplateView):
@@ -588,38 +596,65 @@ class VenueGalleryUploadView(LoginRequiredMixin, UserPassesTestMixin, View):
 
         messages.success(request, f"Se subieron {created} foto(s) a la galería.")
         return redirect(reverse("venue-detail", kwargs={"slug": venue.slug}))
+# app/places/views.py  (imports relevantes arriba del archivo)
+from django.utils import timezone
+from django.utils.text import slugify
+from django.db.models import Q
+from datetime import datetime, timedelta, time
+import json
+
+from app.places.models import Venue, Event, Commune, Tag  # lo que uses
+from app.account.models import Subscription               # <- app singular: account
+
+
+from datetime import datetime, timedelta, time
+from django.utils import timezone
+from django.db.models import Q
+from django.views.generic import ListView
+from django.utils.text import slugify
+import json
+
+from app.places.models import Venue, Event, Commune
+from app.account.models import Subscription, OwnerProfile
+
+
 class CityVenueListView(ListView):
     template_name = "venue_index.html"
     context_object_name = "venues"
     paginate_by = 24
     model = Venue
 
+    # ------------------------------------------------------------
+    # 🔹 UTILIDAD: rango de próxima semana (lunes a domingo)
+    # ------------------------------------------------------------
     def _get_week_range_next_monday_to_sunday(self, tz):
-        """Rango de la PRÓXIMA semana (lunes a domingo) en timezone local."""
         now = timezone.now().astimezone(tz)
         days_until_next_monday = (7 - now.weekday()) % 7 or 7
         next_monday = (now + timedelta(days=days_until_next_monday)).replace(
             hour=0, minute=0, second=0, microsecond=0
         )
-        week_end = next_monday + timedelta(days=7)  # exclusivo
+        week_end = next_monday + timedelta(days=7)
         return next_monday, week_end
 
+    # ------------------------------------------------------------
+    # 🔹 QUERY PRINCIPAL
+    # ------------------------------------------------------------
     def get_queryset(self):
-        qs = Venue.objects.select_related("Commune")  # .filter(is_published=True)
+        qs = Venue.objects.select_related("Commune", "owner_user")
 
         q        = (self.request.GET.get("q") or "").strip()
         cat      = (self.request.GET.get("cat") or "").strip()
         when     = (self.request.GET.get("when") or "cualquier_dia").strip()
         city_raw = (self.request.GET.get("city") or "").strip()
 
-        # 1) Sin ciudad → no listar
+        # 1️⃣ Sin ciudad → no listar
         if not city_raw:
             self.needs_city = True
             self.city_input_value = ""
             self.filter_city = None
             return Venue.objects.none()
 
-        # 2) Validar ciudad por nombre o slug
+        # 2️⃣ Buscar ciudad por nombre o slug
         slugguess = slugify(city_raw)
         commune = Commune.objects.filter(
             Q(name__iexact=city_raw) | Q(slug__iexact=slugguess)
@@ -636,10 +671,40 @@ class CityVenueListView(ListView):
         self.city_input_value = city_raw
         self.filter_city = commune
 
-        # 3) Base: venues por ciudad
-        qs = qs.filter(Commune=commune)
+        # 3️⃣ Filtrar venues por comuna (solo publicados)
+        qs = qs.filter(Commune=commune, is_published=True)
 
-        # 4) Texto libre
+        # 4️⃣ Filtrar dueños con suscripción activa (MP, override o manual)
+        now = timezone.now()
+        active_owner_user_ids = set()
+
+        # --- a) Suscripción activa en Mercado Pago ---
+        active_owner_user_ids.update(
+            Subscription.objects.filter(
+                status=Subscription.ACTIVE,
+                current_period_end__gt=now
+            ).values_list("user_id", flat=True)
+        )
+
+        # --- b) Override manual desde el admin ---
+        active_owner_user_ids.update(
+            Subscription.objects.filter(
+                override_status=Subscription.ACTIVE,
+            ).values_list("user_id", flat=True)
+        )
+
+        # --- c) Checkbox “is_subscribed_admin” en OwnerProfile ---
+        active_owner_user_ids.update(
+            OwnerProfile.objects.filter(
+                is_subscribed_admin=True
+            ).values_list("profile__user_id", flat=True)
+        )
+
+        # Aplicar filtro global
+        qs = qs.filter(owner_user_id__in=active_owner_user_ids)
+        self.active_owner_user_ids = list(active_owner_user_ids)
+
+        # 5️⃣ Texto libre
         if q:
             qs = qs.filter(
                 Q(name__icontains=q) |
@@ -647,13 +712,12 @@ class CityVenueListView(ListView):
                 Q(address__icontains=q)
             )
 
-        # 5) Categoría
+        # 6️⃣ Categoría
         if cat:
             qs = qs.filter(category=cat)
 
-        # 6) Fecha (filtra venues que tengan eventos en el rango)
+        # 7️⃣ Filtro por fecha (hoy / esta semana)
         tz = timezone.get_current_timezone()
-
         if when == "hoy":
             today = timezone.localdate()
             start = timezone.make_aware(datetime.combine(today, time.min), tz)
@@ -663,7 +727,6 @@ class CityVenueListView(ListView):
                 events__start_at__gte=start,
                 events__start_at__lt=end
             ).distinct()
-
         elif when == "esta_semana":
             start, end = self._get_week_range_next_monday_to_sunday(tz)
             qs = qs.filter(
@@ -672,19 +735,19 @@ class CityVenueListView(ListView):
                 events__start_at__lt=end
             ).distinct()
 
-        # else: "cualquier_dia" -> no filtrar por eventos
-
         return qs.order_by("name")
 
+    # ------------------------------------------------------------
+    # 🔹 CONTEXTO PARA TEMPLATE
+    # ------------------------------------------------------------
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         req = self.request.GET
 
-        # City en contexto (ya no se usa para mapa, pero sí para secciones/labels)
-        ctx["city"] = getattr(self, "filter_city", None)
-        city = ctx["city"]
+        city = getattr(self, "filter_city", None)
+        ctx["city"] = city
 
-        # 🔍 Filtros activos
+        # Filtros activos
         ctx["q"] = (req.get("q") or "").strip()
         ctx["active_cat"]  = (req.get("cat") or "").strip()
         ctx["active_when"] = (req.get("when") or "").strip()
@@ -701,46 +764,41 @@ class CityVenueListView(ListView):
         ctx["error_city"]   = getattr(self, "error_city", "")
         ctx["venues_count"] = ctx["object_list"].count() if not ctx["needs_city"] else 0
 
-        # ⭐ Secciones destacadas
+        # ⭐ Secciones destacadas (solo de dueños activos)
+        active_ids = getattr(self, "active_owner_user_ids", [])
         if city:
             ctx["featured_venues"] = (
-                Venue.objects
-                    .filter(Commune=city, is_published=True)
-                    .order_by("name")[:4]
+                Venue.objects.filter(
+                    Commune=city,
+                    is_published=True,
+                    owner_user_id__in=active_ids
+                ).order_by("name")[:4]
             )
             ctx["featured_events"] = (
-                Event.objects
-                    .filter(
-                        Commune=city,
-                        is_published=True,
-                        venue__isnull=False,
-                        venue__is_published=True
-                    )
-                    .select_related("venue")
-                    .order_by("start_at")[:]
+                Event.objects.filter(
+                    Commune=city,
+                    is_published=True,
+                    venue__isnull=False,
+                    venue__is_published=True,
+                    venue__owner_user_id__in=active_ids
+                ).select_related("venue").order_by("start_at")[:8]
             )
         else:
             ctx["featured_venues"] = Venue.objects.none()
             ctx["featured_events"] = Event.objects.none()
 
-        # 🧭 Valores activos + URLs categorías
+        # 🧭 Parámetros activos + URLs para categorías
         ctx["active_city_label"] = city.name if city else ""
         ctx["active_city"] = city.slug if city else ""
 
         def build_url_for_cat(cat_value: str | None):
             params = self.request.GET.copy()
-
-            # fuerza ciudad actual en slug si existe
             if ctx["active_city"]:
                 params["city"] = ctx["active_city"]
-
-            # set/clear cat
             if cat_value:
                 params["cat"] = cat_value
             else:
                 params.pop("cat", None)
-
-            # limpia paginación
             params.pop("page", None)
             return "?" + params.urlencode()
 
@@ -751,8 +809,8 @@ class CityVenueListView(ListView):
             "rooftop":    build_url_for_cat("rooftop"),
             "discoteque": build_url_for_cat("discoteque"),
         }
-
         return ctx
+
 
 
 class CityListView(ListView):
@@ -850,7 +908,6 @@ class CityVenueListJsonView(CityVenueListView):
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
-
 class FeaturedCitiesView(View):
     """Devuelve HTML del bloque 'Ciudades destacadas' (4 con más venues publicados)."""
     template_name = "city_index.html"
@@ -888,7 +945,6 @@ class FeaturedCitiesView(View):
         block_html = m.group(1).strip() if m else ""
 
         return JsonResponse({"html": block_html})
-
 
 
 class EventListView(ListView):

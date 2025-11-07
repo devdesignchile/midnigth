@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
-
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "jazzmin",
+    'mercadopago',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -40,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app.places',
     'app.account',
+    
     
 ]
 
@@ -145,3 +147,15 @@ JAZZMIN_SETTINGS = {
     "theme": "darkly",
     "custom_css": None,  # o ruta a tu CSS si quieres colores propios
 }
+
+# Access Token (SDK — privado)
+MP_ACCESS_TOKEN = os.getenv(
+    "MP_ACCESS_TOKEN",
+    "TEST-3898631603914208-110423-bf235168ec42af0dd13bc34270713be8-237407882"
+)
+
+# Public Key (JS en cliente — no usar en el servidor)
+MP_PUBLIC_KEY = os.getenv(
+    "MP_PUBLIC_KEY",
+    "TEST-0d76855a-8385-4344-8ca1-c55270724d2f"
+)

@@ -22,6 +22,20 @@
     {% endfor %}
   {% endif %}
 
+  {# ⚠️ Bloque de aviso si no está suscrito #}
+  {% if not user.subscription or not user.subscription.is_active %}
+    <div class="alert alert-warning d-flex align-items-center justify-content-between rounded-lg p-3 mb-4 shadow-sm">
+      <div>
+        <i class="bi bi-exclamation-triangle me-2 fs-5 text-warning"></i>
+        <span class="fw-semibold">No estás suscrito.</span>
+        <span>Suscríbete para mostrar al mundo tus locales y acceder a más funciones.</span>
+      </div>
+      <a href="#" class="btn btn-sm btn-brand btn-pill">
+        <i class="bi bi-lightning-charge me-1"></i> Suscribirme
+      </a>
+    </div>
+  {% endif %}
+
   {% if venues %}
     <div class="row g-3">
       {% for v in venues %}
@@ -39,7 +53,9 @@
             <div class="card-body">
               <div class="d-flex align-items-start justify-content-between">
                 <div>
-                  <h2 class="h6 mb-1"><a class="text-reset text-decoration-none" href="{{ v.get_absolute_url }}">{{ v.name }}</a></h2>
+                  <h2 class="h6 mb-1">
+                    <a class="text-reset text-decoration-none" href="{{ v.get_absolute_url }}">{{ v.name }}</a>
+                  </h2>
                   <div class="small text-soft">
                     {{ v.get_category_display }}{% if v.commune %} · {{ v.city.commune }}{% endif %}
                   </div>

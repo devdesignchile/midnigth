@@ -8,6 +8,17 @@ from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import FormView, UpdateView
 from app.places.models import Commune
+# app/accounts/views.py  o app/payments/views.py
+import json
+import datetime
+import mercadopago
+from django.http import HttpResponse
+from django.utils import timezone
+from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from .models import OwnerProfile, Subscription
+
 from .forms import (
     OwnerSignupForm,
     GuestSignupForm,
@@ -139,3 +150,102 @@ class ProfileEditView(LoginRequiredMixin, UpdateView):
     def form_invalid(self, form):
         messages.error(self.request, "Revisa los campos en rojo.")
         return super().form_invalid(form)
+
+
+
+# SDK Mercado Pago
+sdk = mercadopago.SDK(settings.MP_ACCESS_TOKEN)
+
+# Tu ID de plan (desde el panel de Mercado Pago)
+PLAN_ID = "ec21111b64994019978196a11936035c"
+
+
+@csrf_exempt
+def mp_webhook(request):
+    """Webhook oficial de Mercado Pago para manejar suscripciones y pagos automáticos."""
+    try:
+        payload = json.loads(request.body or "{}")
+    except Exception as e:
+        print("❌ Error parsing webhook JSON:", e)
+        return HttpResponse(status=400)
+
+    event_type = payload.get("type") or payload.get("action") or payload.get("topic")
+    resource_id = payload.get("data", {}).get("id") or payload.get("id")
+
+    if not event_type or not resource_id:
+        print("⚠️ Notificación sin tipo o ID:", payload)
+        return HttpResponse(status=400)
+
+    # 🟣 1) SUSCRIPCIONES (preapproval)
+    if "preapproval" in event_type.lower():
+        try:
+            pre = sdk.preapproval().get(resource_id)["response"]
+        except Exception as e:
+            print("❌ Error obteniendo preapproval:", e)
+            return HttpResponse(status=500)
+
+        plan_id = pre.get("preapproval_plan_id")
+        payer_email = (pre.get("payer_email") or "").lower().strip()
+        status = (pre.get("status") or "").upper()  # AUTHORIZED, PAUSED, CANCELLED...
+
+        print(f"📬 [Webhook preapproval] {payer_email} → {status}")
+
+        # Validar plan y correo
+        if plan_id != PLAN_ID or not payer_email:
+            return HttpResponse(status=200)
+
+        owner = OwnerProfile.objects.filter(company_email__iexact=payer_email).first()
+        if not owner:
+            print("⚠️ Owner no encontrado para:", payer_email)
+            return HttpResponse(status=404)
+
+        # Obtener o crear suscripción asociada al owner
+        sub, _ = Subscription.objects.get_or_create(owner=owner)
+        sub.mp_preapproval_id = pre.get("id")
+
+        # Actualizar estado
+        if status == "AUTHORIZED":
+            base = max(timezone.now(), sub.current_period_end or timezone.now())
+            sub.current_period_end = base + datetime.timedelta(days=31)
+            sub.status = Subscription.ACTIVE
+        elif status == "PAUSED":
+            sub.status = Subscription.PAUSED
+        elif status == "CANCELLED":
+            sub.status = Subscription.CANCELLED
+
+        sub.save()
+        print(f"✅ Suscripción de {owner.venue_name} → {sub.status}")
+        return HttpResponse(status=200)
+
+    # 🟢 2) PAGOS PERIÓDICOS
+    elif "payment" in event_type.lower():
+        try:
+            pay = sdk.payment().get(resource_id)["response"]
+        except Exception as e:
+            print("❌ Error obteniendo payment:", e)
+            return HttpResponse(status=500)
+
+        status = (pay.get("status") or "").lower()
+        payer_email = (pay.get("payer", {}) or {}).get("email", "").lower().strip()
+        print(f"📬 [Webhook payment] {payer_email} → {status}")
+
+        if status != "approved" or not payer_email:
+            return HttpResponse(status=200)
+
+        owner = OwnerProfile.objects.filter(company_email__iexact=payer_email).first()
+        if not owner:
+            print("⚠️ Owner no encontrado para pago:", payer_email)
+            return HttpResponse(status=404)
+
+        sub, _ = Subscription.objects.get_or_create(owner=owner)
+        base = max(timezone.now(), sub.current_period_end or timezone.now())
+        sub.current_period_end = base + datetime.timedelta(days=31)
+        sub.status = Subscription.ACTIVE
+        sub.save(update_fields=["current_period_end", "status"])
+        print(f"💰 Pago aprobado → {owner.venue_name} suscripción extendida.")
+        return HttpResponse(status=200)
+
+    # 🔵 3) Otros eventos (ignorados)
+    print(f"ℹ️ Evento ignorado: {event_type}")
+    return HttpResponse(status=200)
+
