@@ -75,8 +75,6 @@
           </button>
           <ul class="dropdown-menu dropdown-menu-end user-menu shadow-1">
             <li><a class="dropdown-item" href="{% url 'profile_edit' %}">Perfil</a></li>
-            <li><a class="dropdown-item" href="#">Ajustes</a></li>
-
             {% if request.user.venues.exists %}
             <li><a class="dropdown-item" href="{% url 'list_venues-owner' %}">Mi negocio</a></li>
             {% endif %}
@@ -120,11 +118,13 @@
 
 <!-- Footer básico -->
 
-<footer class="bg-surface-1 border-top mt-5 pt-5">
-  <div class="container">
+{# templates/partials/footer.html #}
+<footer class="footer bg-surface-1 border-top mt-5">
+  <div class="container py-5">
 
-    <!-- Top: brand + links -->
+    <!-- TOP: marca + navegación -->
     <div class="row g-4 g-lg-5 align-items-start">
+      
       <!-- Brand -->
       <div class="col-12 col-lg-4">
         <a href="{% url 'home' %}" class="d-inline-flex align-items-center text-decoration-none mb-3">
@@ -132,9 +132,9 @@
           <span class="fw-bold text-white">midnight</span>
         </a>
         <p class="text-soft mb-4">
-          Descubre bares, clubs y eventos con información al día. Ofertas con vigencia, entradas rápidas y guía curada para decidir mejor tu noche.
+          La guía más completa para descubrir bares, clubs y eventos en Chile.  
+          Información real, ofertas activas y recomendaciones para decidir mejor tu noche.
         </p>
-
         <div class="d-flex gap-2">
           <a class="btn btn-ghost btn-sm" aria-label="Instagram" href="https://instagram.com" target="_blank" rel="noopener">
             <i class="bi bi-instagram"></i>
@@ -148,24 +148,40 @@
         </div>
       </div>
 
-      <!-- Navegación -->
-      <div class="col-6 col-lg-2">
+      <!-- Sección explorar -->
+      <div class="col-6 col-lg-3">
         <h6 class="text-white mb-3">Explorar</h6>
         <ul class="list-unstyled small">
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'city_index' %}?city=santiago">Santiago</a></li>
+          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'city_index' %}">Ciudades</a></li>
           <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'events-detail' %}">Eventos</a></li>
           <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'venue_search' %}">Buscar</a></li>
           <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'home' %}#colecciones">Colecciones</a></li>
         </ul>
       </div>
 
-      <div class="col-6 col-lg-2">
+      <!-- Sección para locales (siempre pública) -->
+      <div class="col-6 col-lg-3">
         <h6 class="text-white mb-3">Para locales</h6>
         <ul class="list-unstyled small">
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="/registro/local">Registra tu local</a></li>
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="/planes">Planes y precios</a></li>
+          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'signup-company' %}">Crear cuenta de dueño</a></li>
+          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'subscribe' %}">Planes y precios</a></li>
           <li class="mb-2"><a class="text-decoration-none text-soft" href="/ayuda/anunciantes">Guía de anuncios</a></li>
           <li class="mb-2"><a class="text-decoration-none text-soft" href="/contacto">Contacto ventas</a></li>
+        </ul>
+      </div>
+
+      <!-- Cuenta -->
+      <div class="col-12 col-lg-2">
+        <h6 class="text-white mb-3">Cuenta</h6>
+        <ul class="list-unstyled small">
+          {% if user.is_authenticated %}
+            <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'list_venues-owner' %}">Mis locales</a></li>
+            <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'profile_edit' %}">Editar perfil</a></li>
+            <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'logout' %}">Cerrar sesión</a></li>
+          {% else %}
+            <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'signup-guest' %}">Registrarse</a></li>
+            <li class="mb-2"><a class="text-decoration-none text-soft" href="/accounts/login/">Iniciar sesión</a></li>
+          {% endif %}
         </ul>
       </div>
     </div>
@@ -173,20 +189,14 @@
     <!-- Divider -->
     <hr class="border-secondary-subtle my-4">
 
-    <!-- Bottom: locale + legal -->
+    <!-- Bottom -->
     <div class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center justify-content-between pb-4">
       <div class="d-flex align-items-center gap-2">
         <i class="bi bi-geo-alt text-soft"></i>
-        <span class="small text-soft">Ciudad activa: <strong class="text-white">{{ active_city_label|default:"Chile" }}</strong></span>
-        <span class="vr mx-2 d-none d-lg-inline opacity-25"></span>
-        <!---<label for="lang" class="small text-soft me-1">Idioma</label>
-        <select id="lang" class="form-select form-select-sm w-auto bg-surface-2 border-0">
-          <option selected>Español (CL)</option>
-          <option>Español (LATAM)</option>
-          <option>English</option> 
-        </select>-->
+        <span class="small text-soft">
+          Ciudad activa: <strong class="text-white">{{ active_city_label|default:"Chile" }}</strong>
+        </span>
       </div>
-
       <ul class="nav small">
         <li class="nav-item"><a class="nav-link text-soft px-2" href="/terminos">Términos</a></li>
         <li class="nav-item"><a class="nav-link text-soft px-2" href="/privacidad">Privacidad</a></li>
@@ -195,11 +205,44 @@
       </ul>
     </div>
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center pb-4">
-      <small class="text-soft">© <span id="y"></span> Midnight. Todos los derechos reservados.</small>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center pb-2">
+      <small class="text-soft">
+        © {{ now|date:"Y" }} Midnight · Todos los derechos reservados
+      </small>
+      <small class="text-soft mt-2 mt-md-0">
+        Pagos seguros con Mercado&nbsp;Pago · Contenido curado para mayores de 18 años
+      </small>
     </div>
   </div>
 </footer>
+
+<!-- estilos -->
+<style>
+  .footer .text-soft { color: var(--text-2, rgba(255,255,255,.7)); }
+  .footer .btn-ghost.btn-sm {
+    border-radius: .8rem; padding: .35rem .6rem;
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .footer .btn-ghost.btn-sm:hover {
+    background: rgba(255,255,255,.08);
+  }
+  .bg-surface-1 {
+    background: rgba(255,255,255,.04);
+    backdrop-filter: blur(8px);
+  }
+</style>
+
+
+{# estilos locales opcionales #}
+<style>
+  .text-soft{ color: var(--text-2, rgba(255,255,255,.72)); }
+  .bg-surface-1{ background: rgba(255,255,255,.04); }
+  .btn-ghost.btn-sm{
+    border-radius: .8rem; padding: .35rem .6rem; border:1px solid rgba(255,255,255,.08);
+  }
+  .btn-ghost.btn-sm:hover{ background: rgba(255,255,255,.06); }
+</style>
+
 
 <script>
   // Año dinámico

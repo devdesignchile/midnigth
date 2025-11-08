@@ -1,68 +1,52 @@
-from datetime import datetime, timedelta, time
+# ===== Standard library =====
 import json
 import re
 from functools import reduce
 from operator import and_
-from django.utils import timezone
-from django.utils.text import slugify
-from django.db.models import Q
+from urllib.parse import urlparse
 from datetime import datetime, timedelta, time
-import json
 
-from app.places.models import Venue, Event, Commune, Tag  # lo que uses
-from app.account.models import Subscription               # <- app singular: account
+# ===== Third-party =====
+import mercadopago
 
-
-from datetime import datetime, timedelta, time
-from django.utils import timezone
-from django.db.models import Q
-from django.views.generic import ListView
-from django.utils.text import slugify
-import json
-
-from app.places.models import Venue, Event, Commune
-from app.account.models import Subscription, OwnerProfile
+# ===== Django =====
+from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth import logout
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.cache import cache
 from django.core.exceptions import PermissionDenied
-from django.db import transaction
+from django.core.serializers.json import DjangoJSONEncoder
+from django.db import models, transaction
 from django.db.models import (
-    Q, Count, Case, When, Value, IntegerField
+    Q, F, Count, Case, When, Value, IntegerField
 )
-from django.http import JsonResponse, QueryDict
+from django.http import (
+    JsonResponse, Http404, HttpResponseBadRequest, HttpResponseNotAllowed, QueryDict
+)
 from django.shortcuts import get_object_or_404, redirect
 from django.template.loader import render_to_string
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 from django.utils.text import slugify
 from django.views import View
+from django.views.decorators.http import require_POST
 from django.views.generic import (
-    TemplateView, DetailView, UpdateView, ListView,
-    DeleteView, CreateView
+    TemplateView, DetailView, UpdateView, ListView, DeleteView, CreateView
 )
 from django.views.generic.edit import FormMixin
 
-from .forms import VenueForm, VenueUpdateForm, EventForm, VenueGalleryUploadForm
-from .models import Commune, Venue, Event, Photo, Tag
-from django.views.decorators.http import require_POST
-from django.http import JsonResponse, Http404
-from django.db.models import F
-from django.utils import timezone
-from django.core.cache import cache
-from django.shortcuts import get_object_or_404
-from .models import Venue, Event
-from datetime import datetime, timedelta, time
-from django.db.models import Q
-from django.utils import timezone
-from django.utils.text import slugify
-from django.views.generic import ListView
-from app.places.models import Venue, Commune, Event
-from app.account.models import OwnerProfile, Subscription
-import json
-from django.conf import settings
-from urllib.parse import urlparse
-import mercadopago
+# ===== Local apps =====
+from app.account.models import Subscription, OwnerProfile
+from app.places.models import Venue, Event, Commune, Tag, Photo
+from app.places.forms import (
+    VenueCreateForm, VenueForm, VenueUpdateForm, EventForm, VenueGalleryUploadForm
+)
 
+# y tu modelo
+
+
+from .models import Venue, Commune, Event # ajusta import según tu app
 class HomeView(TemplateView):
     template_name = "index.html"
 
@@ -619,18 +603,6 @@ class VenueGalleryUploadView(LoginRequiredMixin, UserPassesTestMixin, View):
 # app/places/views.py  (imports relevantes arriba del archivo)
 
 
-# views.py
-import json
-from datetime import datetime, time, timedelta
-
-from django.db.models import Q
-from django.utils import timezone
-from django.utils.text import slugify
-from django.views.generic import ListView
-
-from .models import Venue, Commune, Event # ajusta import según tu app
-
-
 class CityVenueListView(ListView):
     template_name = "venue_index.html"
     context_object_name = "venues"
@@ -796,17 +768,6 @@ class CityVenueListView(ListView):
             "discoteque": build_url_for_cat("discoteque"),
         }
         return ctx
-
-from django.views import View
-from django.http import JsonResponse, HttpResponseBadRequest
-from django.utils import timezone
-from datetime import timedelta
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect
-from django.contrib import messages
-# y tu modelo
-
-
 
 class CityListView(ListView):
     template_name = "city_index.html"
@@ -1163,8 +1124,6 @@ class SubscribeView(LoginRequiredMixin, TemplateView):
         return ctx
 
 
-
-
 class SubscribeConfirmView(LoginRequiredMixin, View):
     def post(self, request):
         preapproval_id = (request.POST.get("preapproval_id") or "").strip()
@@ -1195,19 +1154,6 @@ class SubscribeConfirmView(LoginRequiredMixin, View):
 
         sub.save()
         return JsonResponse({"ok": True})
-
-
-# app/places/views.py
-from django.views import View
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic import TemplateView
-from django.shortcuts import redirect
-from django.conf import settings
-from django.db import transaction
-from django.utils import timezone
-from datetime import timedelta
-from django.http import HttpResponseNotAllowed
-from django.contrib.auth import logout
 
 
 class AccountDeleteView(LoginRequiredMixin, View):
@@ -1267,3 +1213,29 @@ class AccountDeleteView(LoginRequiredMixin, View):
 
 class AccountDeletedView(TemplateView):
     template_name = "accounts/account_deleted.html"
+
+
+class VenueCreateView(LoginRequiredMixin, CreateView):
+    """Permite a un dueño agregar una nueva sucursal (Venue)."""
+    model = Venue
+    form_class = VenueCreateForm
+    template_name = "venue_create.html"
+    context_object_name = "venue"
+
+    def form_valid(self, form):
+        venue = form.save(commit=False)
+        venue.owner_user = self.request.user
+        base = f"{venue.name}-{venue.Commune.name if venue.Commune else ''}"
+        venue.slug = slugify(base)[:210]
+        venue.save()
+        form.save_m2m()
+        messages.success(self.request, "Sucursal agregada correctamente 🎉")
+        return redirect(reverse("venue-detail", kwargs={"slug": venue.slug}))
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["title"] = "Agregar nueva sucursal"
+        # JSON ligero para el datalist: id, name, slug
+        communes = Commune.objects.order_by("name").values("id", "name", "slug")
+        ctx["communes_json"] = json.dumps(list(communes), cls=DjangoJSONEncoder, ensure_ascii=False)
+        return ctx

@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import HomeView, VenueDetailView, VenueUpdateView, MyVenuesListView, EventCreateView, EventUpdateView, VenueGalleryUploadView, CityVenueListView
 from .views import CityVenueListView, CityVenueListJsonView, FeaturedCitiesView, VenueSearchView, EventListView, CityListView, track_click
-from .views import SubscribeView, SubscribeConfirmView, AccountDeleteView, AccountDeletedView
+from .views import SubscribeView, SubscribeConfirmView, AccountDeleteView, AccountDeletedView,VenueCreateView
 
 
 urlpatterns = [
@@ -24,4 +24,5 @@ urlpatterns = [
     path("track-click/", track_click, name="track_click"),
     path("cuenta/eliminar/", AccountDeleteView.as_view(), name="account_delete"),
     path("cuenta/eliminada/", AccountDeletedView.as_view(), name="account_deleted"),
+    path("owner/sucursales/nueva/", VenueCreateView.as_view(), name="venue_create"),
 ]

@@ -56,7 +56,7 @@
               <div class="form-check">
                 {{ form.remember }} <label class="form-check-label text-white-50" for="{{ form.remember.id_for_label }}">Recordarme</label>
               </div>
-              <a href="#" class="link-light small opacity-75">¿Olvidaste la contraseña?</a>  <!--- url password reset  -->
+              <a href="{% url 'password_reset' %}" class="link-light small opacity-75">¿Olvidaste la contraseña?</a>  <!--- url password reset  -->
             </div>
 
             <!-- CTA -->

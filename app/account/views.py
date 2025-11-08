@@ -1,23 +1,31 @@
-from django.contrib import messages
-from django.contrib.auth import authenticate, login
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
-from django.db import transaction, IntegrityError
-from django.db.models import Q
-from django.shortcuts import render, redirect
-from django.urls import reverse_lazy
-from django.views.generic import FormView, UpdateView
-from app.places.models import Commune
-# app/accounts/views.py  o app/payments/views.py
+# ===== Standard library =====
 import json
 import datetime
+
+# ===== Third-party =====
 import mercadopago
+
+# ===== Django =====
+from django.conf import settings
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction, IntegrityError
+from django.db.models import Q
 from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
-from django.conf import settings
+from django.views.generic import FormView, UpdateView
+
+# ===== Local apps =====
+from app.places.models import Commune
+
+# arriba del archivo, junto a los imports
 from django.contrib.auth import get_user_model
-from .models import OwnerProfile, Subscription
+User = get_user_model()
+
 
 from .forms import (
     OwnerSignupForm,
@@ -26,7 +34,7 @@ from .forms import (
     OwnerProfileUpdateForm,
     GuestProfileUpdateForm,
 )
-from .models import Profile, OwnerProfile, GuestProfile
+from .models import Profile, OwnerProfile, GuestProfile, Subscription
 
 
 class OwnerSignupView(FormView):
@@ -249,3 +257,48 @@ def mp_webhook(request):
     print(f"ℹ️ Evento ignorado: {event_type}")
     return HttpResponse(status=200)
 
+
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
+from django.contrib import messages
+
+
+class PasswordResetView(auth_views.PasswordResetView):
+    template_name = "accounts/password_reset_form.html"
+    email_template_name = "accounts/password_reset_email.txt"
+    subject_template_name = "accounts/password_reset_subject.txt"
+    success_url = reverse_lazy("password_reset_done")
+
+    def form_valid(self, form):
+        messages.info(self.request, "Si tu correo existe en el sistema, te enviaremos instrucciones para restablecer la contraseña.")
+        return super().form_valid(form)
+
+
+class PasswordResetDoneView(auth_views.PasswordResetDoneView):
+    template_name = "accounts/password_reset_done.html"
+
+
+class PasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    template_name = "accounts/password_reset_confirm.html"
+    success_url = reverse_lazy("password_reset_complete")
+
+    def form_valid(self, form):
+        messages.success(self.request, "¡Tu contraseña fue cambiada! Ahora puedes iniciar sesión.")
+        return super().form_valid(form)
+
+
+class PasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    template_name = "accounts/password_reset_complete.html"
+
+
+class PasswordChangeView(LoginRequiredMixin, auth_views.PasswordChangeView):
+    template_name = "accounts/password_change_form.html"
+    success_url = reverse_lazy("password_change_done")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Contraseña actualizada correctamente ✅")
+        return super().form_valid(form)
+
+
+class PasswordChangeDoneView(LoginRequiredMixin, auth_views.PasswordChangeDoneView):
+    template_name = "accounts/password_change_done.html"

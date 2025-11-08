@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Agregar sucursal{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <!-- Encabezado -->
+  <div class="d-flex align-items-center justify-content-between mb-4">
+    <h1 class="h4 mb-0">Agregar nueva sucursal</h1>
+    <a class="btn btn-outline-secondary btn-sm" href="{% url 'list_venues-owner' %}">Volver</a>
+  </div>
+
+  <form method="post" enctype="multipart/form-data" novalidate>
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <!-- Contenedor principal -->
+    <div class="bg-glass border-0 shadow-sm rounded-4">
+      <div class="p-4">
+
+        <!-- Grupo: Información básica -->
+        <div class="mb-3">
+          <h2 class="section-title">Información básica</h2>
+        </div>
+
+        <div class="row g-4">
+          <!-- Nombre -->
+          <div class="col-12 col-md-6">
+            <label class="form-label small text-uppercase fw-semibold" for="{{ form.name.id_for_label }}">
+              {{ form.name.label|default:"Nombre del local" }}
+            </label>
+            {{ form.name }}
+            {% if form.name.help_text %}<div class="form-text">{{ form.name.help_text }}</div>{% endif %}
+            {% if form.name.errors %}<div class="invalid-feedback d-block">{{ form.name.errors|striptags }}</div>{% endif %}
+          </div>
+
+          <!-- Comuna (input con datalist) -->
+          <div class="col-12 col-md-6">
+            <label class="form-label small text-uppercase fw-semibold">Comuna</label>
+
+            <!-- Select nativo oculto (se sincroniza con el input de abajo) -->
+            <div class="d-none">
+              {{ form.Commune }}
+            </div>
+
+            <!-- Input visible con datalist -->
+            <input id="communeInput" class="form-control rounded-3" list="communesList"
+                   placeholder="Escribe y elige tu comuna…">
+            <datalist id="communesList"></datalist>
+
+            <div class="form-text">Escribe para autocompletar y selecciona una opción.</div>
+            <div class="invalid-feedback d-block d-none" id="communeError">Selecciona una comuna válida.</div>
+          </div>
+
+          <!-- Categoría -->
+          <div class="col-12 col-md-6">
+            <label class="form-label small text-uppercase fw-semibold" for="{{ form.category.id_for_label }}">
+              {{ form.category.label|default:"Categoría" }}
+            </label>
+            {{ form.category }}
+            {% if form.category.errors %}<div class="invalid-feedback d-block">{{ form.category.errors|striptags }}</div>{% endif %}
+          </div>
+
+          <!-- Teléfono -->
+          <div class="col-12 col-md-6">
+            <label class="form-label small text-uppercase fw-semibold" for="{{ form.phone.id_for_label }}">
+              {{ form.phone.label|default:"Teléfono" }}
+            </label>
+            {{ form.phone }}
+            {% if form.phone.errors %}<div class="invalid-feedback d-block">{{ form.phone.errors|striptags }}</div>{% endif %}
+          </div>
+
+          <!-- Dirección -->
+          <div class="col-12">
+            <label class="form-label small text-uppercase fw-semibold" for="{{ form.address.id_for_label }}">
+              {{ form.address.label|default:"Dirección" }}
+            </label>
+            {{ form.address }}
+            {% if form.address.errors %}<div class="invalid-feedback d-block">{{ form.address.errors|striptags }}</div>{% endif %}
+          </div>
+
+          <!-- Descripción -->
+          <div class="col-12">
+            <hr class="section-divider"><h2 class="section-title">Sobre el lugar</h2>
+            <label class="form-label small text-uppercase fw-semibold" for="{{ form.description.id_for_label }}">
+              {{ form.description.label|default:"Descripción" }}
+            </label>
+            {{ form.description }}
+            {% if form.description.help_text %}<div class="form-text">{{ form.description.help_text }}</div>{% endif %}
+            {% if form.description.errors %}<div class="invalid-feedback d-block">{{ form.description.errors|striptags }}</div>{% endif %}
+          </div>
+
+          <!-- Medios -->
+          <div class="col-12">
+            <hr class="section-divider"><h2 class="section-title">Medios</h2>
+          </div>
+          <div class="col-12 col-md-6">
+            <label class="form-label small text-uppercase fw-semibold" for="{{ form.cover_image.id_for_label }}">
+              {{ form.cover_image.label|default:"Imagen de portada" }}
+            </label>
+            {{ form.cover_image }}
+            {% if form.cover_image.errors %}<div class="invalid-feedback d-block">{{ form.cover_image.errors|striptags }}</div>{% endif %}
+            <div class="form-text">Formato horizontal recomendado (p. ej., 4:3).</div>
+          </div>
+
+        </div> <!-- /.row -->
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="d-flex gap-2 mt-4">
+      <a class="btn btn-outline-secondary" href="{% url 'list_venues-owner' %}">Cancelar</a>
+      <button class="btn btn-primary" type="submit">Guardar sucursal</button>
+    </div>
+  </form>
+</div>
+
+<!-- Estilos (alineados a tu editor de venues) -->
+<style>
+  .section-title{
+    font-size:.9rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--bs-secondary-color); margin:0 0 .25rem 0; font-weight:700;
+  }
+  .section-divider{
+    border:0; height:1px; background:linear-gradient(90deg, rgba(0,0,0,.06), rgba(0,0,0,0));
+    margin:1.25rem 0 .75rem;
+  }
+  .bg-glass{
+    background: rgba(255,255,255,.04);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,.08);
+  }
+  .card .form-control,
+  .card .form-select,
+  .card input[type="file"],
+  .card textarea {
+    padding: .75rem 1rem;
+    border-radius: .8rem;
+  }
+  textarea { min-height: 140px; }
+</style>
+
+<script>
+(function(){
+  // JSON de comunas viene como string seguro desde la vista
+  const communes = JSON.parse('{{ communes_json|escapejs }}' || '[]');
+  const input = document.getElementById('communeInput');
+  const dl = document.getElementById('communesList');
+
+  // Campo select real (oculto) que se envía en el POST
+  const selectCommune = document.getElementById('{{ form.Commune.id_for_label }}') ||
+                        document.getElementById('id_Commune');
+  const err = document.getElementById('communeError');
+
+  // Renderizar datalist
+  if (Array.isArray(communes) && dl) {
+    communes.forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.name;      // lo que el usuario ve/escribe
+      opt.label = c.slug || ''; // por si quieres mostrar slug como etiqueta (opc)
+      dl.appendChild(opt);
+    });
+  }
+
+  // Sincroniza input -> select real (busca por name exacto o por slug)
+  function syncCommune(){
+    const val = (input.value || '').trim().toLowerCase();
+    const found = communes.find(c =>
+      (c.name || '').toLowerCase() === val || (c.slug || '').toLowerCase() === val
+    );
+    if (found && selectCommune) {
+      selectCommune.value = found.id;  // setea el ID en el select nativo
+      if (err) err.classList.add('d-none');
+    } else {
+      if (err) err.classList.remove('d-none');
+      if (selectCommune) selectCommune.value = ''; // invalida
+    }
+  }
+
+  if (input) {
+    input.addEventListener('change', syncCommune);
+    input.addEventListener('blur', syncCommune);
+    input.addEventListener('input', () => { if (err) err.classList.add('d-none'); });
+  }
+
+  // Si el form viene con errores y ya traía un Commune seleccionado, precárgalo en el input
+  if (selectCommune && selectCommune.value) {
+    const found = communes.find(c => String(c.id) === String(selectCommune.value));
+    if (found) input.value = found.name;
+  }
+})();
+</script>
+{% endblock %}

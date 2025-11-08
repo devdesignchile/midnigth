@@ -223,3 +223,22 @@ class VenueGalleryUploadForm(forms.Form):
         max_length=160, required=False,
         widget=forms.TextInput(attrs={"class":"form-control"})
     )
+    
+class VenueCreateForm(LabelsMixin, ModelForm):
+    class Meta:
+        model = Venue
+        fields = [
+            "name", "Commune", "category",
+            "address", "phone",
+            "description", "cover_image",
+            # agrega otros campos básicos si quieres
+        ]
+        widgets = {
+            "description": forms.Textarea(attrs={"rows": 4, "class": "form-control rounded-3"}),
+            "cover_image": forms.ClearableFileInput(attrs={"class": "form-control rounded-3"}),
+            "category": forms.Select(attrs={"class": "form-select rounded-3"}),
+            "name": forms.TextInput(attrs={"class": "form-control rounded-3", "placeholder": "Ej: Club Midnight"}),
+            "address": forms.TextInput(attrs={"class": "form-control rounded-3", "placeholder": "Av. del Mar 1234"}),
+            "phone": forms.TextInput(attrs={"class": "form-control rounded-3", "placeholder": "+56 9 ..."}),
+            "Commune": forms.Select(attrs={"class": "form-select rounded-3 d-none"}),  # la ocultamos (se sincroniza por JS)
+        }
