@@ -1,7 +1,8 @@
 {# templates/accounts/signup_guest.html #}
 {% extends "base.html" %}
-{% block content %}
+{% load static %}
 
+{% block content %}
 <section class="min-vh-100 d-flex align-items-center choice-hero ">
   <div class="container py-5">
     <div class="mx-auto" style="max-width: 640px;">
@@ -29,7 +30,7 @@
             <!-- Nombre -->
             <div>
               <label for="{{ form.first_name.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
-                Nombre
+                {{ form.first_name.label }}
               </label>
               {{ form.first_name }}
               {{ form.first_name.errors }}
@@ -38,7 +39,7 @@
             <!-- Apellido -->
             <div>
               <label for="{{ form.last_name.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
-                Apellido
+                {{ form.last_name.label }}
               </label>
               {{ form.last_name }}
               {{ form.last_name.errors }}
@@ -47,7 +48,7 @@
             <!-- Fecha de nacimiento -->
             <div>
               <label for="{{ form.birth_date.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
-                Fecha de nacimiento
+                {{ form.birth_date.label }}
               </label>
               {{ form.birth_date }}
               {{ form.birth_date.errors }}
@@ -56,26 +57,27 @@
             <!-- Correo -->
             <div>
               <label for="{{ form.email.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
-                Correo
+                {{ form.email.label }}
               </label>
               {{ form.email }}
               {{ form.email.errors }}
             </div>
 
-            <!-- Ciudad -->
-            <label for="{{ form.city.id_for_label }}" class="form-label text-uppercase small fw-semibold text-dark-50">
-              Ciudad
-            </label>
-            {{ form.city }}
-            {% if form.city.errors %}
-              <div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>
-            {% endif %}
-
+            <!-- Comuna (nuevo FK) -->
+            <div>
+              <label for="{{ form.commune.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
+                {{ form.commune.label }}
+              </label>
+              {{ form.commune }}
+              {% if form.commune.errors %}
+                <div class="invalid-feedback d-block">{{ form.commune.errors.0 }}</div>
+              {% endif %}
+            </div>
 
             <!-- Contraseña -->
             <div>
               <label for="{{ form.password1.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
-                Contraseña
+                {{ form.password1.label }}
               </label>
               {{ form.password1 }}
               {{ form.password1.errors }}
@@ -84,7 +86,7 @@
             <!-- Confirmar contraseña -->
             <div>
               <label for="{{ form.password2.id_for_label }}" class="form-label text-uppercase small fw-semibold text-white-50">
-                Contraseña
+                {{ form.password2.label }}
               </label>
               {{ form.password2 }}
               {{ form.password2.errors }}
@@ -105,23 +107,24 @@
     </div>
   </div>
 </section>
+{% endblock %}
+
 {% block extra_js %}
+{# Si usas Choices.js para el select mejorado #}
+{# <link rel="stylesheet" href="{% static 'vendor/choices/choices.min.css' %}"> #}
+{# <script src="{% static 'vendor/choices/choices.min.js' %}"></script> #}
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  const el = document.getElementById('id_city');   // Django genera este id
-  if (!el) return;
+  const el = document.getElementById('id_commune'); // Django genera id="id_commune"
+  if (!el || typeof Choices === 'undefined') return;
 
   new Choices(el, {
-    position: 'bottom',       // fuerza abrir hacia abajo
-    searchEnabled: true,      // 🔎 escribe y filtra
+    position: 'bottom',
+    searchEnabled: true,
     searchChoices: true,
     itemSelectText: '',
-    shouldSort: true,
-      
+    shouldSort: true
   });
 });
 </script>
-{% endblock %}
-
-
 {% endblock %}

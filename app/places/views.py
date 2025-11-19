@@ -142,18 +142,17 @@ class HomeView(TemplateView):
         trending_items = []
         if city:
             now = timezone.now()
-            window_end = now + timedelta(hours=48)
+            window_end = now + timedelta(days=7)  # antes: timedelta(hours=48)
 
             events_qs = (
                 Event.objects
                 .filter(
-                    is_published=True,
                     Commune=city,
                     start_at__gte=now,
                     start_at__lte=window_end
                 )
                 .select_related("venue")
-                .order_by("start_at")[:4]
+                .order_by("start_at")      # ya no lo limito a [:4] aquí
             )
 
             for e in events_qs:
@@ -162,6 +161,7 @@ class HomeView(TemplateView):
                 if not href and e.venue:
                     href = reverse("venue-detail", kwargs={"slug": e.venue.slug})
                 if not href:
+                    # si no tengo a dónde mandar al usuario, salto el evento
                     continue
 
                 img = (
@@ -181,16 +181,15 @@ class HomeView(TemplateView):
                     "img": img,
                     "tags": getattr(e, "tags_list", []),
                 })
-
-        ctx["trending_items"] = trending_items[:4]
-        ctx["trending_chunks"] = [trending_items] if trending_items else []
+                
+                ctx["trending_items"] = trending_items[:8]  # limitar a 8
 
         # ====================================================
         # 2️⃣ VENUES DESTACADOS
         # ====================================================
         featured_qs = Venue.objects.select_related("Commune").filter(
             Commune=city,
-            is_published=True,
+            
         )
 
         ordering = []
@@ -209,7 +208,7 @@ class HomeView(TemplateView):
         venues_with_promos = (
             Venue.objects
             .select_related("Commune")
-            .filter(Commune=city, is_published=True)
+            .filter(Commune=city)
             .only(
                 "slug", "name", "address", "Commune",
                 "cover_image", "gallery_venue",
@@ -389,7 +388,7 @@ class VenueDetailView(FormMixin, DetailView):
         # Próximos: primero futuros; luego pasados cercanos
         ctx["upcoming_events"] = (
             Event.objects
-            .filter(is_published=True, venue=v)
+            .filter(venue=v)
             .exclude(start_at__isnull=True)
             .annotate(
                 is_past=Case(
@@ -404,7 +403,7 @@ class VenueDetailView(FormMixin, DetailView):
         # Carrusel: solo futuros
         ctx["carousel_events"] = (
             Event.objects
-            .filter(is_published=True, venue=v, start_at__gte=now)
+            .filter( venue=v, start_at__gte=now)  #is_published=True para despues
             .order_by("start_at")[:10]
         )
 
@@ -785,7 +784,7 @@ class CityListView(ListView):
             .annotate(
                 venues_count=Count(
                     "venues",
-                    filter=Q(venues__is_published=True),
+                    filter=Q(),
                     distinct=True,
                 )
             )
@@ -875,7 +874,7 @@ class FeaturedCitiesView(View):
 
         communes = (
             Commune.objects
-            .annotate(venues_count=Count("venues", filter=Q(venues__is_published=True)))
+            .annotate(venues_count=Count("venues",  filter=Q(), distinct=True))
             .filter(venues_count__gt=0)
             .order_by("-venues_count", "name")[:4]
         )
@@ -1239,3 +1238,4 @@ class VenueCreateView(LoginRequiredMixin, CreateView):
         communes = Commune.objects.order_by("name").values("id", "name", "slug")
         ctx["communes_json"] = json.dumps(list(communes), cls=DjangoJSONEncoder, ensure_ascii=False)
         return ctx
+    

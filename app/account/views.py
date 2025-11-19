@@ -62,11 +62,6 @@ class GuestSignupView(FormView):
     form_class = GuestSignupForm
     success_url = reverse_lazy("home")
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.fields["city"].queryset = Commune.objects.all().order_by("name")
-        return form
-
     def form_valid(self, form):
         user = form.save()
         login(self.request, user)
@@ -265,13 +260,19 @@ from django.contrib import messages
 
 class PasswordResetView(auth_views.PasswordResetView):
     template_name = "accounts/password_reset_form.html"
-    email_template_name = "accounts/password_reset_email.txt"
+    email_template_name = "accounts/password_reset_email.txt"      # fallback texto plano (opcional)
+    html_email_template_name = "accounts/password_reset_email.html"  # <<— NUEVO
     subject_template_name = "accounts/password_reset_subject.txt"
     success_url = reverse_lazy("password_reset_done")
 
-    def form_valid(self, form):
-        messages.info(self.request, "Si tu correo existe en el sistema, te enviaremos instrucciones para restablecer la contraseña.")
-        return super().form_valid(form)
+    def get_email_context(self, context):
+        # Forzar marca si quieres
+        context = super().get_email_context(context)
+        context["site_name"] = context.get("site_name") or "Midnight"
+        # Si quieres forzar dominio/protocolo:
+        # context["domain"] = "midnight.cl"
+        # context["protocol"] = "https"
+        return context
 
 
 class PasswordResetDoneView(auth_views.PasswordResetDoneView):
@@ -302,3 +303,17 @@ class PasswordChangeView(LoginRequiredMixin, auth_views.PasswordChangeView):
 
 class PasswordChangeDoneView(LoginRequiredMixin, auth_views.PasswordChangeDoneView):
     template_name = "accounts/password_change_done.html"
+
+def terminos_view(request):
+    context = {
+        "version": "1.0",
+        "last_update": "2025-01-01"
+    }
+    return render(request, "terminos.html", context)
+
+def privacidad_view(request):
+    context = {
+        "version": "1.0",
+        "last_update": "2025-01-01",
+    }
+    return render(request, "privacidad.html", context)

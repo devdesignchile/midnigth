@@ -1,0 +1,104 @@
+{# templates/legal/terminos.html #}
+{% extends "base.html" %}
+
+{% block title %}Términos y Condiciones{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+  <div class="container">
+
+    <!-- Encabezado -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-8">
+        <h1 class="h3 fw-bold mb-2 text-black text-center">
+          Términos y Condiciones de Uso
+        </h1>
+        <p class="text-dark text-center mb-0">
+          Lee cuidadosamente estos términos antes de utilizar la plataforma.
+        </p>
+      </div>
+    </div>
+
+    <!-- Card principal -->
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-8">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4 p-md-5">
+
+            <!-- Fecha y versión -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-primary-subtle text-primary border border-primary-subtle">
+                Versión {{ version|default:"1.0" }}
+              </span>
+              <small class="text-muted">
+                Actualizado el: {{ last_update|default:"01-01-2025" }}
+              </small>
+            </div>
+
+            <!-- Contenido de términos -->
+            <div class="terms-content" style="max-height: 60vh; overflow-y: auto;">
+              <h2 class="h5 fw-semibold mt-3 mb-2">1. Aceptación de los términos</h2>
+              <p class="text-muted">
+                Al acceder y utilizar esta plataforma, declaras haber leído, entendido y aceptado
+                los presentes Términos y Condiciones. Si no estás de acuerdo con alguno de ellos,
+                te recomendamos no utilizar el servicio.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">2. Uso permitido de la plataforma</h2>
+              <p class="text-muted">
+                Te comprometes a utilizar la plataforma únicamente para fines lícitos y
+                de acuerdo con la normativa vigente. Queda prohibido:
+              </p>
+              <ul class="text-muted">
+                <li>Utilizar la plataforma para actividades fraudulentas o ilícitas.</li>
+                <li>Intentar acceder sin autorización a sistemas, cuentas o datos de terceros.</li>
+                <li>Realizar acciones que puedan afectar la disponibilidad o seguridad del servicio.</li>
+              </ul>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">3. Cuenta de usuario y responsabilidad</h2>
+              <p class="text-muted">
+                Eres responsable de mantener la confidencialidad de tus credenciales de acceso
+                y de todas las actividades que ocurran bajo tu cuenta. En caso de detectar un
+                uso no autorizado, deberás notificarlo de inmediato.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">4. Tratamiento de datos personales</h2>
+              <p class="text-muted">
+                El tratamiento de tus datos personales se realizará conforme a nuestra
+                Política de Privacidad, la cual forma parte integral de estos Términos y Condiciones.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">5. Modificaciones del servicio</h2>
+              <p class="text-muted">
+                Nos reservamos el derecho de modificar, suspender o descontinuar parcial o
+                totalmente la plataforma, previa comunicación razonable a los usuarios cuando
+                sea posible.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">6. Limitación de responsabilidad</h2>
+              <p class="text-muted">
+                No seremos responsables por daños directos o indirectos derivados del uso o
+                imposibilidad de uso de la plataforma, salvo en los casos expresamente establecidos
+                por la ley aplicable.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">7. Legislación aplicable y jurisdicción</h2>
+              <p class="text-muted mb-0">
+                Estos Términos y Condiciones se rigen por las leyes vigentes en Chile. Cualquier
+                controversia será sometida a los tribunales competentes de la ciudad correspondiente.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nota informativa -->
+        <p class="text-center text-dark small mt-3">
+          Si tienes dudas sobre estos términos, contáctanos a
+          <a href="mailto:soporte@midnight.cl" class="link-secondary">soporte@midnight.cl</a>.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

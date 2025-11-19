@@ -1,6 +1,6 @@
 # app/accounts/urls.py
 from django.urls import path
-from .views import OwnerSignupView, GuestSignupView,login_view, ProfileEditView
+from .views import OwnerSignupView, GuestSignupView,login_view, ProfileEditView, terminos_view, privacidad_view
 from django.views.generic import TemplateView
 from django.contrib.auth.views import LogoutView
 from . import views
@@ -19,8 +19,9 @@ urlpatterns = [
     path("password/reset/done/", views.PasswordResetDoneView.as_view(), name="password_reset_done"),
     path("password/reset/confirm/<uidb64>/<token>/", views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
     path("password/reset/complete/", views.PasswordResetCompleteView.as_view(), name="password_reset_complete"),
-
+    path("terminos/", terminos_view, name="terminos"),
     # Cambiar contraseña (logueado)
+    path("privacidad/", privacidad_view, name="privacidad"),
     path("password/change/", views.PasswordChangeView.as_view(), name="password_change"),
     path("password/change/done/", views.PasswordChangeDoneView.as_view(), name="password_change_done"),
 ]

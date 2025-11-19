@@ -1,0 +1,139 @@
+{# templates/legal/privacidad.html #}
+{% extends "base.html" %}
+
+{% block title %}Política de Privacidad{% endblock %}
+
+{% block content %}
+<section class="py-5 bg-light">
+  <div class="container">
+
+    <!-- Encabezado -->
+    <div class="row justify-content-center mb-4">
+      <div class="col-lg-8">
+        <h1 class="h3 fw-bold mb-2 text-center">
+          Política de Privacidad
+        </h1>
+        <p class="text-muted text-center mb-0">
+          Esta política describe cómo recopilamos, usamos y protegemos tu información personal.
+        </p>
+      </div>
+    </div>
+
+    <!-- Card principal -->
+    <div class="row justify-content-center">
+      <div class="col-lg-10 col-xl-8">
+        <div class="card shadow-sm border-0">
+          <div class="card-body p-4 p-md-5">
+
+            <!-- Meta -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="badge bg-secondary-subtle text-secondary border border-secondary-subtle">
+                Versión {{ version|default:"1.0" }}
+              </span>
+              <small class="text-muted">
+                Actualizado el: {{ last_update|default:"01-01-2025" }}
+              </small>
+            </div>
+
+            <!-- Contenido scrollable -->
+            <div style="max-height: 60vh; overflow-y: auto;">
+
+              <h2 class="h5 fw-semibold mt-3 mb-2">1. Información que recopilamos</h2>
+              <p class="text-muted">
+                Podemos recopilar información personal que tú mismo proporcionas al registrarte,
+                utilizar la plataforma o contactarnos, como:
+              </p>
+              <ul class="text-muted">
+                <li>Nombre, correo electrónico y datos de contacto.</li>
+                <li>Información de perfil y preferencias de uso.</li>
+                <li>Registros de actividad dentro de la plataforma.</li>
+              </ul>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">2. Finalidad del tratamiento de datos</h2>
+              <p class="text-muted">
+                Utilizamos tu información para:
+              </p>
+              <ul class="text-muted">
+                <li>Prestar y mantener el funcionamiento de la plataforma.</li>
+                <li>Mejorar la experiencia de usuario y desarrollar nuevas funcionalidades.</li>
+                <li>Gestionar comunicaciones relacionadas con el servicio (avisos, cambios, soporte).</li>
+                <li>Cumplir con obligaciones legales y regulatorias aplicables.</li>
+              </ul>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">3. Bases legales para el tratamiento</h2>
+              <p class="text-muted">
+                El tratamiento de tus datos se fundamenta en:
+              </p>
+              <ul class="text-muted">
+                <li>Tu consentimiento expreso al registrarte o continuar usando el servicio.</li>
+                <li>La necesidad de ejecutar la relación contractual asociada al uso de la plataforma.</li>
+                <li>Intereses legítimos vinculados a la mejora continua del servicio.</li>
+              </ul>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">4. Conservación de la información</h2>
+              <p class="text-muted">
+                Conservaremos tus datos personales durante el tiempo estrictamente necesario para cumplir
+                las finalidades descritas, y por los plazos adicionales exigidos por la normativa aplicable.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">5. Compartición y transferencias de datos</h2>
+              <p class="text-muted">
+                No comercializamos tus datos personales. Solo podrán ser comunicados a:
+              </p>
+              <ul class="text-muted">
+                <li>Proveedores de servicios que actúan como encargados de tratamiento (hosting, email, etc.).</li>
+                <li>Autoridades competentes cuando exista obligación legal de hacerlo.</li>
+              </ul>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">6. Seguridad de la información</h2>
+              <p class="text-muted">
+                Implementamos medidas técnicas y organizativas razonables para proteger tus datos
+                frente a accesos no autorizados, pérdida o alteración. Sin embargo, ningún sistema
+                es completamente infalible.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">7. Derechos de los titulares de datos</h2>
+              <p class="text-muted">
+                Podrás ejercer tus derechos de acceso, rectificación, actualización, eliminación y oposición,
+                conforme a la legislación vigente, contactándonos a través de los canales indicados más abajo.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">8. Cookies y tecnologías similares</h2>
+              <p class="text-muted">
+                Podemos utilizar cookies y tecnologías similares para mejorar la experiencia de usuario,
+                analizar el uso de la plataforma y personalizar contenido. Puedes gestionar tus preferencias
+                de cookies desde la configuración de tu navegador.
+              </p>
+
+              <h2 class="h5 fw-semibold mt-4 mb-2">9. Cambios en esta política</h2>
+              <p class="text-muted mb-0">
+                Nos reservamos el derecho de actualizar esta Política de Privacidad cuando sea necesario.
+                Publicaremos la nueva versión con su fecha de actualización. El uso continuado de la
+                plataforma implica la aceptación de los cambios.
+              </p>
+            </div>
+
+            <!-- Footer acciones -->
+            <div class="mt-4 pt-3 border-top d-flex justify-content-between align-items-center">
+              <a href="{% url 'terminos' %}" class="btn btn-outline-secondary btn-sm">
+                Ver Términos y Condiciones
+              </a>
+              <a href="{% url 'home' %}" class="btn btn-primary btn-sm">
+                Volver a la plataforma
+              </a>
+            </div>
+
+          </div>
+        </div>
+
+        <p class="text-center text-muted small mt-3">
+          Para ejercer tus derechos o realizar consultas sobre privacidad,
+          escríbenos a
+          <a href="mailto:privacidad@midnight.cl" class="link-secondary">privacidad@midnight.cl</a>.
+        </p>
+      </div>
+    </div>
+
+  </div>
+</section>
+{% endblock %}

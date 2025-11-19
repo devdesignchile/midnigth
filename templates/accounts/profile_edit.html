@@ -132,8 +132,6 @@
                 {% if form.city.errors %}<div class="invalid-hint">{{ form.city.errors|join:", " }}</div>{% endif %}
               </div>
             </div>
-            <a href="{% url 'password_change' %}" class="dropdown-item">Cambiar contraseña</a>
-
             {% endif %}
 
             <div class="mt-4 d-flex gap-2">
@@ -148,6 +146,29 @@
       </div>
     </form>
     <!-- ⬆️ Fin del form -->
+
+    <!-- ========================= -->
+    <!-- Seguridad y acceso -->
+    <!-- ========================= -->
+    <div class="card panel glass p-3 p-md-4 mt-4" id="security-card">
+      <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+        <div>
+          <div class="eyebrow mb-1">Seguridad y acceso</div>
+          <h3 class="h6 fw-bold mb-1">Protege tu cuenta</h3>
+          <p class="text-soft small mb-0">
+            Cambia tu contraseña regularmente para mantener tu cuenta segura.
+          </p>
+        </div>
+        <div class="d-flex flex-column flex-sm-row gap-2">
+          <a href="{% url 'password_change' %}" class="btn btn-primary btn-pill floaty">
+            <i class="bi bi-shield-lock me-2"></i> Cambiar contraseña
+          </a>
+          <a href="{% url 'password_reset' %}" class="btn btn-ghost btn-pill">
+            ¿Olvidaste tu contraseña?
+          </a>
+        </div>
+      </div>
+    </div>
 
     <!-- Zona de peligro -->
     <div class="card panel glass p-3 p-md-4 mt-4 border-danger" id="danger-zone">
@@ -205,6 +226,11 @@
   border: 1px solid rgba(255,255,255,.08);
   border-radius: var(--radius-lg, 1rem);
   backdrop-filter: blur(8px) saturate(120%);
+}
+#security-card .btn-primary{
+  /* tono elegante, respeta tema si ya tienes --brand */
+  background: var(--brand, #5850ec);
+  border-color: var(--brand, #5850ec);
 }
 .eyebrow{ letter-spacing:.12em; text-transform:uppercase; font-size:.78rem; color:var(--text-2); }
 .invalid-hint{ color:#ff7a7a; font-size:.85rem; margin-top:.25rem; }

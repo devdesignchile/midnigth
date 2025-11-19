@@ -180,7 +180,7 @@ class GuestSignupForm(forms.Form):
             "autocomplete": "family-name"
         })
     )
-    # MISMO PATRÓN QUE EN DoctorForm (format + input_formats)
+
     birth_date = forms.DateField(
         label="Fecha de nacimiento",
         widget=forms.DateInput(
@@ -190,6 +190,7 @@ class GuestSignupForm(forms.Form):
         input_formats=["%Y-%m-%d"],
         required=True,
     )
+
     email = forms.EmailField(
         label="Correo",
         widget=forms.EmailInput(attrs={
@@ -198,15 +199,19 @@ class GuestSignupForm(forms.Form):
             "autocomplete": "email"
         })
     )
-    city = forms.ModelChoiceField(
+
+    # 👇 nuevo campo commune (FK)
+    commune = forms.ModelChoiceField(
         label="Comuna",
-        queryset=Commune.objects.none(),  # se definirá en __init__ para permitir filtrados dinámicos
+        queryset=Commune.objects.none(),
         empty_label="Selecciona una comuna",
         widget=forms.Select(attrs={
             "class": "form-select rounded-3 bg-white text-dark",
             "autocomplete": "address-level2"
-        })
+        }),
+        required=True,
     )
+
     password1 = forms.CharField(
         label="Contraseña",
         widget=forms.PasswordInput(attrs={
@@ -224,6 +229,11 @@ class GuestSignupForm(forms.Form):
         })
     )
 
+    # ✅ aquí definimos el queryset (reemplaza el get_form de la vista)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["commune"].queryset = Commune.objects.order_by("name")
+
     def clean_birth_date(self):
         bd = self.cleaned_data["birth_date"]
         today = date.today()
@@ -238,11 +248,18 @@ class GuestSignupForm(forms.Form):
             self.add_error("password2", "Las contraseñas no coinciden.")
         return c
 
+    def clean_email(self):
+        email = self.cleaned_data["email"].strip()
+        if User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError("Este email ya está registrado.")
+        return email
+
     def save(self):
         c = self.cleaned_data
+
+        # username único
         base = slugify(f'{c["first_name"]}-{c["last_name"]}') or c["email"].split("@")[0]
-        username = base
-        i = 1
+        username, i = base, 1
         while User.objects.filter(username=username).exists():
             i += 1
             username = f"{base}{i}"
@@ -256,21 +273,16 @@ class GuestSignupForm(forms.Form):
         )
         profile = Profile.objects.create(user=user, role="guest")
 
-        selected_commune = c["city"]        # instancia Commune
+        selected = c["commune"]
         GuestProfile.objects.create(
             profile=profile,
             first_name=c["first_name"],
             last_name=c["last_name"],
             birth_date=c["birth_date"],
-            city=selected_commune.name,      # <-- IMPORTANTE: guardar string
+            commune=selected,      # FK
+            city=selected.name,    # compatibilidad string
         )
         return user
-
-    def clean_email(self):
-        email = self.cleaned_data["email"].strip()
-        if User.objects.filter(email__iexact=email).exists():
-            raise ValidationError("Este email ya está registrado.")
-        return email
 
 
 class LoginForm(forms.Form):

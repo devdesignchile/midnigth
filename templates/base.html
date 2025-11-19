@@ -58,7 +58,7 @@
 
         {% if request.user.is_authenticated and request.user.venues.exists %}
         <li class="nav-item">
-          <a class="nav-link {% if url_name == 'list_venues-owner' %}active{% endif %}" href="{% url 'list_venues-owner' %}">
+          <a class="nav-link {% if url_name == 'venue_detail' %}active{% endif %} {% if url_name == 'list_venues-owner' %}active{% endif %}" href="{% url 'list_venues-owner' %}">
             Mi negocio
           </a>
         </li>
@@ -128,8 +128,13 @@
       <!-- Brand -->
       <div class="col-12 col-lg-4">
         <a href="{% url 'home' %}" class="d-inline-flex align-items-center text-decoration-none mb-3">
-          <img src="{% static 'img/logo.svg' %}" alt="Midnight" height="28" class="me-2">
-          <span class="fw-bold text-white">midnight</span>
+              <!-- Brand -->
+        <a class="navbar-brand d-flex py-0 align-items-center fw-bold" href="{% url 'home' %}" aria-label="MidNight">
+          <!-- Desktop / tablet -->
+          <span class="logo-text d-none d-sm-inline">MIDNIGHT</span>
+          <!-- Celular -->
+          <span class="logo-text d-inline d-sm-none" aria-hidden="true">MN</span>
+        </a>
         </a>
         <p class="text-soft mb-4">
           La guía más completa para descubrir bares, clubs y eventos en Chile.  
@@ -159,16 +164,6 @@
         </ul>
       </div>
 
-      <!-- Sección para locales (siempre pública) -->
-      <div class="col-6 col-lg-3">
-        <h6 class="text-white mb-3">Para locales</h6>
-        <ul class="list-unstyled small">
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'signup-company' %}">Crear cuenta de dueño</a></li>
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'subscribe' %}">Planes y precios</a></li>
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="/ayuda/anunciantes">Guía de anuncios</a></li>
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="/contacto">Contacto ventas</a></li>
-        </ul>
-      </div>
 
       <!-- Cuenta -->
       <div class="col-12 col-lg-2">
@@ -198,10 +193,8 @@
         </span>
       </div>
       <ul class="nav small">
-        <li class="nav-item"><a class="nav-link text-soft px-2" href="/terminos">Términos</a></li>
-        <li class="nav-item"><a class="nav-link text-soft px-2" href="/privacidad">Privacidad</a></li>
-        <li class="nav-item"><a class="nav-link text-soft px-2" href="/cookies">Cookies</a></li>
-        <li class="nav-item"><a class="nav-link text-soft px-2" href="/contacto">Contacto</a></li>
+        <li class="nav-item"><a class="nav-link text-soft px-2" href="{% url 'terminos' %}">Términos</a></li>
+        <li class="nav-item"><a class="nav-link text-soft px-2" href="{% url 'privacidad' %}">Privacidad</a></li>
       </ul>
     </div>
 

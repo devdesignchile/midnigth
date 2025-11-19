@@ -1,6 +1,5 @@
 # app/account/models.py  (ajusta la ruta si tu app es distinta)
 from datetime import date, timedelta
-
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -170,7 +169,17 @@ class GuestProfile(models.Model):
     first_name = models.CharField("Nombre", max_length=80)
     last_name = models.CharField("Apellido", max_length=80)
     birth_date = models.DateField("Fecha de nacimiento", blank=True, null=True)
-    city = models.CharField("Ciudad", max_length=100)
+    city = models.CharField("Ciudad", max_length=100, blank=True)
+
+    # 🔹 Nuevo campo relacionado a Commune
+    commune = models.ForeignKey(
+        "places.Commune",              # ✅ app_label.ModelName (tu app se llama "places")
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name="guests",
+        verbose_name="Comuna de residencia",
+    )
+
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

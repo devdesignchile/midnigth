@@ -887,3 +887,115 @@ option:focus {}
   from{ transform: translateY(10px); opacity: 0; }
   to{ transform: translateY(0); opacity: 1; }
 }
+
+/* ===== Fondo + overlay ===== */
+.hero-venue { padding: clamp(64px, 7vw, 110px) 0 18px; }
+.hero-venue__media { position: absolute; inset: 0; }
+#heroCoverImg { width:100%; height:100%; object-fit:cover; object-position:center; display:block; filter: brightness(.45); }
+.hero-venue__overlay { position:absolute; inset:0; background: linear-gradient(180deg, rgba(0,0,0,.2), rgba(0,0,0,.45)); }
+.hero-venue__content { position: relative; z-index: 1; }
+
+/* ===== Panel vidrio ===== */
+.hero-venue__panel{
+  background: rgba(18,18,22,.6);
+  border: 1px solid rgba(255,255,255,.08);
+  backdrop-filter: blur(6px);
+}
+
+/* ===== Logo responsive ===== */
+.hero-venue__logo{ width:72px; height:72px; }
+@media (min-width: 768px){
+  .hero-venue__logo{ width:100px; height:100px; }
+}
+.object-cover{ object-fit:cover; object-position:center; display:block; }
+
+/* ===== Título que no “revienta” en móvil ===== */
+.venue-title{
+  font-weight: 800;
+  letter-spacing: -.02em;
+  line-height: 1.1;
+  font-size: clamp(1.35rem, 2.2vw + .6rem, 2rem);
+}
+
+/* ===== Botonera: apilar en móvil, inline en desktop ===== */
+@media (max-width: 575.98px){
+  .hero-venue__panel .btn{ font-size: .95rem; padding: .6rem 1rem; }
+}
+
+/* ===== Subnav con scroll en móvil ===== */
+.subnav-shell{
+  background: rgba(18,18,22,.7);
+  border: 1px solid rgba(255,255,255,.08);
+}
+.subnav-scroll{ flex-wrap: wrap; }
+@media (max-width: 575.98px){
+  .subnav-scroll{
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .subnav-scroll::-webkit-scrollbar{ display: none; }
+}
+
+/* ===== Pills base ===== */
+.pill-link{
+  display: inline-flex; align-items:center; gap:.4rem;
+  padding:.55rem 1rem; border-radius:999px;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(255,255,255,.08);
+  color:#fff; text-decoration:none;
+  font-size:.95rem;
+}
+
+.text-soft{ color: rgba(255,255,255,.7)!important; }
+
+/* Que el panel siempre quede por encima del fondo y NO se solape con la subnav */
+.hero-venue__panel{ position: relative; z-index: 2; }
+.subnav-sticky{z-index: 1; margin-top: .75rem; }
+
+/* Subnav: scroll en el WRAPPER, no en la fila */
+.subnav-shell{
+  background: rgba(18,18,22,.7);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  overflow: hidden;               /* recorta el contenido al borde redondeado */
+}
+
+/* Desktop: envuelve normal */
+.subnav-scroll{ flex-wrap: wrap; }
+
+/* Móvil: carrusel suave SIN “alas” ni cortes */
+@media (max-width: 575.98px){
+  /* el scroll va en el wrapper */
+  .subnav-shell{
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .subnav-shell::-webkit-scrollbar{ display: none; }
+
+  /* la fila es una pista de ancho = suma de hijos */
+  .subnav-scroll{
+    flex-wrap: nowrap;
+    justify-content: flex-start !important;
+    width: max-content;           /* clave */
+    gap: .5rem;
+    padding: .4rem .5rem;
+  }
+
+  /* ningún chip se encoge ni empuja al resto */
+  .subnav-scroll > *{ flex: 0 0 auto; }
+
+  /* apaga las “alas” si las tenías */
+  .subnav-shell::before,
+  .subnav-shell::after{ display:none !important; content:none !important; }
+}
+
+#trendCarouselInner .grid{
+  display:grid; gap:1rem;
+  grid-template-columns: repeat(4, minmax(0,1fr));
+}
+@media (max-width: 991.98px){ #trendCarouselInner .grid{ grid-template-columns: repeat(2,1fr); } }
+@media (max-width: 575.98px){ #trendCarouselInner .grid{ grid-template-columns: 1fr; } }

@@ -124,16 +124,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 <!-- ============== Trending de hoy (Carrusel 4x) ============== -->
+<!-- ============== Trending de hoy (Carrusel 4x) ============== -->
 <section id="trending" class="py-5">
   <div class="container">
     <div class="d-flex flex-wrap align-items-end justify-content-between mb-3">
       <div>
         <h2 class="h3 fw-bold mb-1">Trending de hoy</h2>
-        <p class="text-secondary mb-0">Lo más visto y guardado ahora en <span id="trend-city">La Serena</span>.</p>
+        <p class="text-secondary mb-0">
+          Lo más visto y guardado ahora en
+          <span id="trend-city">{{ active_city_label }}</span>.
+        </p>
       </div>
     </div>
 
-    <!-- Chips -->
+    <!-- Chips (opcional; filtran por tags si tus eventos tienen "tags") -->
     <div id="trendChips" class="d-flex flex-wrap gap-2 mb-4">
       <button class="btn btn-sm btn-outline-secondary active" data-tag="all">Todo</button>
       <button class="btn btn-sm btn-outline-secondary" data-tag="techno">Techno</button>
@@ -146,9 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     <!-- Carrusel -->
     <div id="trendCarousel4" class="carousel slide" data-bs-interval="false">
-      <div class="carousel-inner" id="trendCarouselInner">
-        <!-- Las slides se renderizan por JS -->
-      </div>
+      <div class="carousel-inner" id="trendCarouselInner"></div>
 
       <button class="carousel-control-prev" type="button" data-bs-target="#trendCarousel4" data-bs-slide="prev" aria-label="Anterior">
         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -157,11 +159,14 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="carousel-control-next-icon" aria-hidden="true"></span>
       </button>
 
-      <!-- Indicadores -->
       <div class="carousel-indicators mt-3 position-static" id="trendIndicators"></div>
     </div>
   </div>
 </section>
+
+{# 👇 Inserta aquí el JSON seguro con los eventos ya filtrados por ciudad (hasta 4) #}
+{{ trending_items|json_script:"trending-data" }}
+
 
 <!-- ====== Estilos suaves para las cards (no futuristas) ====== -->
 
@@ -258,7 +263,22 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- ===================== Próximos eventos destacados (SEO) ===================== -->
 <section id="destacados" class="py-5 bg-surface-1 my-5 rounded-lg container shadow-1">
   <header class="mb-4 text-center">
-    <h2 class="section-title mb-1">Visita los lugares destacados en <span id="seo-city">La Serena</span></h2>
+    <h2 class="section-title mb-1">
+      Visita los lugares destacados en 
+      <span id="seo-city">
+        {% if request.user.is_authenticated and request.user.profile.is_guest %}
+          {% if request.user.profile.guest.commune %}
+            {{ request.user.profile.guest.commune.name }}
+          {% elif request.user.profile.guest.city %}
+            {{ request.user.profile.guest.city }}
+          {% else %}
+            La Serena
+          {% endif %}
+        {% else %}
+          Santiago
+        {% endif %}
+      </span>
+    </h2>
     <p class="section-sub mb-0">
       Agenda curada con los eventos con más interacciones, reseñas y búsquedas recientes.
     </p>
