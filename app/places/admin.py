@@ -13,7 +13,7 @@ class PhotoInline(admin.TabularInline):
 # --- Commune ---
 @admin.register(Commune)
 class CommuneAdmin(admin.ModelAdmin):
-    list_display = ("name", "region", "country", "slug")
+    list_display = ("id","name", "region", "country", "slug")
     search_fields = ("name", "slug", "region")
     prepopulated_fields = {"slug": ("name",)}
     ordering = ("name",)

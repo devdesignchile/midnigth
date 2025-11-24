@@ -999,3 +999,4 @@ option:focus {}
 }
 @media (max-width: 991.98px){ #trendCarouselInner .grid{ grid-template-columns: repeat(2,1fr); } }
 @media (max-width: 575.98px){ #trendCarouselInner .grid{ grid-template-columns: 1fr; } }
+
