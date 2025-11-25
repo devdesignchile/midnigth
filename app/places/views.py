@@ -65,9 +65,11 @@ class HomeView(TemplateView):
     def _get_default_commune(self):
         """Ciudad por defecto: Santiago."""
         c = Commune.objects.filter(slug__iexact="santiago").first()
-        if c: return c
+        if c:
+            return c
         c = Commune.objects.filter(name__iexact="Santiago").first()
-        if c: return c
+        if c:
+            return c
         return Commune.objects.order_by("name").first()
 
     def _commune_from_user(self, request):
@@ -97,7 +99,8 @@ class HomeView(TemplateView):
         return None
 
     def _get_city(self, request):
-        """Orden de resolución:
+        """
+        Orden de resolución:
         1️⃣ ?city= (slug o nombre)
         2️⃣ Usuario autenticado (guest u owner)
         3️⃣ Fallback: Santiago (predeterminada para visitantes no registrados)
@@ -137,7 +140,7 @@ class HomeView(TemplateView):
         ctx["active_city"] = city.slug if city else ""
 
         # ====================================================
-        # 1️⃣ TRENDING — Eventos próximos (48h)
+        # 1️⃣ TRENDING — Eventos próximos (7 días)
         # ====================================================
         trending_items = []
         if city:
@@ -149,10 +152,10 @@ class HomeView(TemplateView):
                 .filter(
                     Commune=city,
                     start_at__gte=now,
-                    start_at__lte=window_end
+                    start_at__lte=window_end,
                 )
                 .select_related("venue")
-                .order_by("start_at")      # ya no lo limito a [:4] aquí
+                .order_by("start_at")
             )
 
             for e in events_qs:
@@ -165,15 +168,20 @@ class HomeView(TemplateView):
                     continue
 
                 img = (
-                    e.flyer_image.url if getattr(e, "flyer_image", None) else
-                    (e.venue.cover_image.url if (e.venue and getattr(e.venue, "cover_image", None)) else "")
+                    e.flyer_image.url
+                    if getattr(e, "flyer_image", None)
+                    else (
+                        e.venue.cover_image.url
+                        if (e.venue and getattr(e.venue, "cover_image", None))
+                        else ""
+                    )
                 )
 
                 trending_items.append({
                     "type": "evento",
                     "title": e.title,
                     "time": timezone.localtime(e.start_at).strftime("%a %H:%M"),
-                    "venue": e.venue.name if e.venue else city.name,
+                    "venue": e.venue.name if e.venue else (city.name if city else ""),
                     "href": href,
                     "external": bool(self._is_http_url(ext)),
                     "badge": e.badge_text or "Próximo",
@@ -181,15 +189,15 @@ class HomeView(TemplateView):
                     "img": img,
                     "tags": getattr(e, "tags_list", []),
                 })
-                
-                ctx["trending_items"] = trending_items[:8]  # limitar a 8
+
+        # siempre defino la clave en el contexto, aunque esté vacía
+        ctx["trending_items"] = trending_items[:8]
 
         # ====================================================
         # 2️⃣ VENUES DESTACADOS
         # ====================================================
         featured_qs = Venue.objects.select_related("Commune").filter(
             Commune=city,
-            
         )
 
         ordering = []
@@ -202,43 +210,54 @@ class HomeView(TemplateView):
         ctx["featured_venues"] = featured_qs.order_by(*ordering)[:3]
 
         # ====================================================
-        # 3️⃣ OFERTAS — Promos visibles
+        # 3️⃣ OFERTAS — Promos visibles (agrupadas por venue)
         # ====================================================
         offers_items = []
+
         venues_with_promos = (
             Venue.objects
             .select_related("Commune")
             .filter(Commune=city)
             .only(
-                "slug", "name", "address", "Commune",
-                "cover_image", "gallery_venue",
-                "vgt_promos_1", "vgt_promos_2", "vgt_promos_3",
+                "slug",
+                "name",
+                "address",
+                "Commune",
+                "cover_image",
+                "gallery_venue",
+                "vgt_promos_1",
+                "vgt_promos_2",
+                "vgt_promos_3",
             )
         )
 
-        def build_offer_item(v, promo_text):
-            if not promo_text:
-                return None
-            img = (
-                v.cover_image.url if getattr(v, "cover_image", None) else
-                (v.gallery_venue.url if getattr(v, "gallery_venue", None) else "")
-            )
-            return {
-                "href": reverse("venue-detail", kwargs={"slug": v.slug}),
-                "title": v.name,
-                "subtitle": v.Commune.name,
-                "badge": promo_text,
-                "img": img,
-                "address": v.address or "",
-            }
+        def _venue_image(v):
+            if getattr(v, "cover_image", None):
+                return v.cover_image.url
+            if getattr(v, "gallery_venue", None):
+                return v.gallery_venue.url
+            return ""
 
         for v in venues_with_promos:
+            promos = []
             for promo_field in ["vgt_promos_1", "vgt_promos_2", "vgt_promos_3"]:
                 promo_text = getattr(v, promo_field, None)
                 if promo_text:
-                    item = build_offer_item(v, promo_text)
-                    if item:
-                        offers_items.append(item)
+                    promos.append(promo_text)
+
+            # si no tiene promos, lo saltamos
+            if not promos:
+                continue
+
+            offers_items.append({
+                "href": reverse("venue-detail", kwargs={"slug": v.slug}),
+                "title": v.name,
+                "subtitle": v.Commune.name,
+                "img": _venue_image(v),
+                "address": v.address or "",
+                "promos": promos,   # 👈 lista con 1–3 promos
+                # si quieres luego: "dist": ..., "vigencia_iso": ...
+            })
 
         ctx["offers_items"] = offers_items[:6]
 
@@ -284,9 +303,9 @@ class HomeView(TemplateView):
         user = self.request.user
         print(f"[DEBUG] Usuario: {'anon' if not user.is_authenticated else user.username}")
         print(f"[DEBUG] Ciudad activa: {city}")
-        print(f"[DEBUG] Eventos 48h: {len(trending_items)}")
+        print(f"[DEBUG] Eventos próximos: {len(trending_items)}")
         print(f"[DEBUG] Venues destacados: {featured_qs.count()}")
-        print(f"[DEBUG] Ofertas: {len(offers_items)}")
+        print(f"[DEBUG] Ofertas (venues con promos): {len(offers_items)}")
         print(f"[DEBUG] Venues para mini-mapa: {len(mini_map_venues)}")
 
         return ctx

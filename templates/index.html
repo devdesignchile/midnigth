@@ -9,13 +9,18 @@
   <div class="container py-4">
     <div class="row justify-content-center text-center g-4">
       <div class="col-12 col-lg-8 mx-auto">
-        <h2 class=" hero-text mb-4"><strong>MIDNIGHT</strong></h2>
-        <h1 class="display-5 fw-extrabold hero-title mb-3 ">
+
+        <!-- Logo Midnight -->
+        <img src="{% static 'img/logo-sf.png' %}" 
+             alt="Midnight Logo"
+             class="hero-logo mb-4">
+
+        <h1 class="display-5 fw-extrabold hero-title mb-3">
           Descubre dónde salir <span class="text-primary">hoy</span>
         </h1>
 
         <!-- Panel de filtros centrado -->
-        <div class="p-3 p-md-4 rounded-lg shadow-1  mx-auto" style="max-width: 900px;">
+        <div class="p-3 p-md-4 rounded-lg shadow-1 mx-auto" style="max-width: 900px;">
           <form action="{% url 'venue_search' %}" method="get" class="row g-2 justify-content-center">
             <div class="col-12 col-md-6">
               <div class="input-group">
@@ -32,12 +37,12 @@
           </form>
         </div>
 
-        {# opcional: ciudad actual para otros scripts #}
         <span id="city-current" class="visually-hidden">{{ active_city_label }}</span>
       </div>
     </div>
   </div>
 </header>
+
 
 {# Exporta trending_items UNA sola vez, fuera del header #}
 {{ trending_items|json_script:"trending-data" }}
@@ -266,17 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
     <h2 class="section-title mb-1">
       Visita los lugares destacados en 
       <span id="seo-city">
-        {% if request.user.is_authenticated and request.user.profile.is_guest %}
-          {% if request.user.profile.guest.commune %}
-            {{ request.user.profile.guest.commune.name }}
-          {% elif request.user.profile.guest.city %}
-            {{ request.user.profile.guest.city }}
-          {% else %}
-            La Serena
-          {% endif %}
-        {% else %}
-          Santiago
-        {% endif %}
+        {{ active_city_label }}
       </span>
     </h2>
     <p class="section-sub mb-0">
@@ -338,7 +333,7 @@ document.addEventListener("DOMContentLoaded", () => {
               {% if v.payment_methods %}<span class="chip">{{ v.payment_methods|truncatechars:14 }}</span>{% endif %}
             </div>
 
-            <div class="d-flex justify-content-between align-items-center">
+           <!-- <div class="d-flex justify-content-between align-items-center">
               <span class="small text-soft">
                 <i class="bi bi-heart-fill"></i>
                 {{ v.clicks_count|default:0 }} interacciones   {# cambiado: antes v.interactions #}
@@ -347,7 +342,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 <i class="bi bi-star-fill"></i>
                 {{ v.rating|default:"4.5" }}
               </span>
-            </div>
+            </div> -->
           </div>
         </article>
       </div>
@@ -416,16 +411,27 @@ document.addEventListener("DOMContentLoaded", () => {
            data-dist="{{ o.dist|default:'' }}"
            data-vigencia="{{ o.vigencia_iso|default:'' }}">
         <article class="card-event h-100 position-relative">
-          <a class="stretched-link text-decoration-none" href="{{ o.href }}" aria-label="{{ o.title }}"></a>
+          <a class="stretched-link text-decoration-none"
+             href="{{ o.href }}"
+             aria-label="{{ o.title }}"></a>
 
-          <div class="card-cover">
+          <div class="card-cover position-relative">
             {% if o.img %}
               <img src="{{ o.img }}" alt="{{ o.title }}" loading="lazy">
             {% else %}
               {% load static %}
-              <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ o.title }}" loading="lazy">
+              <img src="{% static 'img/placeholders/venue-cover.jpg' %}"
+                   alt="{{ o.title }}" loading="lazy">
             {% endif %}
-            <span class="position-absolute top-0 start-0 m-2 badge badge-offer">{{ o.badge }}</span>
+
+            {# 🔹 Aquí mostramos TODAS las promos del local #}
+            {% if o.promos %}
+              <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1">
+                {% for promo in o.promos %}
+                  <span class="badge badge-offer">{{ promo }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
 
           <div class="p-3">
@@ -433,12 +439,26 @@ document.addEventListener("DOMContentLoaded", () => {
             <p class="text-soft mb-2">
               <i class="bi bi-geo"></i> {{ o.subtitle }}
             </p>
+
+            {# Si quieres, también puedes listar las promos abajo #}
+
+            {% if o.promos %}
+              <ul class="small text-soft mb-3">
+                {% for promo in o.promos %}
+                  <li>{{ promo }}</li>
+                {% endfor %}
+              </ul>
+            {% endif %}
+
+
             <div class="d-flex gap-2">
               <a class="btn btn-brand" href="{{ o.href }}">
-               <i class="bi bi-qr-code"></i>   <!-Canjear -->
-               </a>
+                <i class="bi bi-qr-code"></i>
+                <!-- Canjear -->
+              </a>
               <a class="btn btn-ghost" href="{{ o.href }}">
-                <i class="bi bi-upc-scan"></i>   <!-- Mostrar en barra -->
+                <i class="bi bi-upc-scan"></i>
+                <!-- Mostrar en barra -->
               </a>
             </div>
           </div>
@@ -453,6 +473,7 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   {% endif %}
 </div>
+
 
 
   </div>

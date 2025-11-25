@@ -7,7 +7,7 @@
   --app-bg-gradient: linear-gradient(135deg, #0b0c12 0%, #1a1e4a 60%, #20227a 100%);
   --accent-500:#22d3ee;     /* Cian para estados/accents */
   --highlight-500:#f43f5e;  /* Destacado/ofertas */
-
+  --midnight-ig-bg: #2C0E63;
   /* Superficies y tipografía */
   --surface-0:#0b0b12;  /* Fondo app */
   --surface-1:#11111a;  /* Superficie cards/nav */
@@ -40,35 +40,15 @@
   --logo-grad: linear-gradient(180deg, #6C2BD9 0%, #8B5CF6 25%, #F59E0B 70%, #FDE047 100%);
 }
 
-.logo-text{
-  font-size: clamp(1.5rem, 2.2vw + 1rem, 2.25rem); /* responsivo */
-  line-height: 1;
-  letter-spacing: 0.5px;
-  background: var(--logo-grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent; /* Safari/iOS */
-  color: transparent;                   /* fallback */
-  font-weight: 900;
+.hero-logo {
+  max-width: 420px;     /* tamaño recomendado (ajústalo según gusto) */
+  width: 100%;          /* mantiene responsividad */
+  height: auto;         /* mantiene proporción */
+  display: block;
+  margin: 0 auto 1rem;  /* centrado + separación inferior */
 }
 
-.hero-text{
-  font-size: clamp(2.5rem, 6vw + 1rem, 6rem); /* ahora tamaño hero */
-  line-height: 1;
-  letter-spacing: 1px;
-  background: var(--logo-grad);
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  color: transparent;
-  font-weight: 900;
-  text-transform: uppercase;
-}
 
-/* Opcional: versión “compacta” un poquito más grande en móvil */
-@media (max-width: 575.98px){
-  .navbar-brand .logo-text{ font-size: 1.9rem; }
-}
 
 
 /* ======== Base / Reset ======== */
