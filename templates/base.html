@@ -4,33 +4,107 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}Club Midnight — Santiago{% endblock %}</title>
-  <meta name="description" content="{% block meta_description %}Club Midnight: electrónica y pop en Santiago. Line-up, agenda, barra y reservas.{% endblock %}">
 
-  <!-- Bootstrap / Icons (CDN) -->
-   <link rel="preconnect" href="https://fonts.googleapis.com">
+  {# ====== SEO BÁSICO ====== #}
+  <title>
+    {% block title %}
+      Midnight — Dónde salir hoy en Chile
+    {% endblock %}
+  </title>
+
+  <meta name="description" content="{% block meta_description %}
+    Midnight es la plataforma para descubrir bares, discoteques, pubs, rooftops y eventos en las principales ciudades de Chile. Encuentra dónde salir hoy.
+  {% endblock %}">
+
+  {% block meta_robots %}
+    <meta name="robots" content="index,follow">
+  {% endblock %}
+
+  {% if request %}
+    {% block link_canonical %}
+      <link rel="canonical" href="{{ request.build_absolute_uri }}">
+    {% endblock %}
+  {% endif %}
+
+  {# ====== FAVICON ====== #}
+  <link rel="icon" href="{% static 'img/favicon.ico' %}">
+
+  {# ====== TIPOGRAFÍAS (puedes racionalizar después) ====== #}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Outfit:wght@100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,200..900;1,200..900&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  {# ====== CSS DE TERCEROS ====== #}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-
-  <!-- Tus estilos estáticos -->
+  {# ====== CSS PROPIO ====== #}
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 
   {% block extra_css %}{% endblock %}
 
+  {# ====== OPEN GRAPH / TWITTER (BASE) ====== #}
+  {% block meta_og %}
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Midnight">
+    <meta property="og:title" content="{% block og_title %}{% block og_title_fallback %}Midnight — Dónde salir hoy en Chile{% endblock %}{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}Plataforma para descubrir bares, clubs y eventos nocturnos en las principales ciudades de Chile.{% endblock %}">
+    {% if request %}
+      <meta property="og:url" content="{{ request.build_absolute_uri }}">
+    {% endif %}
+    <meta property="og:image" content="{% static 'img/og-midnight.jpg' %}">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{% block twitter_title %}Midnight — Dónde salir hoy{% endblock %}">
+    <meta name="twitter:description" content="{% block twitter_description %}Descubre bares, discoteques y eventos cerca de ti.{% endblock %}">
+    <meta name="twitter:image" content="{% static 'img/og-midnight.jpg' %}">
+  {% endblock %}
+
+  {# ====== SCHEMA.ORG BÁSICO (WEBSITE + ORGANIZATION) ====== #}
+  {% block meta_schema %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Midnight",
+    "url": "{% if request %}{{ request.scheme }}://{{ request.get_host }}{% else %}https://midnight.example{% endif %}",
+    "description": "Plataforma para descubrir bares, discoteques, pubs, rooftops y eventos en las principales ciudades de Chile.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "{% if request %}{{ request.scheme }}://{{ request.get_host }}{% else %}https://midnight.example{% endif %}/buscar?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Midnight",
+    "url": "{% if request %}{{ request.scheme }}://{{ request.get_host }}{% else %}https://midnight.example{% endif %}",
+    "logo": "{% static 'img/logo-midnight.png' %}",
+    "sameAs": [
+      "https://www.instagram.com/",
+      "https://www.tiktok.com/",
+      "https://x.com/"
+    ]
+  }
+  </script>
+  {% endblock %}
 
   {% block extra_head %}{% endblock %}
 </head>
 <body>
 
+<a href="#content" class="visually-hidden-focusable">Saltar al contenido principal</a>
+
 {% with url_name=request.resolver_match.url_name %}
-<nav class="navbar navbar-expand-lg navbar-dark nav-glass sticky-top">
+<nav class="navbar navbar-expand-lg navbar-dark nav-glass sticky-top" role="navigation" aria-label="Navegación principal">
   <div class="container">
     <!-- Brand -->
-    <a class="navbar-brand d-flex py-0 align-items-center fw-bold" href="{% url 'home' %}" aria-label="MidNight">
+    <a class="navbar-brand d-flex py-0 align-items-center fw-bold" href="{% url 'home' %}" aria-label="Midnight inicio">
       <!-- Desktop / tablet -->
       <span class="logo-text d-none d-sm-inline">midnight</span>
       <!-- Celular -->
@@ -38,8 +112,13 @@
     </a>
 
     <!-- Toggler -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#nav"
-      aria-controls="nav" aria-expanded="false" aria-label="Mostrar menú">
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#nav"
+            aria-controls="nav"
+            aria-expanded="false"
+            aria-label="Mostrar menú">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -50,15 +129,21 @@
           <a class="nav-link {% if url_name == 'home' %}active{% endif %}" href="{% url 'home' %}">Inicio</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if url_name == 'venue_search' %}active{% endif %} {% if url_name == 'venue_index' %}active{% endif %} {% if url_name == 'city_index' %}active{% endif %}" href="{% url 'city_index' %}   ">Lugares</a>
+          <a class="nav-link {% if url_name == 'venue_search' or url_name == 'venue_index' or url_name == 'city_index' %}active{% endif %}"
+             href="{% url 'city_index' %}">
+            Lugares
+          </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if url_name == 'events-detail' %}active{% endif %}" href="{% url 'events-detail' %}">Eventos</a>
+          <a class="nav-link {% if url_name == 'events-detail' %}active{% endif %}" href="{% url 'events-detail' %}">
+            Eventos
+          </a>
         </li>
 
         {% if request.user.is_authenticated and request.user.venues.exists %}
         <li class="nav-item">
-          <a class="nav-link {% if url_name == 'venue_detail' %}active{% endif %} {% if url_name == 'list_venues-owner' %}active{% endif %}" href="{% url 'list_venues-owner' %}">
+          <a class="nav-link {% if url_name == 'venue_detail' or url_name == 'list_venues-owner' %}active{% endif %}"
+             href="{% url 'list_venues-owner' %}">
             Mi negocio
           </a>
         </li>
@@ -69,9 +154,11 @@
       <div class="d-flex align-items-center">
         {% if request.user.is_authenticated %}
         <div class="dropdown">
-          <button class="btn user-btn d-flex align-items-center gap-2" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn user-btn d-flex align-items-center gap-2"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false">
             <span class="user-name">Hola {{ request.user.first_name|default:request.user.username }}</span>
-            <i class="bi bi-person-fill user-icon"></i>
+            <i class="bi bi-person-fill user-icon" aria-hidden="true"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end user-menu shadow-1">
             <li><a class="dropdown-item" href="{% url 'profile_edit' %}">Perfil</a></li>
@@ -83,7 +170,7 @@
             <li>
               <form action="{% url 'logout' %}" method="post">
                 {% csrf_token %}
-                <button class="dropdown-item text-danger">Cerrar sesión</button>
+                <button class="dropdown-item text-danger" type="submit">Cerrar sesión</button>
               </form>
             </li>
           </ul>
@@ -96,9 +183,7 @@
     </div>
   </div>
 </nav>
-
 {% endwith %}
-
 
 <!-- Mensajes (framework messages) -->
 {% if messages %}
@@ -112,43 +197,52 @@
 {% endif %}
 
 <!-- Contenido principal -->
-<main id="content" class="flex-grow-1">
+<main id="content" class="flex-grow-1" tabindex="-1">
   {% block content %}{% endblock %}
 </main>
 
-<!-- Footer básico -->
-
-{# templates/partials/footer.html #}
+<!-- Footer -->
 <footer class="footer bg-surface-1 border-top mt-5">
   <div class="container py-5">
 
     <!-- TOP: marca + navegación -->
     <div class="row g-4 g-lg-5 align-items-start">
       
-      <!-- Brand -->
+      <!-- Brand + descripción -->
       <div class="col-12 col-lg-4">
-        <a href="{% url 'home' %}" class="d-inline-flex align-items-center text-decoration-none mb-3">
-              <!-- Brand -->
-        <a class="navbar-brand d-flex py-0 align-items-center fw-bold" href="{% url 'home' %}" aria-label="MidNight">
-          <!-- Desktop / tablet -->
+        <a class="navbar-brand d-inline-flex py-0 align-items-center fw-bold text-decoration-none mb-3"
+           href="{% url 'home' %}"
+           aria-label="Midnight inicio">
           <span class="logo-text d-none d-sm-inline">MIDNIGHT</span>
-          <!-- Celular -->
           <span class="logo-text d-inline d-sm-none" aria-hidden="true">MN</span>
         </a>
-        </a>
+
         <p class="text-soft mb-4">
-          La guía más completa para descubrir bares, clubs y eventos en Chile.  
+          La guía más completa para descubrir bares, clubs y eventos en Chile.
           Información real, ofertas activas y recomendaciones para decidir mejor tu noche.
         </p>
+
         <div class="d-flex gap-2">
-          <a class="btn btn-ghost btn-sm" aria-label="Instagram" href="https://instagram.com" target="_blank" rel="noopener">
-            <i class="bi bi-instagram"></i>
+          <a class="btn btn-ghost btn-sm"
+             aria-label="Instagram"
+             href="https://instagram.com"
+             target="_blank"
+             rel="noopener">
+            <i class="bi bi-instagram" aria-hidden="true"></i>
           </a>
-          <a class="btn btn-ghost btn-sm" aria-label="TikTok" href="#" target="_blank" rel="noopener">
-            <i class="bi bi-tiktok"></i>
+          <a class="btn btn-ghost btn-sm"
+             aria-label="TikTok"
+             href="#"
+             target="_blank"
+             rel="noopener">
+            <i class="bi bi-tiktok" aria-hidden="true"></i>
           </a>
-          <a class="btn btn-ghost btn-sm" aria-label="X" href="#" target="_blank" rel="noopener">
-            <i class="bi bi-twitter-x"></i>
+          <a class="btn btn-ghost btn-sm"
+             aria-label="X"
+             href="#"
+             target="_blank"
+             rel="noopener">
+            <i class="bi bi-twitter-x" aria-hidden="true"></i>
           </a>
         </div>
       </div>
@@ -157,25 +251,42 @@
       <div class="col-6 col-lg-3">
         <h6 class="text-white mb-3">Explorar</h6>
         <ul class="list-unstyled small">
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'city_index' %}">Ciudades</a></li>
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'events-detail' %}">Eventos</a></li>
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'venue_search' %}">Buscar</a></li>
-          <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'home' %}#colecciones">Colecciones</a></li>
+          <li class="mb-2">
+            <a class="text-decoration-none text-soft" href="{% url 'city_index' %}">Ciudades</a>
+          </li>
+          <li class="mb-2">
+            <a class="text-decoration-none text-soft" href="{% url 'events-detail' %}">Eventos</a>
+          </li>
+          <li class="mb-2">
+            <a class="text-decoration-none text-soft" href="{% url 'venue_search' %}">Buscar</a>
+          </li>
+          <li class="mb-2">
+            <a class="text-decoration-none text-soft" href="{% url 'home' %}#colecciones">Colecciones</a>
+          </li>
         </ul>
       </div>
-
 
       <!-- Cuenta -->
       <div class="col-12 col-lg-2">
         <h6 class="text-white mb-3">Cuenta</h6>
         <ul class="list-unstyled small">
           {% if user.is_authenticated %}
-            <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'list_venues-owner' %}">Mis locales</a></li>
-            <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'profile_edit' %}">Editar perfil</a></li>
-            <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'logout' %}">Cerrar sesión</a></li>
+            <li class="mb-2">
+              <a class="text-decoration-none text-soft" href="{% url 'list_venues-owner' %}">Mis locales</a>
+            </li>
+            <li class="mb-2">
+              <a class="text-decoration-none text-soft" href="{% url 'profile_edit' %}">Editar perfil</a>
+            </li>
+            <li class="mb-2">
+              <a class="text-decoration-none text-soft" href="{% url 'logout' %}">Cerrar sesión</a>
+            </li>
           {% else %}
-            <li class="mb-2"><a class="text-decoration-none text-soft" href="{% url 'signup-guest' %}">Registrarse</a></li>
-            <li class="mb-2"><a class="text-decoration-none text-soft" href="/accounts/login/">Iniciar sesión</a></li>
+            <li class="mb-2">
+              <a class="text-decoration-none text-soft" href="{% url 'signup-guest' %}">Registrarse</a>
+            </li>
+            <li class="mb-2">
+              <a class="text-decoration-none text-soft" href="/accounts/login/">Iniciar sesión</a>
+            </li>
           {% endif %}
         </ul>
       </div>
@@ -184,17 +295,24 @@
     <!-- Divider -->
     <hr class="border-secondary-subtle my-4">
 
-    <!-- Bottom -->
+    <!-- Bottom: ciudad activa + links legales -->
     <div class="d-flex flex-column flex-lg-row gap-3 align-items-start align-items-lg-center justify-content-between pb-4">
       <div class="d-flex align-items-center gap-2">
-        <i class="bi bi-geo-alt text-soft"></i>
+        <i class="bi bi-geo-alt text-soft" aria-hidden="true"></i>
         <span class="small text-soft">
-          Ciudad activa: <strong class="text-white">{{ active_city_label|default:"Chile" }}</strong>
+          Ciudad activa:
+          <strong class="text-white">
+            {{ active_city_label|default:"Chile" }}
+          </strong>
         </span>
       </div>
       <ul class="nav small">
-        <li class="nav-item"><a class="nav-link text-soft px-2" href="{% url 'terminos' %}">Términos</a></li>
-        <li class="nav-item"><a class="nav-link text-soft px-2" href="{% url 'privacidad' %}">Privacidad</a></li>
+        <li class="nav-item">
+          <a class="nav-link text-soft px-2" href="{% url 'terminos' %}">Términos</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-soft px-2" href="{% url 'privacidad' %}">Privacidad</a>
+        </li>
       </ul>
     </div>
 
@@ -209,57 +327,56 @@
   </div>
 </footer>
 
-<!-- estilos -->
+{# ====== ESTILOS RÁPIDOS (idealmente mover a styles.css) ====== #}
 <style>
-  .footer .text-soft { color: var(--text-2, rgba(255,255,255,.7)); }
-  .footer .btn-ghost.btn-sm {
-    border-radius: .8rem; padding: .35rem .6rem;
-    border: 1px solid rgba(255,255,255,.08);
-  }
-  .footer .btn-ghost.btn-sm:hover {
-    background: rgba(255,255,255,.08);
+  .text-soft {
+    color: var(--text-2, rgba(255,255,255,.72));
   }
   .bg-surface-1 {
     background: rgba(255,255,255,.04);
     backdrop-filter: blur(8px);
   }
-</style>
-
-
-{# estilos locales opcionales #}
-<style>
-  .text-soft{ color: var(--text-2, rgba(255,255,255,.72)); }
-  .bg-surface-1{ background: rgba(255,255,255,.04); }
-  .btn-ghost.btn-sm{
-    border-radius: .8rem; padding: .35rem .6rem; border:1px solid rgba(255,255,255,.08);
-  }
-  .btn-ghost.btn-sm:hover{ background: rgba(255,255,255,.06); }
-</style>
-
-
-<script>
-  // Año dinámico
-  document.getElementById('y').textContent = new Date().getFullYear();
-</script>
-
-<style>
-  /* Afinado visual del footer (oscuro, elegante) */
-  footer .card-hero__img{border-radius:12px}
-  footer .btn-ghost{
+  .btn-ghost.btn-sm {
+    border-radius: .8rem;
+    padding: .35rem .6rem;
     border: 1px solid rgba(255,255,255,.08);
     background: rgba(255,255,255,.03);
   }
-  footer .btn-ghost:hover{
+  .btn-ghost.btn-sm:hover {
     background: rgba(255,255,255,.08);
+  }
+  footer .card-hero__img{
+    border-radius: 12px;
   }
   footer select.form-select{
     color: var(--bs-body-color);
   }
+  .visually-hidden-focusable:not(:focus):not(:active) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0,0,0,0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .visually-hidden-focusable:focus,
+  .visually-hidden-focusable:active {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip: auto;
+    white-space: normal;
+  }
 </style>
 
-<!-- JS (Bootstrap) -->
-<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+{# ====== JS DE TERCEROS ====== #}
+<script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 
 {% block extra_js %}{% endblock %}
 </body>

@@ -1,27 +1,77 @@
 {% extends "base.html" %}
 {% load static %}
 
+{# ====== SEO ESPECÍFICO PARA LA PÁGINA DE EVENTOS ====== #}
+{% block title %}Eventos hoy en {{ active_city_label|default:"Chile" }} | Midnight{% endblock %}
+
+{% block meta_description %}
+Descubre eventos hoy en {{ active_city_label|default:"Chile" }}: fiestas, conciertos, stand up, electrónica, reggaetón y más. Filtra por comuna, explora eventos destacados, de hoy, próximos 7 días y de este mes con Midnight.
+{% endblock %}
+
+{# Open Graph / Twitter específicos #}
+{% block og_title %}Eventos hoy en {{ active_city_label|default:"Chile" }} | Midnight{% endblock %}
+{% block og_description %}
+Explora los mejores eventos en {{ active_city_label|default:"Chile" }}: fiestas, shows y panoramas nocturnos organizados por fecha y relevancia. Encuentra tu próximo carrete con Midnight.
+{% endblock %}
+{% block twitter_title %}Eventos hoy en {{ active_city_label|default:"Chile" }} | Midnight{% endblock %}
+{% block twitter_description %}
+Encuentra eventos destacados, de hoy, próximos 7 días y de este mes en {{ active_city_label|default:"Chile" }}. Filtra por comuna y estilo con Midnight.
+{% endblock %}
+
+{# Schema extra: CollectionPage orientada a eventos #}
+{% block meta_schema %}
+  {{ block.super }}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Eventos en {{ active_city_label|default:"Chile" }}",
+    "description": "Listado de eventos nocturnos organizados por fecha en {{ active_city_label|default:"Chile" }}: fiestas, conciertos, stand up, música electrónica y más.",
+    "inLanguage": "es",
+    "about": [
+      "eventos nocturnos",
+      "fiestas",
+      "conciertos",
+      "bares",
+      "discoteques"
+    ],
+    "isPartOf": {
+      "@type": "WebSite",
+      "name": "Midnight"
+    }
+  }
+  </script>
+{% endblock %}
+
 {% block content %}
 <!-- =========================
      HERO con búsqueda + autocompletado comunas
-     ========================= --><header class="hero py-5 py-lg-6 section-with-bg"
+     ========================= -->
+<header class="hero py-5 py-lg-6 section-with-bg"
         style="--section-bg: url('{% static 'img/header-events.jpg' %}');">
   <div class="container py-4">
     <div class="row justify-content-center text-center g-4">
       <div class="col-12 col-lg-9 mx-auto">
         <p class="tagline mb-1 text-uppercase small opacity-75">Explora tu ciudad</p>
-        <h1 class="display-1  mb-5">¿Que hay hoy?</h1>
+        <h1 class="display-1 mb-4">
+          Eventos hoy{% if active_city_label %} en {{ active_city_label }}{% endif %}
+        </h1>
+        <p class="lead mb-5">
+          Encuentra fiestas, conciertos, stand up y eventos especiales en tu ciudad. 
+          Busca por nombre, estilo musical o filtra por comuna para decidir dónde salir hoy.
+        </p>
 
         <!-- Panel de búsqueda minimal -->
         <div class="search-shell mx-auto">
-          <form action="." method="get" class="row g-2 align-items-stretch">
+          <form action="." method="get" class="row g-2 align-items-stretch" role="search" aria-label="Buscar eventos por nombre y comuna">
             <!-- Texto libre -->
             <div class="col-12 col-lg-7">
-              <label for="q" class="visually-hidden">Buscar</label>
+              <label for="q" class="visually-hidden">Buscar evento o venue</label>
               <div class="input-group h-100">
-                <span class="input-group-text"><i class="bi bi-search"></i></span>
+                <span class="input-group-text"><i class="bi bi-search" aria-hidden="true"></i></span>
                 <input id="q" name="q" type="search" class="form-control ring-focus"
-                       placeholder="Busca un evento o venue…" value="{{ q }}" autocomplete="off">
+                       placeholder="Busca un evento o venue… (ej: reggaetón, jazz, stand up)"
+                       value="{{ q }}" autocomplete="off">
               </div>
             </div>
 
@@ -45,9 +95,9 @@
 
           <!-- Tips mini (opcionales) -->
           <div class="mini-hints">
-            <span><i class="bi bi-magic"></i> Ej: “reggaetón”, “jazz”, “stand up”</span>
+            <span><i class="bi bi-magic" aria-hidden="true"></i> Ej: “reggaetón”, “jazz”, “stand up”</span>
             <span>•</span>
-            <span><i class="bi bi-geo-alt"></i> Filtra por comuna desde el campo “Comuna”</span>
+            <span><i class="bi bi-geo-alt" aria-hidden="true"></i> Filtra por comuna desde el campo “Comuna”</span>
           </div>
         </div>
 
@@ -102,62 +152,23 @@
 .hero .tagline{ letter-spacing:.08em; }
 </style>
 
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-  // Autocompletado comunas desde communes_json (opcional)
-  try {
-    const raw = document.getElementById("communes-data")?.textContent || "[]";
-    const communes = JSON.parse(raw);
-    const dl = document.getElementById("communesList");
-    if (Array.isArray(communes) && dl) {
-      communes.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c.name || c.slug || "";
-        if (c.slug) opt.label = c.slug;  // guardamos slug en label
-        dl.appendChild(opt);
-      });
-    }
-  } catch(e){/* no-op */}
-
-  // Si el usuario elige una comuna del datalist, mandar el slug si existe
-  const cityInput = document.getElementById("cityInput");
-  cityInput?.addEventListener("change", () => {
-    const dl = document.getElementById("communesList");
-    if (!dl) return;
-    const match = [...dl.options].find(o => o.value.toLowerCase() === cityInput.value.toLowerCase());
-    if (match?.label) {
-      let hidden = document.getElementById("citySlugHidden");
-      if (!hidden) {
-        hidden = document.createElement("input");
-        hidden.type = "hidden";
-        hidden.name = "city";
-        hidden.id = "citySlugHidden";
-        cityInput.form.appendChild(hidden);
-      }
-      hidden.value = match.label; // envía el slug
-    }
-  });
-});
-</script>
-
-
-<!-- Inyecta comunas en JSON si viene desde la vista (opcional) -->
-{% if communes_json %}
-<script id="communes-data" type="application/json">{{ communes_json|safe }}</script>
-{% endif %}
-
 <!-- =========================
      RESUMEN
      ========================= -->
-<section class="container py-4">
+<section class="container py-4" aria-labelledby="events-summary-heading">
   <header class="d-flex justify-content-between align-items-end mb-3">
     <div>
-      <h2 class="h4 mb-1">Eventos en {{ active_city_label|default:"Chile" }}</h2>
-      <small class="text-soft">{{ total }} resultados (filtrados por {% if active_cat %}categoría{% else %}búsqueda{% endif %})</small>
+      <h2 id="events-summary-heading" class="h4 mb-1">
+        Eventos en {{ active_city_label|default:"Chile" }}
+      </h2>
+      <small class="text-soft">
+        {{ total }} resultados 
+        (filtrados por {% if active_cat %}categoría{% elif q %}búsqueda{% else %}fecha y comuna{% endif %})
+      </small>
     </div>
     <!-- botón filtros móvil opcional -->
     <button class="btn btn-ghost d-lg-none" data-bs-toggle="offcanvas" data-bs-target="#filtersCanvas">
-      <i class="bi bi-sliders"></i> Filtros
+      <i class="bi bi-sliders" aria-hidden="true"></i> Filtros
     </button>
   </header>
 </section>
@@ -165,12 +176,11 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- =========================
      SECCIONES (máx. 16 c/u) pobladas por JS
      ========================= -->
-<section class="container pb-2">
+<section class="container pb-2" aria-label="Secciones de eventos por fecha y relevancia">
   <!-- Publicitados -->
   <div class="mb-4">
     <div class="d-flex align-items-center justify-content-between mb-2">
       <h3 class="h5 mb-0">Eventos Destacados</h3>
-
     </div>
     <div class="row g-3" id="sec-promoted"></div>
   </div>
@@ -179,7 +189,6 @@ document.addEventListener("DOMContentLoaded", () => {
   <div class="mb-4">
     <div class="d-flex align-items-center justify-content-between mb-2">
       <h3 class="h5 mb-0">Eventos de Hoy</h3>
-
     </div>
     <div class="row g-3" id="sec-today"></div>
   </div>
@@ -188,7 +197,6 @@ document.addEventListener("DOMContentLoaded", () => {
   <div class="mb-4">
     <div class="d-flex align-items-center justify-content-between mb-2">
       <h3 class="h5 mb-0">Eventos Próximos 7 días</h3>
-
     </div>
     <div class="row g-3" id="sec-next7"></div>
   </div>
@@ -197,7 +205,6 @@ document.addEventListener("DOMContentLoaded", () => {
   <div class="mb-1">
     <div class="d-flex align-items-center justify-content-between mb-2">
       <h3 class="h5 mb-0">Eventos de este mes</h3>
-
     </div>
     <div class="row g-3" id="sec-month"></div>
   </div>
@@ -206,9 +213,11 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- =========================
      FUENTE ÚNICA DE CARDS (servidor) -> JS las reparte
      ========================= -->
-<section class="container pb-4">
+<section class="container pb-4" aria-label="Listado paginado de eventos">
   <div class="alert alert-secondary small">
-    <i class="bi bi-info-circle"></i> Mostrando la página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} (la distribución en secciones usa solo los eventos de esta página).
+    <i class="bi bi-info-circle" aria-hidden="true"></i>
+    Mostrando la página {{ page_obj.number }} de {{ page_obj.paginator.num_pages }} 
+    (la distribución en secciones usa solo los eventos de esta página).
   </div>
 
   <!-- Contenedor "fuente" (oculto) -->
@@ -218,18 +227,17 @@ document.addEventListener("DOMContentLoaded", () => {
         <a href="{{ e.cta_url }}"
            class="event-card text-decoration-none d-block h-100"
            {% if e.cta_is_external %}target="_blank" rel="noopener"{% endif %}
-           data-bs-toggle="tooltip" data-bs-title="Ver detalle"
+           data-bs-toggle="tooltip" data-bs-title="Ver detalle del evento"
            data-start="{{ e.start_at|date:'c' }}"
            data-month="{{ e.start_at|date:'Y-m' }}"
-           data-promoted="{{ e.is_promoted|yesno:'1,0' }}"
-           >
+           data-promoted="{{ e.is_promoted|yesno:'1,0' }}">
           <div class="card event-card__wrap bg-surface-1 border-0 overflow-hidden position-relative shadow-1 rounded-3 h-100">
             <!-- Imagen -->
             <div class="event-card__media ratio ratio-16x9">
               {% if e.flyer_image %}
-                <img src="{{ e.flyer_image.url }}" alt="{{ e.title }}" class="w-100 h-100 object-fit-cover">
+                <img src="{{ e.flyer_image.url }}" alt="Flyer del evento {{ e.title }}" class="w-100 h-100 object-fit-cover">
               {% else %}
-                <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="{{ e.title }}" class="w-100 h-100 object-fit-cover">
+                <img src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="Evento {{ e.title }}" class="w-100 h-100 object-fit-cover">
               {% endif %}
             </div>
 
@@ -242,7 +250,8 @@ document.addEventListener("DOMContentLoaded", () => {
               {% endif %}
               <h3 class="h6 mb-1 text-white">{{ e.title }}</h3>
               <div class="small text-soft mb-0">
-                {{ e.start_at|date:"D d M · H:i" }}{% if e.venue %} · {{ e.venue.name }}{% endif %}
+                {{ e.start_at|date:"D d M · H:i" }}
+                {% if e.venue %} · {{ e.venue.name }}{% endif %}
               </div>
             </div>
 
@@ -252,7 +261,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h4 class="h6 fw-semibold mb-1 text-white">{{ e.title }}</h4>
                 <p class="small mb-2">
                   {{ e.start_at|date:"D d M · H:i" }}
-                  {% if e.Commune %} · {{ e.Commune.name }}{% endif %}
+                  {% if e.venue and e.venue.commune %}
+                    · {{ e.venue.commune.name }}
+                  {% endif %}
                 </p>
                 {% if e.get_category_display %}
                   <span class="badge text-bg-dark">{{ e.get_category_display }}</span>
@@ -271,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   <!-- paginación -->
   {% if is_paginated %}
-  <nav class="mt-4">
+  <nav class="mt-4" aria-label="Paginación de eventos">
     <ul class="pagination justify-content-center">
       {% if page_obj.has_previous %}
         <li class="page-item">
@@ -299,19 +310,19 @@ document.addEventListener("DOMContentLoaded", () => {
     <div class="modal-content bg-surface-1">
       <div class="modal-header">
         <h5 class="modal-title">Vista rápida del evento</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
         <div class="row g-3">
           <div class="col-12 col-md-6">
-            <img class="w-100 rounded-md" src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="">
+            <img class="w-100 rounded-md" src="{% static 'img/placeholders/venue-cover.jpg' %}" alt="Imagen del evento seleccionado">
           </div>
           <div class="col-12 col-md-6">
             <h6 class="mb-1">Nombre del evento</h6>
             <p class="text-soft small mb-2">Vie 08 Nov · 23:00 · Club X</p>
             <p class="mb-3">Descripción corta del evento para enriquecer la decisión del usuario.</p>
             <div class="d-flex gap-2">
-              <a href="#" class="btn btn-brand"><i class="bi bi-ticket-perforated"></i> Comprar</a>
+              <a href="#" class="btn btn-brand"><i class="bi bi-ticket-perforated" aria-hidden="true"></i> Comprar</a>
               <button class="btn btn-ghost" data-bs-dismiss="modal">Cerrar</button>
             </div>
           </div>
@@ -326,7 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Autocompletado comunas ---
+  // --- Autocompletado comunas desde communes_json ---
   try {
     const raw = document.getElementById("communes-data")?.textContent || "[]";
     const communes = JSON.parse(raw);
@@ -335,11 +346,12 @@ document.addEventListener("DOMContentLoaded", () => {
       communes.forEach(c => {
         const opt = document.createElement("option");
         opt.value = c.name || c.slug || "";
-        if (c.slug) opt.label = c.slug;
+        if (c.slug) opt.label = c.slug;  // guardamos slug en label
         dl.appendChild(opt);
       });
     }
-  } catch (e) { /* no-op */ }
+  } catch(e){/* no-op */}
+
 
   // Si el usuario elige una comuna del datalist, enviamos slug si está disponible
   const cityInput = document.getElementById("cityInput");
@@ -347,9 +359,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const dl = document.getElementById("communesList");
     if (!dl) return;
     const match = [...dl.options].find(o => o.value.toLowerCase() === cityInput.value.toLowerCase());
-    // Si el label guarda el slug, lo reemplazamos en el value para que la vista lo reciba como slug o nombre
     if (match?.label) {
-      // Insertamos un input oculto "city" con el slug (y dejamos visible el value para UX)
       let hidden = document.getElementById("citySlugHidden");
       if (!hidden) {
         hidden = document.createElement("input");
@@ -358,7 +368,7 @@ document.addEventListener("DOMContentLoaded", () => {
         hidden.id = "citySlugHidden";
         cityInput.form.appendChild(hidden);
       }
-      hidden.value = match.label;
+      hidden.value = match.label; // envía el slug
     }
   });
 
@@ -380,7 +390,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const startToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const endToday   = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
   const end7       = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 8); // incluye hoy + 7 completos
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
   const monthEnd   = new Date(now.getFullYear(), now.getMonth() + 1, 1);
 
   let cProm=0, cToday=0, cNext7=0, cMonth=0;
@@ -426,7 +435,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Si alguna sección quedó vacía, mostramos un mensajito suave
   function ensureNotEmpty(wrap) {
     if (wrap && wrap.children.length === 0) {
       const div = document.createElement("div");
@@ -444,9 +452,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- Toast feedback -->
 <div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div id="actionToast" class="toast bg-surface-1 text-white border-0 shadow-2" role="alert">
+  <div id="actionToast" class="toast bg-surface-1 text-white border-0 shadow-2" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="toast-body small">
-      <i class="bi bi-check2-circle me-2"></i>Filtros aplicados correctamente.
+      <i class="bi bi-check2-circle me-2" aria-hidden="true"></i>Filtros aplicados correctamente.
     </div>
   </div>
 </div>

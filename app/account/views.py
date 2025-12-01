@@ -8,7 +8,12 @@ import mercadopago
 # ===== Django =====
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import authenticate, login, get_user_model
+from django.contrib.auth import (
+    authenticate,
+    login,
+    get_user_model,
+    views as auth_views
+)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db import transaction, IntegrityError
 from django.db.models import Q
@@ -21,12 +26,6 @@ from django.views.generic import FormView, UpdateView
 
 # ===== Local apps =====
 from app.places.models import Commune
-
-# arriba del archivo, junto a los imports
-from django.contrib.auth import get_user_model
-User = get_user_model()
-
-
 from .forms import (
     OwnerSignupForm,
     GuestSignupForm,
@@ -35,6 +34,10 @@ from .forms import (
     GuestProfileUpdateForm,
 )
 from .models import Profile, OwnerProfile, GuestProfile, Subscription
+
+# Obtener el modelo User
+User = get_user_model()
+
 
 
 class OwnerSignupView(FormView):
@@ -253,9 +256,6 @@ def mp_webhook(request):
     return HttpResponse(status=200)
 
 
-from django.contrib.auth import views as auth_views
-from django.urls import reverse_lazy
-from django.contrib import messages
 
 
 class PasswordResetView(auth_views.PasswordResetView):

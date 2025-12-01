@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.db import transaction
 from .models import Profile, OwnerProfile, GuestProfile
 from app.places.models import Venue, Commune
+from django.utils.translation import gettext_lazy as _
 
 PUBLIC_DOMAINS = {
     "gmail.com","outlook.com","hotmail.com","yahoo.com","icloud.com",
@@ -309,7 +310,7 @@ class LoginForm(forms.Form):
         widget=forms.CheckboxInput(attrs={"class": "form-check-input"})
     )
 
-from django import forms
+
 
 class VenueForm(forms.ModelForm):
     class Meta:
@@ -329,9 +330,7 @@ class VenueForm(forms.ModelForm):
 
 
 # app/accounts/forms.py
-from django import forms
-from .models import OwnerProfile, GuestProfile
-from django.utils.translation import gettext_lazy as _
+
 
 class OwnerProfileUpdateForm(forms.ModelForm):
     class Meta:

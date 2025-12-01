@@ -1,6 +1,8 @@
 # app/accounts/validators.py
 import re
 from django.core.exceptions import ValidationError
+from django.utils import timezone
+from .models import Subscription
 
 RUT_RE = re.compile(r"^\d{7,8}-[\dkK]$")
 
@@ -24,9 +26,6 @@ def validate_rut(value: str):
     if not rut_is_valid(value):
         raise ValidationError("RUT inválido. Use formato 12345678-9")
 
-
-from django.utils import timezone
-from .models import Subscription
 
 def user_is_premium(user):
     try:

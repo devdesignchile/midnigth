@@ -1,6 +1,5 @@
 # app/account/admin.py
 from datetime import timedelta
-
 from django.contrib import admin
 from django.urls import reverse
 from django.utils import timezone
