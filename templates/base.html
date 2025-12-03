@@ -4,7 +4,13 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="google-site-verification" content="QLgqPmHQQOP85mIM7AWv7kq4tXnoH6eBPPpEy2iLlx0" />
+  <meta name="google-site-verification" content="QLgqPmHQQOP85mIM7AWv7kq4tXnoH6eBPPpEy2iLlx0" />
+  {% load static %}
+
+<link rel="icon" 
+      type="image/png" 
+      href="{% static 'img/midnight-icon.png' %}">
+
   {# ====== SEO BÁSICO ====== #}
   <title>
     {% block title %}
@@ -106,7 +112,12 @@
     <!-- Brand -->
     <a class="navbar-brand d-flex py-0 align-items-center fw-bold" href="{% url 'home' %}" aria-label="Midnight inicio">
       <!-- Desktop / tablet -->
-      <span class="logo-text d-none d-sm-inline">midnight</span>
+      <span class="logo-text d-none d-sm-inline">
+        <img src="{% static 'img/midnight-icon.png' %}" 
+            alt="Midnight Logo"
+            class="navbar-logo">
+      </span>
+
       <!-- Celular -->
       <span class="logo-text d-inline d-sm-none" aria-hidden="true">MN</span>
     </a>
