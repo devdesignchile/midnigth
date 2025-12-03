@@ -206,6 +206,12 @@ html, body { background: var(--surface-0); color: var(--text-1); }
 @media (max-width: 575.98px) {
   .hero-venue__panel .btn { font-size: .95rem; padding: .6rem 1rem; }
 }
+.navbar-logo {
+  height: 32px;         /* tamaño ideal para navbar */
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+}
 
 /* ==========================================================
    4. CARDS & LISTS
