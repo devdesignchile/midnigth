@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls.static import static
 from django.conf import settings
-
+from dotenv import load_dotenv
+load_dotenv(BASE_DIR / ".env")
+ 
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('ADMINURLS/', admin.site.urls),
     path("", include("app.places.urls")),
     path("", include("app.account.urls",)),
 
