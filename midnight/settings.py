@@ -163,12 +163,16 @@ STATICFILES_DIRS = [
 # Archivos de usuario (MEDIA) / CDN (R2)
 # =========================
 
+# =========================
+# Archivos de usuario (MEDIA) / CDN (R2)
+# =========================
+
 USE_R2 = os.getenv("USE_R2", "False") == "True"
 
 if USE_R2:
     INSTALLED_APPS += ["storages"]
 
-    # Django 5 recomienda usar STORAGES
+    # Django 5: STORAGES define los backends reales
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
@@ -184,14 +188,11 @@ if USE_R2:
     AWS_S3_ENDPOINT_URL = os.getenv("R2_ENDPOINT_URL")
     AWS_S3_REGION_NAME = os.getenv("R2_REGION_NAME", "auto")
 
-    # Dominio público del CDN
     AWS_S3_CUSTOM_DOMAIN = "cdn.midnight.cl"
 
-    # URL pública de los media
     MEDIA_URL = "https://cdn.midnight.cl/"
-    # En modo R2 NO usamos MEDIA_ROOT local
+
 else:
-    # Storage clásico en disco para desarrollo
     STORAGES = {
         "default": {
             "BACKEND": "django.core.files.storage.FileSystemStorage",
@@ -203,6 +204,7 @@ else:
 
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
+
 
 
 
