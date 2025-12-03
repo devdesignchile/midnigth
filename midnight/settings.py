@@ -155,37 +155,33 @@ STATICFILES_DIRS = [
 # Archivos de usuario (MEDIA) / CDN (R2)
 # =========================
 
+# =========================
+# Archivos de usuario (MEDIA) / CDN (R2)
+# =========================
+
 USE_R2 = os.getenv("USE_R2", "False") == "True"
 
 if USE_R2:
-    # Evitar que falle si no está instalado django-storages
-    try:
-        import storages  # type: ignore
-        INSTALLED_APPS += ["storages"]
+    INSTALLED_APPS += ["storages"]
 
-        DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    # Storage por defecto: R2 vía django-storages
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
-        AWS_S3_ENDPOINT_URL = os.getenv(
-            "R2_ENDPOINT_URL",
-            "https://d07b5eddeb242d0ecd3ea00bab01a0d7.r2.cloudflarestorage.com",
-        )
-        AWS_S3_REGION_NAME = os.getenv("R2_REGION_NAME", "auto")
-        AWS_STORAGE_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "midnight-media")
+    AWS_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID")
+    AWS_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY")
+    AWS_STORAGE_BUCKET_NAME = os.getenv("R2_BUCKET_NAME", "midnight-media")
+    AWS_S3_ENDPOINT_URL = os.getenv("R2_ENDPOINT_URL")
+    AWS_S3_REGION_NAME = os.getenv("R2_REGION_NAME", "auto")
 
-        AWS_ACCESS_KEY_ID = os.getenv("R2_ACCESS_KEY_ID")
-        AWS_SECRET_ACCESS_KEY = os.getenv("R2_SECRET_ACCESS_KEY")
+    # Dominio público del CDN
+    AWS_S3_CUSTOM_DOMAIN = "cdn.midnight.cl"
 
-        # Muy importante: que apunte al CDN
-        MEDIA_URL = os.getenv("MEDIA_URL", "https://cdn.midnight.cl/")
-        # No usamos MEDIA_ROOT local cuando usamos R2
-    except ImportError:
-        # Si no está instalado django-storages, volvemos a modo local
-        USE_R2 = False
-        MEDIA_URL = "/media/"
-        MEDIA_ROOT = BASE_DIR / "media"
+    MEDIA_URL = "https://cdn.midnight.cl/"
+    # No usamos MEDIA_ROOT en modo R2
 else:
     MEDIA_URL = "/media/"
     MEDIA_ROOT = BASE_DIR / "media"
+
 
 # =========================
 # Default primary key
