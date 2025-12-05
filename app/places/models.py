@@ -128,7 +128,11 @@ class Event(models.Model):
     # Agenda / flyer (lo que muestras en carruseles y grillas)
     start_at = models.DateTimeField()
     end_at = models.DateTimeField(null=True, blank=True)
-    flyer_image = models.ImageField(upload_to="events/flyers/%Y/%m/", blank=True)
+    flyer_image = models.ImageField(
+    upload_to="events/flyers/%Y/%m/",
+    blank=True,
+    max_length=300,  # por ejemplo
+)
 
     # Textos cortos del flyer/carrusel
     eyebrow_text = models.CharField(max_length=60, blank=True)  # "Viernes · 22:00"
