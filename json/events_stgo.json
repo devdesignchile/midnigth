@@ -1,6 +1,6 @@
 [
   {
-    "model": "events.Event",
+    "model": "places.Event",
     "pk": 1,
     "fields": {
       "Commune": 1,
@@ -22,7 +22,7 @@
     }
   },
   {
-    "model": "events.Event",
+    "model": "places.Event",
     "pk": 2,
     "fields": {
       "Commune": 1,
@@ -44,7 +44,7 @@
     }
   },
   {
-    "model": "events.Event",
+    "model": "places.Event",
     "pk": 3,
     "fields": {
       "Commune": 1,
@@ -66,7 +66,7 @@
     }
   },
   {
-    "model": "events.Event",
+    "model": "places.Event",
     "pk": 4,
     "fields": {
       "Commune": 1,
@@ -88,7 +88,7 @@
     }
   },
   {
-    "model": "events.Event",
+    "model": "places.Event",
     "pk": 5,
     "fields": {
       "Commune": 1,
@@ -110,7 +110,7 @@
     }
   },
   {
-    "model": "events.Event",
+    "model": "places.Event",
     "pk": 6,
     "fields": {
       "Commune": 1,
@@ -132,7 +132,7 @@
     }
   },
   {
-    "model": "events.Event",
+    "model": "places.Event",
     "pk": 7,
     "fields": {
       "Commune": 1,
@@ -154,7 +154,7 @@
     }
   },
   {
-    "model": "events.Event",
+    "model": "places.Event",
     "pk": 8,
     "fields": {
       "Commune": 1,
