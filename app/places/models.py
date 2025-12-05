@@ -131,7 +131,7 @@ class Event(models.Model):
     flyer_image = models.ImageField(
     upload_to="events/flyers/%Y/%m/",
     blank=True,
-    max_length=300,  # por ejemplo
+    max_length=500,  # por ejemplo
 )
 
     # Textos cortos del flyer/carrusel
