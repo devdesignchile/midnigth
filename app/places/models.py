@@ -129,7 +129,6 @@ class Event(models.Model):
     start_at = models.DateTimeField()
     end_at = models.DateTimeField(null=True, blank=True)
     flyer_image = models.ImageField(
-    upload_to="events/flyers/%Y/%m/",
     blank=True,
     max_length=500,  # por ejemplo
 )
