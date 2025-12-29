@@ -78,11 +78,19 @@ Encuentra eventos destacados, de hoy, próximos 7 días y de este mes en {{ acti
             <!-- Comuna con datalist -->
             <div class="col-12 col-lg-3">
               <label for="cityInput" class="visually-hidden">Comuna</label>
-              <input id="cityInput" name="city" list="communesList"
-                     class="form-control h-100 ring-focus"
-                     placeholder="Comuna"
-                     value="{{ active_city_label }}" autocomplete="off">
-              <datalist id="communesList"><!-- se llena por JS si hay communes_json --></datalist>
+              <input id="cityInput"
+                    list="communesList"
+                    class="form-control h-100 ring-focus"
+                    placeholder="Comuna"
+                    value="{{ active_city_label }}" autocomplete="off">
+
+              <input type="hidden"
+                    id="citySlugHidden"
+                    name="city"
+                    value="{{ active_city }}">
+                    
+              <datalist id="communesList"></datalist>
+
             </div>
 
             <!-- Botón -->
@@ -177,13 +185,13 @@ Encuentra eventos destacados, de hoy, próximos 7 días y de este mes en {{ acti
      SECCIONES (máx. 16 c/u) pobladas por JS
      ========================= -->
 <section class="container pb-2" aria-label="Secciones de eventos por fecha y relevancia">
-  <!-- Publicitados -->
+  <!-- Publicitados 
   <div class="mb-4">
     <div class="d-flex align-items-center justify-content-between mb-2">
       <h3 class="h5 mb-0">Eventos Destacados</h3>
     </div>
     <div class="row g-3" id="sec-promoted"></div>
-  </div>
+  </div> -->
 
   <!-- Hoy -->
   <div class="mb-4">
@@ -337,40 +345,63 @@ Encuentra eventos destacados, de hoy, próximos 7 días y de este mes en {{ acti
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Autocompletado comunas desde communes_json ---
-  try {
-    const raw = document.getElementById("communes-data")?.textContent || "[]";
-    const communes = JSON.parse(raw);
-    const dl = document.getElementById("communesList");
-    if (Array.isArray(communes) && dl) {
-      communes.forEach(c => {
-        const opt = document.createElement("option");
-        opt.value = c.name || c.slug || "";
-        if (c.slug) opt.label = c.slug;  // guardamos slug en label
-        dl.appendChild(opt);
-      });
-    }
-  } catch(e){/* no-op */}
+// --- Autocompletado comunas desde communes_json (sin mostrar slug) ---
+let communes = [];
+try {
+  const raw = document.getElementById("communes-data")?.textContent || "[]";
+  communes = JSON.parse(raw);
+} catch (e) {
+  communes = [];
+}
 
+const dl = document.getElementById("communesList");
+const cityInput = document.getElementById("cityInput");
 
-  // Si el usuario elige una comuna del datalist, enviamos slug si está disponible
-  const cityInput = document.getElementById("cityInput");
-  cityInput?.addEventListener("change", () => {
-    const dl = document.getElementById("communesList");
-    if (!dl) return;
-    const match = [...dl.options].find(o => o.value.toLowerCase() === cityInput.value.toLowerCase());
-    if (match?.label) {
-      let hidden = document.getElementById("citySlugHidden");
-      if (!hidden) {
-        hidden = document.createElement("input");
-        hidden.type = "hidden";
-        hidden.name = "city";
-        hidden.id = "citySlugHidden";
-        cityInput.form.appendChild(hidden);
-      }
-      hidden.value = match.label; // envía el slug
-    }
+// Asegura hidden (el que realmente se envía como ?city=slug)
+let hidden = document.getElementById("citySlugHidden");
+if (!hidden && cityInput?.form) {
+  hidden = document.createElement("input");
+  hidden.type = "hidden";
+  hidden.name = "city";           // ESTE es el que viaja al backend
+  hidden.id = "citySlugHidden";
+  cityInput.form.appendChild(hidden);
+}
+
+// 1) Render del datalist: SOLO nombre visible, slug guardado en data-attribute
+if (Array.isArray(communes) && dl) {
+  dl.innerHTML = "";
+  communes.forEach(c => {
+    if (!c) return;
+
+    const name = (c.name || "").trim();
+    const slug = (c.slug || "").trim();
+
+    if (!name) return;
+
+    const opt = document.createElement("option");
+    opt.value = name;            // lo que ve el usuario (La Serena)
+    opt.dataset.slug = slug;     // lo que guardamos sin mostrar (la-serena)
+    dl.appendChild(opt);
   });
+}
+
+// helper: sincroniza el hidden según lo que está escrito/seleccionado
+function syncCitySlug() {
+  if (!dl || !hidden || !cityInput) return;
+
+  const typed = (cityInput.value || "").trim().toLowerCase();
+  const match = [...dl.options].find(o => (o.value || "").trim().toLowerCase() === typed);
+
+  hidden.value = match ? (match.dataset.slug || "") : "";
+}
+
+// 2) Cuando el usuario selecciona o escribe, actualiza el slug
+cityInput?.addEventListener("input", syncCitySlug);
+cityInput?.addEventListener("change", syncCitySlug);
+
+// 3) Al cargar, por si el input viene precargado con “La Serena”
+syncCitySlug();
+
 
   // --- Tooltips Bootstrap ---
   [...document.querySelectorAll('[data-bs-toggle="tooltip"]')]
