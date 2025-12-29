@@ -1,0 +1,222 @@
+[
+  {
+    "model": "places.Event",
+    "pk": 1,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Fiesta Ciudadana Año Nuevo La Serena 2026",
+      "slug": "fiesta-ciudadana-ano-nuevo-la-serena-2026",
+      "category": "party",
+      "start_at": "2025-12-31T21:00:00",
+      "end_at": "2026-01-01T01:00:00",
+      "flyer_image": null,
+      "eyebrow_text": "Evento gratuito",
+      "badge_text": "Familiar",
+      "external_ticket_url": "https://chileestuyo.cl/eventos/fiesta-ciudadana-para-celebrar-el-ano-nuevo-en-la-serena/",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 2,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Misa La Serena presenta Año Nuevo 2026",
+      "slug": "misa-la-serena-ano-nuevo-2026",
+      "category": "party",
+      "start_at": "2025-12-31T01:00:00",
+      "end_at": null,
+      "flyer_image": "https://imagenes.passline.com/eventos/-651428-rec.jpg",
+      "eyebrow_text": "",
+      "badge_text": "+21",
+      "external_ticket_url": "https://www.passline.com/eventos/misa-la-serena-presenta-ano-nuevo-2026",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 3,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Año Nuevo 2026 Living Beach",
+      "slug": "ano-nuevo-2026-living-beach",
+      "category": "party",
+      "start_at": "2025-12-31T21:00:00",
+      "end_at": "2026-01-01T05:00:00",
+      "flyer_image": null,
+      "eyebrow_text": "",
+      "badge_text": "+21",
+      "external_ticket_url": "https://www.passline.com/eventos/ano-nuevo-2026-living-beach",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 4,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Año Nuevo 2026 Hangar",
+      "slug": "ano-nuevo-2026-hangar",
+      "category": "party",
+      "start_at": "2025-12-31T22:00:00",
+      "end_at": null,
+      "flyer_image": null,
+      "eyebrow_text": "",
+      "badge_text": "+18",
+      "external_ticket_url": "https://www.passline.com/eventos/ano-nuevo-2026-hangar",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 5,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Kamikaze Año Nuevo 2026",
+      "slug": "kamikaze-ano-nuevo-2026",
+      "category": "party",
+      "start_at": "2025-12-31T22:00:00",
+      "end_at": null,
+      "flyer_image": null,
+      "eyebrow_text": "",
+      "badge_text": "+18",
+      "external_ticket_url": "https://www.passline.com/eventos/kamikaze-ano-nuevo-2026",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 6,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Año Nuevo 2026 New City",
+      "slug": "ano-nuevo-2026-new-city",
+      "category": "party",
+      "start_at": "2025-12-31T23:00:00",
+      "end_at": null,
+      "flyer_image": null,
+      "eyebrow_text": "",
+      "badge_text": "+24",
+      "external_ticket_url": "https://www.passline.com/eventos/ano-nuevo-2026-new-city",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 7,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Año Nuevo Paradise OVO Nightclub",
+      "slug": "ano-nuevo-paradise-ovo-nightclub-2026",
+      "category": "party",
+      "start_at": "2025-12-31T23:00:00",
+      "end_at": null,
+      "flyer_image": null,
+      "eyebrow_text": "",
+      "badge_text": "+21",
+      "external_ticket_url": "https://www.passline.com/eventos/ano-nuevo-paradise-miercoles-31-diciembre-ovo-nightclub-451719",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 8,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Bomboia Innerbloom 2026",
+      "slug": "bomboia-innerbloom-2026",
+      "category": "party",
+      "start_at": "2025-12-31T22:00:00",
+      "end_at": null,
+      "flyer_image": null,
+      "eyebrow_text": "",
+      "badge_text": "+21",
+      "external_ticket_url": "https://www.passline.com/eventos/bomboia-innerbloom-2026",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 9,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Kamanga Sunbeach 2026",
+      "slug": "kamanga-sunbeach-2026",
+      "category": "party",
+      "start_at": "2025-12-31T23:55:00",
+      "end_at": null,
+      "flyer_image": null,
+      "eyebrow_text": "",
+      "badge_text": "+21",
+      "external_ticket_url": "https://www.passline.com/eventos/kamanga-sunbeach-2026",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  },
+  {
+    "model": "places.Event",
+    "pk": 10,
+    "fields": {
+      "Commune": 37,
+      "venue": null,
+      "title": "Año Nuevo Playa Paraíso 2026",
+      "slug": "ano-nuevo-playa-paraiso-2026",
+      "category": "party",
+      "start_at": "2026-01-01T00:30:00",
+      "end_at": null,
+      "flyer_image": null,
+      "eyebrow_text": "",
+      "badge_text": "+18",
+      "external_ticket_url": "https://www.passline.com/eventos/ano-nuevo-playa-paraiso-2026-fiesta-en-el-playa",
+      "is_featured": false,
+      "feature_order": 0,
+      "is_published": true,
+      "clicks_count": 0,
+      "last_clicked_at": null
+    }
+  }
+]
