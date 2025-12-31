@@ -256,10 +256,12 @@ MP_CLIENT_SECRET = os.getenv("MP_CLIENT_SECRET")
 # Email
 # =========================
 # Si estás en DEBUG => consola; si no => SMTP real
+USE_SMTP = os.getenv("USE_SMTP", "False") == "True"
 
-if DEBUG:
+if DEBUG and not USE_SMTP:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     DEFAULT_FROM_EMAIL = "No Reply <no-reply@midnight.local>"
+    SERVER_EMAIL = DEFAULT_FROM_EMAIL
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
     EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.titan.email")
@@ -267,6 +269,5 @@ else:
     EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
-    DEFAULT_FROM_EMAIL = f"No Reply <{EMAIL_HOST_USER}>"
+    DEFAULT_FROM_EMAIL = f"Midnight <{EMAIL_HOST_USER}>"
     SERVER_EMAIL = DEFAULT_FROM_EMAIL
-
