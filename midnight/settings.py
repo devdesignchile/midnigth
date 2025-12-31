@@ -256,18 +256,30 @@ MP_CLIENT_SECRET = os.getenv("MP_CLIENT_SECRET")
 # Email
 # =========================
 # Si estás en DEBUG => consola; si no => SMTP real
+
 USE_SMTP = os.getenv("USE_SMTP", "False") == "True"
 
 if DEBUG and not USE_SMTP:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
     DEFAULT_FROM_EMAIL = "No Reply <no-reply@midnight.local>"
     SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
 else:
     EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-    EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.titan.email")
-    EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
-    EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "True") == "True"
+
+    # Host/puerto desde .env (por defecto: Hostinger SMTP SSL)
+    EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.hostinger.com")
+    EMAIL_PORT = int(os.getenv("EMAIL_PORT", "465"))
+
+    # Seguridad: 465 => SSL, 587 => TLS (STARTTLS)
+    EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", "True") == "True"
+    EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", "False") == "True"
+
     EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
     EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+
     DEFAULT_FROM_EMAIL = f"Midnight <{EMAIL_HOST_USER}>"
     SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+    # Opcional: timeout para que no se quede colgado si SMTP anda mal
+    EMAIL_TIMEOUT = int(os.getenv("EMAIL_TIMEOUT", "15"))
